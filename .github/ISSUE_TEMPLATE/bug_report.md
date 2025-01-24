@@ -1,3 +1,11 @@
+---
+name: Bug Report
+about: Report a bug to help us improve
+title: "[Bug] "
+labels: bug
+assignees: ''
+---
+
 ## Summary: 
 brief description of the issue.
 
