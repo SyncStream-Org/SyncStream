@@ -1,0 +1,14 @@
+{
+  "name": "syncstream-server",
+  "version": "0.0.1",
+  "description": "The server for SyncStream - A Self Hosted Collaborative Workspace",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "SyncStream Org",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
