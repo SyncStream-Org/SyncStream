@@ -1,14 +1,22 @@
 {
-  "name": "syncstream-server",
+  "name": "sync-stream-server",
   "version": "0.0.1",
-  "description": "The server for SyncStream - A Self Hosted Collaborative Workspace",
+  "description": "The server for SyncStream - a self-hosted collaborative workspace environment.",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/server.js",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "SyncStream Org",
+  "keywords": [],
+  "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.12.0",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
   }
 }
