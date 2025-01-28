@@ -1,6 +1,6 @@
 # ESLint client folder on push or pull request.
 
-name: ESLint
+name: ESLint Client
 
 on:
   push:
