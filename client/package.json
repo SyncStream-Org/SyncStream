@@ -1,8 +1,8 @@
 {
   "name": "sync-stream-client",
   "productName": "sync-stream-client",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "0.0.1",
+  "description": "The client for SyncStream - a self-hosted collaborative workspace environment.",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
