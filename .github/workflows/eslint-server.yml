@@ -1,6 +1,6 @@
 # Lint Server Folder on push or pull request
 
-name: ESLint
+name: ESLint Server
 
 on:
   push:
