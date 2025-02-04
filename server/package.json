@@ -1,5 +1,5 @@
 {
-  "name": "sync-stream-server",
+  "name": "sync-stream-server-test",
   "version": "0.0.1",
   "description": "The server for SyncStream - a self-hosted collaborative workspace environment.",
   "main": "index.js",
