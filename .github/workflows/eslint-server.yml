@@ -27,7 +27,9 @@ jobs:
 
       - name: Install ESLint
         working-directory: ./server
-        run: npm install
+        run: |
+          npm install
+          npm install @microsoft/eslint-formatter-sarif        
 
       - name: Run ESLint on Server
         working-directory: ./server
