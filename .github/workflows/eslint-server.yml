@@ -3,6 +3,7 @@
 name: ESLint Server
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - server/**
