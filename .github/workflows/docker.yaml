@@ -1,9 +1,17 @@
 name: Build Server Docker Image
 
 on:
-  release:
-    types: [published]
-  
+  pull_request:
+    branches:
+      - main
+    paths:
+      - server/**
+  push:
+    branches:
+      - main
+    paths:
+      - server/**
+      
 jobs:
   server:
     runs-on: ubuntu-latest
@@ -12,9 +20,5 @@ jobs:
         uses: actions/checkout@v4
       - uses: whoan/docker-build-with-cache-action@v5
         with:
-          registry: ghcr.io
-          dockerfile: ${{path/to/Dockerfile}}
-          username: ${secrets.USERNAME}
-          password: ${{secrets.PASSWORD}}
+          context: ./backend
           image_name: sync_stream
-          push_git_tag: true
