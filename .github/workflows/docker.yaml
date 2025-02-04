@@ -21,4 +21,5 @@ jobs:
       - uses: whoan/docker-build-with-cache-action@v5
         with:
           context: ./backend
+          push_image_and_stages: false
           image_name: sync_stream
