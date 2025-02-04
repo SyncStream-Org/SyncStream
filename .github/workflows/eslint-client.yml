@@ -3,6 +3,7 @@
 name: ESLint Client
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - client/**
@@ -28,17 +29,17 @@ jobs:
         working-directory: ./client
         run: |
           npm install
+          npm install @microsoft/eslint-formatter-sarif
 
       - name: Run ESLint on Client
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         working-directory: ./client
-        run: npm run lint-with-output
+        run: npx eslint -c eslint.config.mjs --format @microsoft/eslint-formatter-sarif -o eslint-results.sarif src/
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@v3
-        working-directory: ./client
         with:
-          sarif_file: eslint-results.sarif
+          sarif_file: ./client/eslint-results.sarif
           wait-for-processing: true
