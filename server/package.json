@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
+    "lint": "eslint -c eslint.config.mjs src/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
