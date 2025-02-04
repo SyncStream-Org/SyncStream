@@ -9,8 +9,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ./src",
-    "lint-with-output": "eslint --ext .ts,.tsx --output-file eslint-results.sarif ."
+    "lint": "eslint -c .eslintrc.json src/",
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.1",
