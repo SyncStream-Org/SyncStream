@@ -20,6 +20,6 @@ jobs:
         uses: actions/checkout@v4
       - uses: whoan/docker-build-with-cache-action@v5
         with:
-          context: ./backend
+          context: ./server
           push_image_and_stages: false
           image_name: sync_stream
