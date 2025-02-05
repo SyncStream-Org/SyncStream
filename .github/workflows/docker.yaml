@@ -6,7 +6,7 @@ on:
     tags: ['v[0-9].[0-9]+.[0-9]+-?[a-zA-Z0-9]+']
 
 env:
-  BUILD_TAG: ${{ contains(github.ref_name, '-') && '${{ github.ref_name }},development' || '${{ github.ref_name }},latest' }}
+  BUILD_TAG: ${{ contains(github.ref_name, '-') && 'development' || 'latest' }}
 
 jobs:
   server:
@@ -24,4 +24,4 @@ jobs:
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
           image_name: "sync-stream"
-          image_tag: "${{ env.BUILD_TAG }}"
+          image_tag: "${{ github.ref_name }},${{ env.BUILD_TAG }}"
