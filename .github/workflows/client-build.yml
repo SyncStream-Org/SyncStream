@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-linux-x64:
-    name: Build Client App .deb with Ubuntu.x64
+    name: Build Client App .deb and .rpm with Ubuntu.x64
     runs-on: ubuntu-latest
     permissions:
       contents: read
