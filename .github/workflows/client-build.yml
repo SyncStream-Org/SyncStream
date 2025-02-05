@@ -1,6 +1,6 @@
 # Builds and uploads artifacts for client
 
-name: Build Client
+name: Build Client App
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-linux:
-    name: Build Client
+    name: Build Client App for Linux
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -30,6 +30,32 @@ jobs:
       - name: Upload analysis results to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: ubutnu-build
+          name: linux
           path: ./client/out/sync-stream-client-linux-x64
+          if-no-files-found: error
+
+  build-windows:
+    name: Build Client App for Windows
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NPM
+        working-directory: ./client
+        run: npm install
+
+      - name: Build Client
+        working-directory: ./client
+        run: npm run package
+
+      - name: Upload analysis results to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: ./client/out/sync-stream-client-windows-x64
           if-no-files-found: error
