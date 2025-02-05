@@ -1,14 +1,11 @@
 name: Build Server Docker Image
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
-    paths:
-      - server/**
   push:
-    branches:
-      - main
     paths:
       - server/**
       
@@ -21,5 +18,7 @@ jobs:
       - uses: whoan/docker-build-with-cache-action@v5
         with:
           context: ./server
-          push_image_and_stages: false
-          image_name: sync_stream
+          username: whoan
+          password: "${{ secrets.GITHUB_TOKEN }}"
+          registry: docker.pkg.github.com
+          image_name: sync-stream
