@@ -8,7 +8,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-linux-deb:
+  build-linux-x64:
     name: Build Client App .deb with Ubuntu.x64
     runs-on: ubuntu-latest
     permissions:
@@ -23,15 +23,22 @@ jobs:
         working-directory: ./client
         run: npm install
 
-      - name: Build Client
+      - name: Build DEB and RPM
         working-directory: ./client
-        run: npm run make -- --targets=@electron-forge/maker-deb
+        run: npm run make -- --targets=@electron-forge/maker-deb,@electron-forge/maker-rpm
 
       - name: Upload .deb to Github
         uses: actions/upload-artifact@v4
         with:
           name: linux-deb-x64
           path: ./client/out/make/deb/x64/*.deb
+          if-no-files-found: error
+
+      - name: Upload .rpm to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-rpm-x64
+          path: ./client/out/make/rpm/x64/*.rpm
           if-no-files-found: error
 
       - name: Upload linux-raw to Github
@@ -41,33 +48,7 @@ jobs:
           path: ./client/out/sync-stream-client-linux-x64
           if-no-files-found: error
 
-  build-linux-rpm:
-    name: Build Client App .rpm with Ubuntu.x64
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-      actions: read 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup NPM
-        working-directory: ./client
-        run: npm install
-
-      - name: Build Client
-        working-directory: ./client
-        run: npm run make -- --targets=@electron-forge/maker-rpm
-
-      - name: Upload .rpm to Github
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-rpm-x64
-          path: ./client/out/make/rpm/x64/*.rpm
-          if-no-files-found: error
-
-  build-windows:
+  build-windows-x64:
     name: Build Client App for Windows
     runs-on: windows-latest
     permissions:
