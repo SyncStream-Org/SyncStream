@@ -1,0 +1,34 @@
+# Builds and uploads artifacts for client
+
+name: Build Client
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-linux:
+    name: Build Client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NPM
+        working-directory: ./client
+        run: npm install
+
+      - name: Build Client
+        working-directory: ./client
+        run: npm run package
+
+      - name: Upload analysis results to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubutnu-build
+          path: ./out/sync-stream-client-linux-x64
