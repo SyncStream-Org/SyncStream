@@ -20,5 +20,5 @@ jobs:
           context: ./server
           username: whoan
           password: "${{ secrets.GITHUB_TOKEN }}"
-          registry: docker.pkg.github.com
+          registry: ghcr.io/SyncStream-Org
           image_name: sync-stream
