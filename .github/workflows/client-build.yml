@@ -30,7 +30,7 @@ jobs:
       - name: Upload analysis results to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: linux
+          name: linux-x64
           path: ./client/out/sync-stream-client-linux-x64
           if-no-files-found: error
 
@@ -56,6 +56,6 @@ jobs:
       - name: Upload analysis results to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: windows
-          path: ./client/out/sync-stream-client-windows-x64
+          name: windows-x64
+          path: ./client/out/sync-stream-client-win32-x64
           if-no-files-found: error
