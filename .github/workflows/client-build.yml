@@ -8,8 +8,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-linux:
-    name: Build Client App for Linux
+  build-linux-deb:
+    name: Build Client App .deb with Ubuntu.x64
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,13 +25,42 @@ jobs:
 
       - name: Build Client
         working-directory: ./client
-        run: npm run package
+        run: npm run make -- --targets=@electron-forge/maker-deb
 
       - name: Upload analysis results to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: linux-x64
-          path: ./client/out/sync-stream-client-linux-x64
+          name: linux-deb-x64
+          path: ./client/out/make/deb/x64/*.deb
+          if-no-files-found: error
+
+  build-linux-rpm:
+    name: Build Client App .rpm with Fedora.x64
+    runs-on: fedora-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NPM
+        working-directory: ./client
+        run: npm install
+
+      - name: Patch electron-installer-redhat
+        run: patch ./client/node_modules/electron-installer-redhat/resources/spec.ejs < ./.github/patches/spec.ejs.patch
+
+      - name: Build Client
+        working-directory: ./client
+        run: npm run make -- --targets=@electron-forge/maker-rpm
+
+      - name: Upload analysis results to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-rpm-x64
+          path: ./client/out/make/rpm/x64/*.rpm
           if-no-files-found: error
 
   build-windows:
@@ -51,11 +80,11 @@ jobs:
 
       - name: Build Client
         working-directory: ./client
-        run: npm run package
+        run: npm run make -- --targets=@electron-forge/maker-squirrel
 
       - name: Upload analysis results to GitHub
         uses: actions/upload-artifact@v4
         with:
           name: windows-x64
-          path: ./client/out/sync-stream-client-win32-x64
+          path: ./client/out/make/squirrel.windows/x64/*.exe
           if-no-files-found: error
