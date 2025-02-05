@@ -5,12 +5,10 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    paths:
-      - server/**
       
 jobs:
   server:
+    name: Build and Push Docker Container
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,7 +16,7 @@ jobs:
       - uses: whoan/docker-build-with-cache-action@v5
         with:
           context: ./server
-          username: "${{ github.actor }}"
+          username: SyncStream-Org
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
           image_name: sync-stream
