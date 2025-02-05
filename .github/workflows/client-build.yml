@@ -35,8 +35,8 @@ jobs:
           if-no-files-found: error
 
   build-linux-rpm:
-    name: Build Client App .rpm with Fedora.x64
-    runs-on: fedora-latest
+    name: Build Client App .rpm with Ubuntu.x64
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
@@ -48,9 +48,6 @@ jobs:
       - name: Setup NPM
         working-directory: ./client
         run: npm install
-
-      - name: Patch electron-installer-redhat
-        run: patch ./client/node_modules/electron-installer-redhat/resources/spec.ejs < ./.github/patches/spec.ejs.patch
 
       - name: Build Client
         working-directory: ./client
