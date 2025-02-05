@@ -1,6 +1,6 @@
 {
   "name": "sync-stream-client",
-  "productName": "sync-stream-client-test",
+  "productName": "sync-stream-client",
   "version": "0.0.1",
   "description": "The client for SyncStream - a self-hosted collaborative workspace environment.",
   "main": ".webpack/main",
