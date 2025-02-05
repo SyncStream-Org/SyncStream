@@ -74,9 +74,42 @@ jobs:
           path: ./client/out/make/squirrel.windows/x64/*.exe
           if-no-files-found: error
           
-      - name: Upload linux-raw to Github
+      - name: Upload windows-raw to Github
         uses: actions/upload-artifact@v4
         with:
           name: windows-raw-x64
           path: ./client/out/sync-stream-client-win32-x64
+          if-no-files-found: error
+  
+  build-mac-arm64:
+    name: Build Client App for macOS
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup NPM
+        working-directory: ./client
+        run: npm install
+
+      - name: Build Client
+        working-directory: ./client
+        run: npm run make -- --targets=@electron-forge/maker-dmg
+
+      - name: Upload .dmg to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-dmg-arm64
+          path: ./client/out/make/*.dmg
+          if-no-files-found: error
+          
+      - name: Upload mac-raw to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-raw-arm64
+          path: ./client/out/sync-stream-client-darwin-arm64
           if-no-files-found: error
