@@ -3,9 +3,9 @@ name: Testing with Jest
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   Client:
