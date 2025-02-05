@@ -20,4 +20,5 @@ jobs:
           username: SyncStream-Org
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
-          image_name: "sync-stream:${{ github.ref_name }}"
+          image_name: "sync-stream"
+          image_tag: "${{ github.ref_name }}"
