@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
   push:
     tags: ['v[0-9].[0-9]+.[0-9]+-?[a-zA-Z0-9]+']
-    branches: ["main"]
 
 jobs:
   build-linux-x64:
