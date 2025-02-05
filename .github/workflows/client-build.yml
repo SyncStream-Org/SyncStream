@@ -27,11 +27,18 @@ jobs:
         working-directory: ./client
         run: npm run make -- --targets=@electron-forge/maker-deb
 
-      - name: Upload analysis results to GitHub
+      - name: Upload .deb to Github
         uses: actions/upload-artifact@v4
         with:
           name: linux-deb-x64
           path: ./client/out/make/deb/x64/*.deb
+          if-no-files-found: error
+
+      - name: Upload linux-raw to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-raw-x64
+          path: ./client/out/sync-stream-client-linux-x64
           if-no-files-found: error
 
   build-linux-rpm:
@@ -53,7 +60,7 @@ jobs:
         working-directory: ./client
         run: npm run make -- --targets=@electron-forge/maker-rpm
 
-      - name: Upload analysis results to GitHub
+      - name: Upload .rpm to Github
         uses: actions/upload-artifact@v4
         with:
           name: linux-rpm-x64
@@ -79,9 +86,16 @@ jobs:
         working-directory: ./client
         run: npm run make -- --targets=@electron-forge/maker-squirrel
 
-      - name: Upload analysis results to GitHub
+      - name: Upload .exe to Github
         uses: actions/upload-artifact@v4
         with:
-          name: windows-x64
+          name: windows-exe-x64
           path: ./client/out/make/squirrel.windows/x64/*.exe
+          if-no-files-found: error
+          
+      - name: Upload linux-raw to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-raw-x64
+          path: ./client/out/sync-stream-client-win32-x64
           if-no-files-found: error
