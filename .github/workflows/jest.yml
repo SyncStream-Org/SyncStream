@@ -1,0 +1,28 @@
+name: Testing with Jest
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+
+jobs:
+  Client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run Tests on Client
+        run: |
+          cd client
+          npm install 
+          npm test
+  Server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run Tests on Server
+        run: |
+          cd server
+          npm install 
+          npm test
