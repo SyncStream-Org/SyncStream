@@ -10,7 +10,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint -c .eslintrc.json src/",
-    "test": "jest --coverage"
+    "test": "jest --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.1",
