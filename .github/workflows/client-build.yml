@@ -31,4 +31,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ubutnu-build
-          path: ./out/sync-stream-client-linux-x64
+          path: ./client/out/sync-stream-client-linux-x64
+          if-no-files-found: error
