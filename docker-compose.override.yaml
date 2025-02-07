@@ -1,0 +1,15 @@
+services:
+  backend:
+    restart: "no"
+    build:
+      context: ./server
+    # command: npm start
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server/src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./server/package.json

@@ -1,0 +1,63 @@
+services:
+
+  db:
+    image: postgres:17
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - sync-stream-db-data:/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+      - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      - POSTGRES_DB=${POSTGRES_DB?Variable not set}
+
+  backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: always
+    networks:
+      - sync-stream
+      - default
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    env_file:
+      - .env
+    # environment:
+      # - DOMAIN=${DOMAIN}
+      # - ENVIRONMENT=${ENVIRONMENT}
+      # - SECRET_KEY=${SECRET_KEY?Variable not set}
+      # - ADMIN_USER=${ADMIN_USER?Variable not set}
+      # - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD?Variable not set}
+      # # - EMAILS_FROM_EMAIL=${EMAILS_FROM_EMAIL}
+      # - POSTGRES_SERVER=db
+      # - POSTGRES_DB=${POSTGRES_DB}
+      # - POSTGRES_USER=${POSTGRES_USER?Variable not set}
+      # - POSTGRES_PASSWORD=${POSTGRES_PASSWORD?Variable not set}
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    build:
+      context: ./server
+    
+    ports:
+      - 80:3000
+
+volumes:
+  sync-stream-db-data:
+
+networks:
+  sync-stream:
+    external: false
