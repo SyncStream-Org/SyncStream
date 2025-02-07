@@ -1,0 +1,29 @@
+name: Jest Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  client:
+    name: Run Client Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Tests on Client
+        run: |
+          cd client
+          npm install 
+          npm test
+  
+  server:
+    name: Run Server Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Tests on Server
+        run: |
+          cd server
+          npm install 
+          npm test

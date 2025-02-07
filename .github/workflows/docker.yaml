@@ -1,25 +1,27 @@
 name: Build Server Docker Image
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - server/**
+  workflow_dispatch:
   push:
-    branches:
-      - main
-    paths:
-      - server/**
-      
+    tags: ["v[0-9]+.[0-9]+", "v[0-9]+.[0-9]+.[0-9]+", "v[0-9]+.[0-9]+-*", "v[0-9]+.[0-9]+.[0-9]+-*"]
+
+env:
+  BUILD_TAG: ${{ contains(github.ref_name, '-') && 'development' || 'latest' }}
+
 jobs:
   server:
+    name: Build and Push Docker Container
     runs-on: ubuntu-latest
+    permissions:
+      write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - uses: whoan/docker-build-with-cache-action@v5
         with:
           context: ./server
-          push_image_and_stages: false
-          image_name: sync_stream
+          username: SyncStream-Org
+          password: "${{ secrets.GITHUB_TOKEN }}"
+          registry: ghcr.io
+          image_name: "sync-stream"
+          image_tag: "${{ github.ref_name }},${{ env.BUILD_TAG }}"
