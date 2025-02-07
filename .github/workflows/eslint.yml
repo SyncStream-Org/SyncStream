@@ -1,6 +1,6 @@
 # ESLint on pull request.
 
-name: ESLint checks
+name: ESLint Checks
 
 on:
   workflow_dispatch:
@@ -37,33 +37,33 @@ jobs:
         with:
           sarif_file: ./client/eslint-results.sarif
           wait-for-processing: true
-
-    server:
-        name: ESLint Server Source
-        runs-on: ubuntu-latest
-        permissions:
+  
+  server:
+      name: ESLint Server Source
+      runs-on: ubuntu-latest
+      permissions:
         contents: read
         security-events: write
         actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
-        steps:
+      steps:
         - name: Checkout code
-            uses: actions/checkout@v4
+          uses: actions/checkout@v4
 
         - name: Install ESLint
-            working-directory: ./server
-            run: |
+          working-directory: ./server
+          run: |
             npm install
             npm install @microsoft/eslint-formatter-sarif
 
         - name: Run ESLint on Server
-            working-directory: ./server
-            env:
+          working-directory: ./server
+          env:
             SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
-            run: npx eslint -c eslint.config.mjs --format @microsoft/eslint-formatter-sarif -o eslint-results.sarif src/
-            continue-on-error: true
+          run: npx eslint -c eslint.config.mjs --format @microsoft/eslint-formatter-sarif -o eslint-results.sarif src/
+          continue-on-error: true
 
         - name: Upload analysis results to GitHub
-            uses: github/codeql-action/upload-sarif@v3
-            with:
+          uses: github/codeql-action/upload-sarif@v3
+          with:
             sarif_file: ./server/eslint-results.sarif
             wait-for-processing: true
