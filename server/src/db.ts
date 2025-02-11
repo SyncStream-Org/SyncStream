@@ -2,7 +2,8 @@ import { Sequelize } from "sequelize";
 import dotenv from 'dotenv';
 dotenv.config();
 
-let { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, CI } = process.env;
+let { POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB } = process.env;
+const { CI } = process.env;
 
 if (CI) {
   POSTGRES_DB = 'mock_POSTGRES_DB';
