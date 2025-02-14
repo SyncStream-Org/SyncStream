@@ -39,14 +39,22 @@ class UserService {
     return validatedUser;
   }
 
-  public async getUserRooms(user: User): Promise<RoomAttributes[]> {
-    const ownedRooms = await Room.findAll({ where: { roomOwner: user.username } });
+  public async getUserRooms(user: User, isOwner?: boolean, isMember?: boolean): Promise<RoomAttributes[]> {
+    isOwner = isOwner || false;
+    isMember = isMember || true;
+    
+    const rooms: RoomAttributes[] = [];
+    if (isOwner) {
+      const ownedRooms = await Room.findAll({ where: { roomOwner: user.username } });
+      rooms.push(...ownedRooms);
+    }
 
-    const joinedRoomLinks = await RoomUser.findAll({ where: { username: user.username, isMember: true } });
+    const joinedRoomLinks = await RoomUser.findAll({ where: { username: user.username, isMember: isMember } });
     const joinedRoomIDs = joinedRoomLinks.map((room: RoomUserAttributes) => room.roomID);
     const joinedRooms = await Room.findAll({ where: { roomID: joinedRoomIDs } });
-
-    return ownedRooms.concat(joinedRooms);
+    rooms.push(...joinedRooms);
+    
+    return rooms;
   }
 
 
