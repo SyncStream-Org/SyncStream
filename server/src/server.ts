@@ -1,10 +1,12 @@
 import express, { Application, Request, Response } from 'express';
 import sequelize from './db';
+import routes from "./routes";
 
 const port: number = 3000;
 
 const app: Application = express();
 app.use(express.json());
+app.use(routes)
 
 // 
 app.get('/', (req: Request, res: Response) => {
