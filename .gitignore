@@ -4,3 +4,29 @@
 **/dist
 **/yarn.lock
 **/coverage
+
+# Logs
+**/logs
+**/*.log
+
+# Runtime data
+**/pids
+**/*.pid
+**/*.seed
+
+# Coverage directory used by tools like istanbul
+**/coverage
+**/.eslintcache
+
+# OSX
+**/.DS_Store
+
+client/release/app/dist
+client/release/build
+client/.erb/dll
+
+**/.idea
+**/npm-debug.log.*
+**/*.css.d.ts
+**/*.sass.d.ts
+**/*.scss.d.ts
