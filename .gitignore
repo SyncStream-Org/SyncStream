@@ -30,3 +30,6 @@ client/.erb/dll
 **/*.css.d.ts
 **/*.sass.d.ts
 **/*.scss.d.ts
+
+**/.env
+
