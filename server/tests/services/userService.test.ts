@@ -3,7 +3,7 @@ import * as auth from '../../src/utils/auth';
 import User from '../../src/models/users';
 import Room from '../../src/models/rooms';
 import RoomUser from '../../src/models/roomUsers';
-
+import { RoomUserPermissions } from 'room-types';
 
 jest.mock('../../src/models/users');
 jest.mock('../../src/models/rooms');
@@ -21,9 +21,18 @@ describe('UserService', () => {
     jest.restoreAllMocks();
   });
 
-  const mockRooms = [{ roomID: 1 }, { roomID: 2 }];
-  const mockRoomUsers = [{ roomID: 3 }, { roomID: 4 }];
-  const mockRoomsJoined = [{ roomID: 4 }, { roomID: 4 }];
+  const mockRooms = [
+    { roomID: 1 }, 
+    { roomID: 2 }
+  ] as Room[];
+  const mockRoomUsers = [
+    { roomID: 3, username: 'testuser1' }, 
+    { roomID: 4, username: 'testuser2' }
+  ] as RoomUser[];
+  const mockRoomsJoined = [
+    { roomID: 4 }, 
+    { roomID: 4 }
+  ] as Room[];
 
   /* Tests for getUserByUsername */
 
@@ -213,5 +222,102 @@ describe('UserService', () => {
     
     await expect(result).rejects.toThrow('User not found');
     expect(UserService.getUserByUsername).toHaveBeenCalledWith(mockUser.username);
+  });
+
+  /* Tests for getRoomUser */
+
+  it('getRoomUser - should return room user if found', async () => {
+    jest.spyOn(Room, 'findOne').mockResolvedValue(true as unknown as Room);
+    jest.spyOn(RoomUser, 'findOne').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
+
+    const result = await UserService.getRoomUser(1, mockUser.username);
+
+    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: 1, username: mockUser.username } });
+    expect(result).toBe(mockRoomUsers[0]);
+  });
+
+  it('getRoomUser - should return null if room user not found', async () => {
+    jest.spyOn(Room, 'findOne').mockResolvedValue(true as unknown as Room);
+    jest.spyOn(RoomUser, 'findOne').mockResolvedValue(null);
+
+    const result = await UserService.getRoomUser(1, mockUser.username);
+
+    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: 1, username: mockUser.username } });
+    expect(result).toBe(null);
+  });
+
+  it('getRoomUser - should throw an error if room not found', async () => {
+    jest.spyOn(Room, 'findOne').mockResolvedValue(null);
+
+    const result = UserService.getRoomUser(1, mockUser.username);
+
+    await expect(result).rejects.toThrow('Room not found');
+    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: 1 } });
+  });
+
+  /* Tests for createRoomUser */
+  it('createRoomUser - should create a new room user', async () => {
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(null);
+    jest.spyOn(RoomUser, 'create').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
+
+    const result = await UserService.createRoomUser(1, mockRoomUsers[0] as unknown as RoomUser);
+
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(1, mockRoomUsers[0].username);
+    expect(RoomUser.create).toHaveBeenCalledWith(mockRoomUsers[0]);
+    expect(result).toBe(mockRoomUsers[0]);
+  });
+
+  it('createRoomUser - should throw an error if room user already exists', async () => {
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
+
+    const result = UserService.createRoomUser(1, mockRoomUsers[0] as unknown as RoomUser);
+
+    await expect(result).rejects.toThrow('User already in room');
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(1, mockRoomUsers[0].username);
+  });
+
+  /* Tests for removeRoomUser */
+
+  it('removeRoomUser - should remove a room user', async () => {
+    mockRoomUsers[0].destroy = jest.fn();
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
+
+    await UserService.removeRoomUser(mockRoomUsers[0] as unknown as RoomUser);
+
+    expect(mockRoomUsers[0].destroy).toHaveBeenCalled();
+  });
+
+  it('removeRoomUser - should throw an error if room user not found', async () => {
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(null);
+
+    const result = UserService.removeRoomUser(mockRoomUsers[0] as unknown as RoomUser);
+
+    await expect(result).rejects.toThrow('User not in room');
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(mockRoomUsers[0].roomID, mockRoomUsers[0].username);
+  });
+
+  /* Tests for updateRoomUser */
+
+  it('updateRoomUser - should update room user permissions and status', async () => {
+    mockRoomUsers[0].save = jest.fn();
+    const newPermissions = { canEdit: true };
+    const newStatus = false;
+
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
+
+    await UserService.updateRoomUser(mockRoomUsers[0] as unknown as RoomUser, newPermissions, newStatus);
+
+    expect(mockRoomUsers[0].permissions).toEqual(newPermissions);
+    expect(mockRoomUsers[0].isMember).toBe(newStatus);
+    expect(mockRoomUsers[0].save).toHaveBeenCalled();
+  });
+
+  it('updateRoomUser - should throw an error if room user not found', async () => {
+    jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(null);
+
+    const result = UserService.updateRoomUser(mockRoomUsers[0] as unknown as RoomUser);
+
+    await expect(result).rejects.toThrow('User not in room');
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(mockRoomUsers[0].roomID, mockRoomUsers[0].username);
   });
 });

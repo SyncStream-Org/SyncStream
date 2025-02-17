@@ -117,10 +117,10 @@ class UserService {
       throw new Error('updateRoomUser: User not in room');
     }
 
-    if (newPermissions) {
+    if (newPermissions !== undefined) {
       roomUser.permissions = newPermissions;
     }
-    if (newStatus) {
+    if (newStatus !== undefined) {
       roomUser.isMember = newStatus;
     }
 
