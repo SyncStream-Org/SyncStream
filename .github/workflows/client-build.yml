@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-linux-x64:
-    name: Build Client App .deb and .rpm with Ubuntu.x64
+    name: Build Client AppImage with Ubuntu.x64
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,29 +26,22 @@ jobs:
         working-directory: ./client
         run: npm install
 
-      - name: Build DEB and RPM
+      - name: Build AppImage
         working-directory: ./client
-        run: npm run make -- --targets=@electron-forge/maker-deb,@electron-forge/maker-rpm
+        run: npm run package
 
-      - name: Upload .deb to Github
+      - name: Upload AppImage to Github
         uses: actions/upload-artifact@v4
         with:
           name: "linux-deb-x64-${{ github.ref_name }}"
-          path: ./client/out/make/deb/x64/*.deb
-          if-no-files-found: error
-
-      - name: Upload .rpm to Github
-        uses: actions/upload-artifact@v4
-        with:
-          name: "linux-rpm-x64-${{ github.ref_name }}"
-          path: ./client/out/make/rpm/x64/*.rpm
+          path: ./client/release/build/*.AppImage
           if-no-files-found: error
 
       - name: Upload linux-raw to Github
         uses: actions/upload-artifact@v4
         with:
           name: "linux-portable-x64-${{ github.ref_name }}"
-          path: ./client/out/sync-stream-client-linux-x64
+          path: ./client/release/build/linux-unpacked
           if-no-files-found: error
 
   build-windows-x64:
@@ -68,20 +61,20 @@ jobs:
 
       - name: Build Client
         working-directory: ./client
-        run: npm run make -- --targets=@electron-forge/maker-squirrel
+        run: npm run package
 
       - name: Upload .exe to Github
         uses: actions/upload-artifact@v4
         with:
           name: "windows-exe-x64-${{ github.ref_name }}"
-          path: ./client/out/make/squirrel.windows/x64/*.exe
+          path: ./client/release/build/*.exe
           if-no-files-found: error
           
       - name: Upload windows-raw to Github
         uses: actions/upload-artifact@v4
         with:
           name: "windows-portable-x64-${{ github.ref_name }}"
-          path: ./client/out/sync-stream-client-win32-x64
+          path: ./client/release/build/win-unpacked
           if-no-files-found: error
   
   build-mac-arm64:
@@ -107,12 +100,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "mac-dmg-arm64-${{ github.ref_name }}"
-          path: ./client/out/make/*.dmg
+          path: ./client/release/build/*.dmg
           if-no-files-found: error
           
       - name: Upload mac-raw to Github
         uses: actions/upload-artifact@v4
         with:
           name: "mac-portable-arm64-${{ github.ref_name }}"
-          path: ./client/out/sync-stream-client-darwin-arm64
+          path: ./client/release/build/mac-unpacked
           if-no-files-found: error
