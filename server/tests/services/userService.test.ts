@@ -3,7 +3,6 @@ import * as auth from '../../src/utils/auth';
 import User from '../../src/models/users';
 import Room from '../../src/models/rooms';
 import RoomUser from '../../src/models/roomUsers';
-import { RoomUserPermissions } from 'room-types';
 
 jest.mock('../../src/models/users');
 jest.mock('../../src/models/rooms');
