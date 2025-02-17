@@ -1,5 +1,4 @@
 import Room from '../../src/models/rooms';
-import RoomFile from '../../src/models/roomFiles';
 import RoomService from '../../src/services/roomService';
 
 jest.mock('../../src/models/rooms');

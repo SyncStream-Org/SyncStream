@@ -1,7 +1,6 @@
 import Room from '../models/rooms';
-import RoomFile from 'src/models/roomFiles';
 
-import { RoomAttributes, RoomCreationAttributes, RoomFileAttributes, RoomFilePermissions } from 'room-types';
+import { RoomCreationAttributes } from 'room-types';
 
 class RoomService {
   public async getRoomById(roomID: number): Promise<Room | null> {
