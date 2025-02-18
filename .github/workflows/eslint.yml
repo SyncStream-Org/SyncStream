@@ -29,7 +29,7 @@ jobs:
         env:
           SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
         working-directory: ./client
-        run: npx eslint -c .eslintrc.json --format @microsoft/eslint-formatter-sarif -o eslint-results.sarif src/
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx --format @microsoft/eslint-formatter-sarif -o eslint-results.sarif src/
         continue-on-error: true
 
       - name: Upload analysis results to GitHub
