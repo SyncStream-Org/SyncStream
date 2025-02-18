@@ -12,7 +12,14 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "outDir": ".erb/dll"
+    "outDir": ".erb/dll",
+    "paths": {
+      "@types/*": ["../shared/types/*"]
+    },
+    "typeRoots": [
+      "../shared/types",
+      "./node_modules/@types"
+    ]
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
