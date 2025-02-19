@@ -1,13 +1,12 @@
-// TODO: not implemented
+// All user routes
+
+import { generateDefaultHeaders, serverURL } from '../api';
 
 export function authenticate(): Promise<any | string> {
-  const headers: Headers = new Headers();
-  headers.set('Content-Type', 'application/json');
-  headers.set('Accept', 'application/json');
-  // TODO: implement session token
+  const headers: Headers = generateDefaultHeaders(false);
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request('./users.json', {
+  const request: RequestInfo = new Request(`${serverURL}/user/authenticate`, {
     method: 'GET',
     headers,
   });

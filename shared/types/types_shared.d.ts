@@ -1,44 +1,41 @@
+// MISC
 export interface StringMessage {
   msg: string;
 }
 
-export interface UserAttributes {
+// USER
+export interface UserData {
   username: string;
-  password: string;
-  admin: boolean;
-  displayName: string;
-  email: string;
+  email?: string;
+  password?: string;
+  admin?: boolean;
+  displayName?: string;
 }
 
-export interface RoomAttributes {
-  roomID?: number;
+export interface UserUpdateData {
+  email?: string;
+  password?: string;
+  displayName?: string;
+}
+
+// ROOM
+export interface RoomPermissions {
+  msg: string;
+  // TODO: Complete room permissions setup
+}
+
+export interface InviteData {
+  username: string;
+  permissions?: RoomPermissions;
+}
+
+export interface RoomData {
   roomName: string;
-  roomOwner: string;
+  roomOwner?: string;
+  roomID?: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface RoomCreationAttributes extends Omit<RoomAttributes, 'roomID'> {}  
-
-// TODO: define permissions
-export interface RoomUserPermissions {
-  canEdit: boolean;
-}
-
-export interface RoomUserAttributes {
-  username: string;
-  roomID: number;
-  permissions: RoomUserPermissions;
-  isMember: boolean;
-}
-
-// TODO: define permissions
-export interface RoomFilePermissions {
-  canEdit: boolean;
-}
-
-export interface RoomFileAttributes {
-  roomID: number;
-  fileName: string;
-  fileExtension: string;
-  permissions: RoomFilePermissions;
+export interface UserRoomData {
+  roomData: RoomData;
+  userPermissions: RoomPermissions;
 }

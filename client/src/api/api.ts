@@ -1,6 +1,6 @@
 // Holds data and functions used in api
 
-export let serverURL = 'http://localhost/'; // TODO: Hard coded, make sure to change later
+export let serverURL = 'http://localhost'; // TODO: Hard coded, make sure to change later
 export let sessionToken = '';
 
 export function generateDefaultHeaders(

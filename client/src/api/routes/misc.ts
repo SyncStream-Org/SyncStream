@@ -11,7 +11,7 @@ export function echo(): Promise<boolean | null> {
   };
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request(serverURL + 'echo', {
+  const request: RequestInfo = new Request(`${serverURL}/echo`, {
     method: 'POST',
     headers,
     body: JSON.stringify(uuid),
