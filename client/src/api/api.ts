@@ -10,7 +10,7 @@ export function generateDefaultHeaders(
   headers.set('Content-Type', 'application/json');
   headers.set('Accept', 'application/json');
 
-  if (withSessionToken) headers.set('sessionToken', sessionToken);
+  if (withSessionToken) headers.set('Session-Token', sessionToken);
 
   return headers;
 }
