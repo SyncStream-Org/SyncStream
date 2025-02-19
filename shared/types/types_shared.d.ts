@@ -1,4 +1,4 @@
-export interface Echo {
+export interface StringMessage {
   msg: string;
 }
 
