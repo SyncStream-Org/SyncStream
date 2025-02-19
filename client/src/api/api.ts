@@ -1,32 +1,16 @@
-import { Echo } from "shared-type"
-import "../../../shared/types/types_shared"
-import * as admin from "./admin"
-import * as rooms from "./rooms"
-import * as user from "./user"
+// Holds data and functions used in api
 
+export let serverURL = 'http://localhost'; // TODO: Hard coded, make sure to change later
+export let sessionToken = '';
 
-export function echo(): Promise<boolean> {
-  const headers: Headers = new Headers()
-  headers.set('Content-Type', 'application/json')
-  headers.set('Accept', 'application/json')
+export function generateDefaultHeaders(
+  withSessionToken: boolean = true,
+): Headers {
+  const headers: Headers = new Headers();
+  headers.set('Content-Type', 'application/json');
+  headers.set('Accept', 'application/json');
 
-  // Define junk json to send
-  const junk: Echo = {
-    msg: "This is a test"
-  }
+  if (withSessionToken) headers.set('Session-Token', sessionToken);
 
-  const request: RequestInfo = new Request('./users.json', { // TODO: change to server URL
-    method: 'GET',
-    headers: headers,
-    body: JSON.stringify(junk)
-  })
-
-  return fetch(request)
-    .then(res => res.json())
-    .then(res => {
-      const response = res as Echo;
-      return response.msg == junk.msg;
-    })
+  return headers;
 }
-
-export * as api from "./api";

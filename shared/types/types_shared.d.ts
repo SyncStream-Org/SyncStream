@@ -1,46 +1,41 @@
-declare module 'shared-type' {
-  export interface Echo {
-    msg: string;
-  }
+// MISC
+export interface StringMessage {
+  msg: string;
+}
 
-  export interface UserAttributes {
-    username: string;
-    password: string;
-    admin: boolean;
-    displayName: string;
-    email: string;
-  }
+// USER
+export interface UserData {
+  username: string;
+  email?: string;
+  password?: string;
+  admin?: boolean;
+  displayName?: string;
+}
 
-  export interface RoomAttributes {
-    roomID?: number;
-    roomName: string;
-    roomOwner: string;
-  }
+export interface UserUpdateData {
+  email?: string;
+  password?: string;
+  displayName?: string;
+}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface RoomCreationAttributes extends Omit<RoomAttributes, 'roomID'> {}  
+// ROOM
+export interface RoomPermissions {
+  msg: string;
+  // TODO: Complete room permissions setup
+}
 
-  // TODO: define permissions
-  export interface RoomUserPermissions {
-    canEdit: boolean;
-  }
+export interface InviteData {
+  username: string;
+  permissions?: RoomPermissions;
+}
 
-  export interface RoomUserAttributes {
-    username: string;
-    roomID: number;
-    permissions: RoomUserPermissions;
-    isMember: boolean;
-  }
+export interface RoomData {
+  roomName: string;
+  roomOwner?: string;
+  roomID?: number;
+}
 
-  // TODO: define permissions
-  export interface RoomFilePermissions {
-    canEdit: boolean;
-  }
-
-  export interface RoomFileAttributes {
-    roomID: number;
-    fileName: string;
-    fileExtension: string;
-    permissions: RoomFilePermissions;
-  }
+export interface UserRoomData {
+  roomData: RoomData;
+  userPermissions: RoomPermissions;
 }

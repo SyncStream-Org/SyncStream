@@ -10,8 +10,11 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
     'no-shadow': 'off',
+    'no-restricted-syntax': 'off',
     '@typescript-eslint/no-shadow': 'error',
     'no-unused-vars': 'off',
+    'no-bitwise': 'off',
+    'import/no-mutable-exports': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
   },
   parserOptions: {

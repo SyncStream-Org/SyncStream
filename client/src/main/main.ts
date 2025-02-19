@@ -56,7 +56,11 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function UpsertKeyValue(obj: Record<string, string> | Record<string, string[]>, keyToChange: string, value: string[]) {
+function UpsertKeyValue(
+  obj: Record<string, string> | Record<string, string[]>,
+  keyToChange: string,
+  value: string[],
+) {
   const keyToChangeLower = keyToChange.toLowerCase();
   for (const key of Object.keys(obj)) {
     if (key.toLowerCase() === keyToChangeLower) {
@@ -130,18 +134,20 @@ const createWindow = async () => {
       callback({ requestHeaders });
     },
   );
-  
-  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    const { responseHeaders } = details;
-    if (responseHeaders !== undefined) {
-      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
-      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
-    }
-    
-    callback({
-      responseHeaders,
-    });
-  });
+
+  mainWindow.webContents.session.webRequest.onHeadersReceived(
+    (details, callback) => {
+      const { responseHeaders } = details;
+      if (responseHeaders !== undefined) {
+        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
+        UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
+      }
+
+      callback({
+        responseHeaders,
+      });
+    },
+  );
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
@@ -149,7 +155,7 @@ const createWindow = async () => {
 };
 
 // Disable hardware acceleration
-app.disableHardwareAcceleration(); 
+app.disableHardwareAcceleration();
 
 /**
  * Add event listeners...
