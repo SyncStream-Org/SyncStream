@@ -14,7 +14,8 @@
     "allowJs": true,
     "outDir": ".erb/dll",
     "paths": {
-      "@types/*": ["../shared/types/*"]
+      "@types/*": ["../shared/types/*"],
+      "shared": ["../shared"]
     },
     "typeRoots": [
       "../shared/types",

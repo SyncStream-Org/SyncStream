@@ -1,4 +1,4 @@
-import { StringMessage } from 'types_shared';
+import { Types, Validation } from 'shared'
 import { generateUUID } from '../../utilities/random';
 import { generateDefaultHeaders, serverURL } from '../api';
 
@@ -6,7 +6,7 @@ export function echo(): Promise<boolean | null> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
-  const uuid: StringMessage = {
+  const uuid: Types.StringMessage = {
     msg: generateUUID(), // Generate UUID for test so static cant fake it
   };
 
@@ -30,7 +30,7 @@ export function echo(): Promise<boolean | null> {
     .then((res) => {
       if (res == null) return res;
 
-      const response = res as StringMessage;
+      const response = res as Types.StringMessage;
       return response.msg === uuid.msg;
     });
 }
