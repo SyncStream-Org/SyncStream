@@ -23,6 +23,7 @@ module.exports = {
     'promise/catch-or-return': 'off',
     'no-await-in-loop': 'off',
     'no-use-before-define': 'off',
+    'promise/no-nesting': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
   },

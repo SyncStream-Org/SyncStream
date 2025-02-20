@@ -1,6 +1,6 @@
 import * as Types from "../types"
 
-export function isValidStringMessage(sm: Types.StringMessage): boolean {
+export function isValidStringMessage(sm: any): boolean {
     return !!sm && typeof sm.msg === "string"
 }
 

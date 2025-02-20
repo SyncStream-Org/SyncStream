@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './launch.css';
 
+import { useNavigate } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
+import echo from '../../api/routes/misc';
+import { authenticate } from '../../api/routes/user';
 
 export default class Launch extends React.Component<
   {},
@@ -63,9 +66,32 @@ export default class Launch extends React.Component<
         password: { value: string };
       };
 
-      // TODO: Checks for server url legitimacy and login
       SessionState.getInstance().serverURL = target.server_url.value;
-      alert(`${target.server_url.value}`); // typechecks!
+      echo().then((res) => {
+        if (res === null) {
+          window.electron.dialog.showMessageBox({
+            title: 'Error',
+            message:
+              'Invalid server address. Please enter correct address or contact your administrator for help.',
+          });
+
+          SessionState.getInstance().serverURL = '';
+        } else {
+          authenticate(target.username.value, target.password.value).then(
+            (authRes) => {
+              if (authRes === null) return;
+              if (authRes === false) {
+                window.electron.dialog.showMessageBox({
+                  title: 'Error',
+                  message: 'Invalid username or password.',
+                });
+              } else {
+                useNavigate()('/home');
+              }
+            },
+          );
+        }
+      });
     };
 
     // ---- RENDER BLOCK ----

@@ -14,3 +14,7 @@ export function generateDefaultHeaders(
 
   return headers;
 }
+
+export function generateRoute(route: string) {
+  return `${SessionState.getInstance().serverURL}/${route}`;
+}

@@ -1,6 +1,6 @@
 import { Types, Validation } from 'shared';
 import { generateUUID } from '../../utilities/random';
-import { generateDefaultHeaders, serverURL } from '../api';
+import { generateDefaultHeaders, generateRoute } from '../api';
 
 export default function echo(): Promise<boolean | null> {
   const headers: Headers = generateDefaultHeaders(false);
@@ -11,7 +11,7 @@ export default function echo(): Promise<boolean | null> {
   };
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request(`${serverURL}/echo`, {
+  const request: RequestInfo = new Request(generateRoute('echo'), {
     method: 'POST',
     headers,
     body: JSON.stringify(uuid),
@@ -28,7 +28,8 @@ export default function echo(): Promise<boolean | null> {
       },
     )
     .then((res) => {
-      if (res == null) return res;
+      if (res == null) return null;
+      if (!Validation.isValidStringMessage(res)) return null;
 
       const response = res as Types.StringMessage;
       return response.msg === uuid.msg;
