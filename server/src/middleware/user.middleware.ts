@@ -7,7 +7,7 @@ export const setUserMiddleware = async (req: Request, res: Response, next: NextF
 
     const user = await userService.getUserByUsername(username);
     if (!user) { 
-        res.status(401).json({ error: "invalid credentials" });
+        res.status(404).json({ error: "Not Found: username does not exist" });
         return;
     }
 
