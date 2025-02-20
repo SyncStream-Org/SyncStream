@@ -1,7 +1,11 @@
 import * as Types from "../types"
 
 export function isValidStringMessage(sm: Types.StringMessage): boolean {
-    return typeof sm.msg === "string"
+    return !!sm && typeof sm.msg === "string"
 }
 
+export function isUserDataAuth(userData: any): userData is { username:string, password:string } {
+    return !!userData && typeof userData.username === "string"
+            && typeof userData.password === "string"
+}
 // TODO: make validation functions for all types
