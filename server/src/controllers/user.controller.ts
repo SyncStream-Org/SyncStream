@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Types, Validation } from "shared"
+import { Types, Validation } from "syncstream-sharedlib"
 
 import * as Auth from "../utils/auth"
 import userService from "src/services/userService";

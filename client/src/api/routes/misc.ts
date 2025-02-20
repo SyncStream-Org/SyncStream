@@ -1,4 +1,6 @@
-import { Types, Validation } from 'shared';
+// ALl misc routes
+
+import { Types, Validation } from 'syncstream-sharedlib';
 import { generateUUID } from '../../utilities/random';
 import { generateDefaultHeaders, generateRoute } from '../api';
 

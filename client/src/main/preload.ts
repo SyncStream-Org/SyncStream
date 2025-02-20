@@ -9,7 +9,10 @@ import {
 } from 'electron';
 
 export type Channels = 'app-quit';
-export type Functions = 'save-session-cache' | 'get-session-cache';
+export type Functions =
+  | 'save-session-cache'
+  | 'get-session-cache'
+  | 'show-message-box';
 
 const electronHandler = {
   ipcRenderer: {
@@ -30,11 +33,6 @@ const electronHandler = {
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
-    },
-  },
-  dialog: {
-    showMessageBox(options: MessageBoxOptions) {
-      dialog.showMessageBox(options);
     },
   },
 };

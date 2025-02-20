@@ -34,6 +34,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.13.1",
-    "sequelize": "^6.37.5"
+    "sequelize": "^6.37.5",
+    "syncstream-sharedlib": "file:../sharedLib"
   }
 }

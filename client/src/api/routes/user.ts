@@ -1,6 +1,6 @@
 // All user routes
 
-import { Types, Validation } from 'shared';
+import { Types, Validation } from 'syncstream-sharedlib';
 import SessionState from '../../utilities/session-state';
 import { generateDefaultHeaders, generateRoute } from '../api';
 

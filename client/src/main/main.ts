@@ -10,7 +10,7 @@
  */
 import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -215,6 +215,11 @@ ipcMain.handle('get-session-cache', (event, args): SessionCache => {
 
     return defaultSessionState;
   }
+});
+
+// Show message box
+ipcMain.handle('show-message-box', (event, args) => {
+  return dialog.showMessageBox(args);
 });
 
 // listen the 'app-quit' event to manually quit from browser space

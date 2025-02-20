@@ -66,10 +66,17 @@ export default class Launch extends React.Component<
         password: { value: string };
       };
 
-      SessionState.getInstance().serverURL = target.server_url.value;
+      // Change server url if needed
+      if (
+        SessionState.getInstance().serverURL === '' ||
+        this.state.forceServerURL
+      ) {
+        SessionState.getInstance().serverURL = target.server_url.value;
+      }
+
       echo().then((res) => {
         if (res === null) {
-          window.electron.dialog.showMessageBox({
+          window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
               'Invalid server address. Please enter correct address or contact your administrator for help.',
@@ -81,7 +88,7 @@ export default class Launch extends React.Component<
             (authRes) => {
               if (authRes === null) return;
               if (authRes === false) {
-                window.electron.dialog.showMessageBox({
+                window.electron.ipcRenderer.invokeFunction('show-message-box', {
                   title: 'Error',
                   message: 'Invalid username or password.',
                 });

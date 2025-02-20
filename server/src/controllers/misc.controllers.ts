@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Types, Validation } from "shared"
+import { Types, Validation } from "syncstream-sharedlib"
 //import * as service from "../services/user.service";
 
 export const echo = async (req: Request, res: Response) => {
