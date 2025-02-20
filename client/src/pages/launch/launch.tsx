@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './launch.css';
 
-import { SessionCache } from '../../types/ipctypes';
+import SessionState from '../../utilities/session-state';
 
 export default class Launch extends React.Component<
   {},
   {
     isLoading: boolean;
-    sessionCache: SessionCache;
     sessionSaved: boolean;
     forceServerURL: boolean;
   }
@@ -19,9 +18,6 @@ export default class Launch extends React.Component<
 
     this.state = {
       isLoading: true,
-      sessionCache: {
-        serverURL: '',
-      } as SessionCache,
       sessionSaved: false,
       forceServerURL: false,
     };
@@ -32,8 +28,8 @@ export default class Launch extends React.Component<
         event.preventDefault();
 
         // Handle saving and then quite
-        window.electron.ipcRenderer
-          .invokeFunction('save-session-cache', this.state.sessionCache)
+        SessionState.getInstance()
+          .saveCache()
           .then(() => {
             this.setState({ sessionSaved: true });
             window.electron.ipcRenderer.sendMessage('app-quit');
@@ -44,13 +40,10 @@ export default class Launch extends React.Component<
 
   componentDidMount() {
     // Load session state from memory on window load (only once)
-    window.electron.ipcRenderer
-      .invokeFunction('get-session-cache')
+    SessionState.getInstance()
+      .loadCache()
       .then((ret: any) => {
-        this.setState({
-          isLoading: false,
-          sessionCache: ret as SessionCache,
-        });
+        this.setState({ isLoading: false });
       });
 
     window.addEventListener('beforeunload', this.handleUnload);
@@ -71,7 +64,7 @@ export default class Launch extends React.Component<
       };
 
       // TODO: Checks for server url legitimacy and login
-      this.setState({ sessionCache: { serverURL: target.server_url.value } });
+      SessionState.getInstance().serverURL = target.server_url.value;
       alert(`${target.server_url.value}`); // typechecks!
     };
 
@@ -114,7 +107,7 @@ export default class Launch extends React.Component<
             />
           </div>
           <div className="mb-6">
-            {this.state.sessionCache.serverURL === '' ||
+            {SessionState.getInstance().serverURL === '' ||
             this.state.forceServerURL ? (
               <>
                 <label
@@ -128,9 +121,9 @@ export default class Launch extends React.Component<
                   id="server_url"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder={
-                    this.state.sessionCache.serverURL === ''
+                    SessionState.getInstance().serverURL === ''
                       ? 'https://domain.com'
-                      : this.state.sessionCache.serverURL
+                      : SessionState.getInstance().serverURL
                   }
                   required
                 />

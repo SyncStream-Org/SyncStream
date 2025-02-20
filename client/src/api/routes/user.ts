@@ -1,15 +1,19 @@
 // All user routes
 
-import { generateDefaultHeaders, serverURL } from '../api';
+import SessionState from '../../utilities/session-state';
+import { generateDefaultHeaders } from '../api';
 
 export function authenticate(): Promise<any | string> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request(`${serverURL}/user/authenticate`, {
-    method: 'GET',
-    headers,
-  });
+  const request: RequestInfo = new Request(
+    `${SessionState.getInstance().serverURL}/user/authenticate`,
+    {
+      method: 'GET',
+      headers,
+    },
+  );
 
   return fetch(request).then((res) => {
     if (res.ok) {
@@ -20,16 +24,16 @@ export function authenticate(): Promise<any | string> {
 }
 
 export function update(): Promise<any | string> {
-  const headers: Headers = new Headers();
-  headers.set('Content-Type', 'application/json');
-  headers.set('Accept', 'application/json');
-  // TODO: implement session token
+  const headers: Headers = generateDefaultHeaders(false);
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request('./users.json', {
-    method: 'GET',
-    headers,
-  });
+  const request: RequestInfo = new Request(
+    `${SessionState.getInstance().serverURL}/user/update`,
+    {
+      method: 'GET',
+      headers,
+    },
+  );
 
   return fetch(request).then((res) => {
     if (res.ok) {
