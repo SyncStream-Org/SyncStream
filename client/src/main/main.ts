@@ -9,11 +9,13 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
+import { readFileSync, writeFileSync } from 'fs';
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { SessionState } from '../types/ipctypes';
 
 class AppUpdater {
   constructor() {
@@ -24,12 +26,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-channel', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-channel', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -173,10 +169,53 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+
+    // // Trigger session state load
+    // mainWindow?.webContents.send('get-session-state');
   })
   .catch(console.log);
+
+// ----------- Custom ipc
+// Wait for reply from web browser
+ipcMain.on('save-session-state', async (event, args) => {
+  const state = args as SessionState;
+
+  writeFileSync(
+    path.join(app.getPath('userData'), 'sessionState.json'),
+    JSON.stringify(state),
+  );
+});
+
+// Reply to get session state call
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ipcMain.on('get-session-state', async (event, _) => {
+  try {
+    // Try to load session state
+    const fileData = readFileSync(
+      path.join(app.getPath('userData'), 'sessionState.json'),
+      'utf-8',
+    );
+
+    event.sender.send(
+      'get-session-state',
+      JSON.parse(fileData) as SessionState,
+    );
+  } catch (error) {
+    // Init session state if not found
+    const defaultSessionState: SessionState = {
+      serverURL: '',
+    };
+
+    writeFileSync(
+      path.join(app.getPath('userData'), 'sessionState.json'),
+      JSON.stringify(defaultSessionState),
+    );
+    event.sender.send('get-session-state', defaultSessionState);
+  }
+});

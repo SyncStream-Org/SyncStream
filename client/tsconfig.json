@@ -19,7 +19,7 @@
     },
     "typeRoots": [
       "../shared/types",
-      "./node_modules/@types"
+      "./node_modules/@types",
     ]
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]

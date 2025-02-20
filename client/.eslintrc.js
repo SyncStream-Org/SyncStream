@@ -14,7 +14,13 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     'no-unused-vars': 'off',
     'no-bitwise': 'off',
+    'no-alert': 'off',
+    'no-console': 'off',
     'import/no-mutable-exports': 'off',
+    'import/prefer-default-export': 'off',
+    'react/destructuring-assignment': 'off',
+    'no-await-in-loop': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
   },
   parserOptions: {

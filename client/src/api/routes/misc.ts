@@ -1,8 +1,8 @@
-import { Types, Validation } from 'shared'
+import { Types, Validation } from 'shared';
 import { generateUUID } from '../../utilities/random';
 import { generateDefaultHeaders, serverURL } from '../api';
 
-export function echo(): Promise<boolean | null> {
+export default function echo(): Promise<boolean | null> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
@@ -21,11 +21,11 @@ export function echo(): Promise<boolean | null> {
     .then(
       (res) => {
         return res.json();
-      }, 
+      },
       (res) => {
         console.error(`Echo API Call Failed: ${res.status}; ${res.statusText}`);
         return null;
-      }
+      },
     )
     .then((res) => {
       if (res == null) return res;
