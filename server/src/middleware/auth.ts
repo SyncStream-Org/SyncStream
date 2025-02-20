@@ -9,7 +9,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
   }
 
   try {
-    const verified = await verifyToken(token);
+    const username = await verifyToken(token);
+    (req as any).user = { username }
     next();
   } catch(error) {
     res.status(403).json({ error: "Forbidden: Invalid token" });
