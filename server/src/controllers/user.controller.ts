@@ -8,13 +8,22 @@ import userService from "src/services/userService";
 // TODO: update error response codes, and messages
 export const authenticate = async (req: Request, res: Response) => {
     let userData: Types.UserData = req.body;
-    if (!(Validation.isUserDataAuth(userData))) { return res.status(401).json({ error: "invalid credentials" }) }
+    if (!(Validation.isUserDataAuth(userData))) { 
+        res.status(401).json({ error: "invalid credentials" });
+        return;
+    }
 
     let user = await userService.getUserByUsername(userData.username);
-    if (!user) { return res.status(401).json({ error: "invalid credentials" }) }
+    if (!user) { 
+        res.status(401).json({ error: "invalid credentials" });
+        return;
+    }
 
     let passComparison = await Auth.comparePassword(userData.password, user.password);
-    if (!passComparison) { return res.status(401).json({ error: "invalid credentials" }) }
+    if (!passComparison) { 
+        res.status(401).json({ error: "invalid credentials" });
+        return;
+    }
 
     const token = Auth.generateToken(userData.username);
     let response: Types.StringMessage = { msg: token }
