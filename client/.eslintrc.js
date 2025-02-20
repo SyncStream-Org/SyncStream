@@ -19,9 +19,11 @@ module.exports = {
     'import/no-mutable-exports': 'off',
     'import/prefer-default-export': 'off',
     'react/destructuring-assignment': 'off',
+    'promise/always-return': 'off',
+    'promise/catch-or-return': 'off',
     'no-await-in-loop': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
-    '@typescript-eslint/no-unused-vars': 'error',
+    '@typescript-eslint/no-unused-vars': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

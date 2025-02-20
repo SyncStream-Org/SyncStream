@@ -1,5 +1,5 @@
 // All the IPC types
 
-export interface SessionState {
+export interface SessionCache {
   serverURL: string;
 }

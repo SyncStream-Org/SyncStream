@@ -15,7 +15,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { SessionState } from '../types/ipctypes';
+import { SessionCache } from '../types/ipctypes';
 
 class AppUpdater {
   constructor() {
@@ -183,32 +183,28 @@ app
 
 // ----------- Custom ipc
 // Wait for reply from web browser
-ipcMain.on('save-session-state', async (event, args) => {
-  const state = args as SessionState;
+ipcMain.handle('save-session-cache', (event, args) => {
+  const state = args as SessionCache;
 
   writeFileSync(
-    path.join(app.getPath('userData'), 'sessionState.json'),
+    path.join(app.getPath('userData'), 'sessionCache.json'),
     JSON.stringify(state),
   );
 });
 
 // Reply to get session state call
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-ipcMain.on('get-session-state', async (event, _) => {
+ipcMain.handle('get-session-cache', (event, args): SessionCache => {
   try {
     // Try to load session state
     const fileData = readFileSync(
-      path.join(app.getPath('userData'), 'sessionState.json'),
+      path.join(app.getPath('userData'), 'sessionCache.json'),
       'utf-8',
     );
 
-    event.sender.send(
-      'get-session-state',
-      JSON.parse(fileData) as SessionState,
-    );
+    return JSON.parse(fileData) as SessionCache;
   } catch (error) {
     // Init session state if not found
-    const defaultSessionState: SessionState = {
+    const defaultSessionState: SessionCache = {
       serverURL: '',
     };
 
@@ -216,6 +212,12 @@ ipcMain.on('get-session-state', async (event, _) => {
       path.join(app.getPath('userData'), 'sessionState.json'),
       JSON.stringify(defaultSessionState),
     );
-    event.sender.send('get-session-state', defaultSessionState);
+
+    return defaultSessionState;
   }
+});
+
+// listen the 'app-quit' event to manually quit from browser space
+ipcMain.on('app-quit', (event, info) => {
+  mainWindow?.close();
 });

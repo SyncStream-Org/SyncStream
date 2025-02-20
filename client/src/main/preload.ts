@@ -2,12 +2,16 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'save-session-state' | 'get-session-state';
+export type Channels = 'app-quit';
+export type Functions = 'save-session-cache' | 'get-session-cache';
 
 const electronHandler = {
   ipcRenderer: {
     sendMessage(channel: Channels, ...args: unknown[]) {
       ipcRenderer.send(channel, ...args);
+    },
+    invokeFunction(funcName: Functions, ...args: unknown[]): Promise<any> {
+      return ipcRenderer.invoke(funcName, ...args);
     },
     on(channel: Channels, func: (...args: unknown[]) => void) {
       const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
