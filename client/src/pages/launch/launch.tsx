@@ -67,6 +67,7 @@ export default class Launch extends React.Component<
       };
 
       // Change server url if needed
+      const serverURLCache = SessionState.getInstance().serverURL;
       if (
         SessionState.getInstance().serverURL === '' ||
         this.state.forceServerURL
@@ -82,7 +83,7 @@ export default class Launch extends React.Component<
               'Invalid server address. Please enter correct address or contact your administrator for help.',
           });
 
-          SessionState.getInstance().serverURL = '';
+          SessionState.getInstance().serverURL = serverURLCache;
         } else {
           authenticate(target.username.value, target.password.value).then(
             (authRes) => {
