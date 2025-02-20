@@ -7,32 +7,46 @@ import userService from "src/services/userService";
 
 // TODO: update error response codes, and messages
 export const authenticate = async (req: Request, res: Response) => {
-    let userData: Types.UserData = req.body;
+    const userData: Types.UserData = req.body;
     if (!(Validation.isUserDataAuth(userData))) { 
         res.status(401).json({ error: "invalid credentials" });
         return;
     }
 
-    let user = await userService.getUserByUsername(userData.username);
+    const user = await userService.getUserByUsername(userData.username);
     if (!user) { 
         res.status(401).json({ error: "invalid credentials" });
         return;
     }
 
-    let passComparison = await Auth.comparePassword(userData.password, user.password);
+    const passComparison = await Auth.comparePassword(userData.password, user.password);
     if (!passComparison) { 
         res.status(401).json({ error: "invalid credentials" });
         return;
     }
 
     const token = Auth.generateToken(userData.username);
-    let response: Types.StringMessage = { msg: token }
+    const response: Types.StringMessage = { msg: token }
     res.json(response)
 };
 
+// TODO: update error response codes, and messages
 export const update = async (req: Request, res: Response) => {
-    // TODO as database helper gets implemented
-    res.status(501).json({ error: "Not yet implemented" });
+    const userUpdateData: Types.UserUpdateData = req.body;
+    if (!(Validation.isUserUpdateDate(userUpdateData))) { 
+        res.status(401).json({ error: "invalid format" });
+        return;
+    }
+
+    const user = await userService.getUserByUsername((req as any).user)
+    if (!user) { 
+        res.status(401).json({ error: "invalid credentials" });
+        return;
+    }
+
+    userService.updateUser(user, userUpdateData.password, userUpdateData.displayName, userUpdateData.email);
+
+    res.status(200)
 };
 
 export const listRooms = async (req: Request, res: Response) => {
