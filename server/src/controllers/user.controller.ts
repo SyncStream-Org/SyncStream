@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "shared"
-import * as Auth from "../utils/auth"
-//import * as service from "../services/user.service";
 
+import * as Auth from "../utils/auth"
 import userService from "src/services/userService";
+import User from "src/models/users";
+//import * as service from "../services/user.service";
 
 // TODO: update error response codes, and messages
 export const authenticate = async (req: Request, res: Response) => {
@@ -38,11 +39,7 @@ export const update = async (req: Request, res: Response) => {
         return;
     }
 
-    const user = await userService.getUserByUsername((req as any).user)
-    if (!user) { 
-        res.status(401).json({ error: "invalid credentials" });
-        return;
-    }
+    const user: User =(req as any).user
 
     userService.updateUser(user, userUpdateData.password, userUpdateData.displayName, userUpdateData.email);
 
