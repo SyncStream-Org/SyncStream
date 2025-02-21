@@ -1,8 +1,6 @@
 // User Type validation
 
-export function isUserDataAuth(
-  userData: any
-): userData is { username: string; password: string } {
+export function isUserDataMinimum(userData: any): boolean {
   return (
     !!userData &&
     typeof userData.username === "string" &&
@@ -10,15 +8,15 @@ export function isUserDataAuth(
   );
 }
 
-export function isUserDataCreate(
-  userData: any
-): userData is {
-  username: string;
-  email: string;
-  password: string;
-  admin: boolean;
-  displayName: string;
-} {
+export function isUserDataAuth(userData: any): boolean {
+  return (
+    !!userData &&
+    typeof userData.username === "string" &&
+    typeof userData.password === "string"
+  );
+}
+
+export function isUserDataFull(userData: any): boolean {
   return (
     !!userData &&
     typeof userData.username === "string" &&
@@ -37,5 +35,3 @@ export function isUserUpdateDate(userUpdateData: any): boolean {
       typeof userUpdateData.displayName === "string")
   );
 }
-
-// TODO: make validation functions for all types

@@ -4,6 +4,6 @@ export interface StringMessage {
 }
 
 export interface ErrorMessage {
-  error: string;
+  msg: string;
   relevantData: any;
 }
