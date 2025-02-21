@@ -105,14 +105,14 @@ export const removeUser = async (req: Request, res: Response) => {
     // ensure requesting user has permissions to edit room state
     const requestingRoomUser = await userService.getRoomUser(roomID, user.username);
     if (!requestingRoomUser || !requestingRoomUser.permissions.canEdit) {
-        res.status(403).json({ error: "Forbidden: Permissions Denied" })
+        res.status(403).json({ error: "Forbidden: Permissions Denied" });
         return;
     }
 
     // remove specified user
     const roomUser = await userService.getRoomUser(roomID, userID);
     if (!roomUser) {
-        res.status(404).json({ error: "Not Found: User not part of Room" })
+        res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
     }
 
@@ -134,14 +134,14 @@ export const updateUser = async (req: Request, res: Response) => {
     // ensure requesting user has permissions to edit room state
     const requestingRoomUser = await userService.getRoomUser(roomID, user.username);
     if (!requestingRoomUser || !requestingRoomUser.permissions.canEdit) {
-        res.status(403).json({ error: "Forbidden: Permissions Denied" })
+        res.status(403).json({ error: "Forbidden: Permissions Denied" });
         return;
     }
 
     // update specified user
     const roomUser = await userService.getRoomUser(roomID, userID);
     if (!roomUser) {
-        res.status(404).json({ error: "Not Found: User not part of Room" })
+        res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
     }
 
