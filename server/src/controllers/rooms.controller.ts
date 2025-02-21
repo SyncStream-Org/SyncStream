@@ -99,7 +99,7 @@ export const inviteUser = async (req: Request, res: Response) => {
 
 export const removeUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str, userID } = req.params;
+    const { roomID_str, username } = req.params;
     const roomID = Number(roomID_str);
 
     // ensure requesting user has permissions to edit room state
@@ -110,7 +110,7 @@ export const removeUser = async (req: Request, res: Response) => {
     }
 
     // remove specified user
-    const roomUser = await userService.getRoomUser(roomID, userID);
+    const roomUser = await userService.getRoomUser(roomID, username);
     if (!roomUser) {
         res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
@@ -123,7 +123,7 @@ export const removeUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str, userID } = req.params;
+    const { roomID_str, username } = req.params;
     const roomID = Number(roomID_str);
     const roomPermissions: Types.RoomPermissions = req.body;
     if (!Validation.isValidRoomPermissions(roomPermissions)) {
@@ -139,7 +139,7 @@ export const updateUser = async (req: Request, res: Response) => {
     }
 
     // update specified user
-    const roomUser = await userService.getRoomUser(roomID, userID);
+    const roomUser = await userService.getRoomUser(roomID, username);
     if (!roomUser) {
         res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
