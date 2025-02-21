@@ -238,7 +238,46 @@ export function updateUserRoomPermissions(
     }
 
     console.error(
-      `rooms/{roomId}/users/{user} DELETE API Call Failed: ${res.status}; ${res.status}`,
+      `rooms/{roomId}/users/{user} PUT API Call Failed: ${res.status}; ${res.status}`,
+    );
+    return SuccessState.ERROR;
+  });
+}
+
+export function transferOwnership(
+  roomId: string,
+  username: string,
+): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(
+    generateRoute(`rooms/${roomId}/users/${username}/transferOwnership`),
+    {
+      method: 'PUT',
+      headers,
+    },
+  );
+
+  return fetch(request).then(async (res) => {
+    if (res.ok) return SuccessState.SUCCESS;
+
+    if (res.status === 403) {
+      console.error(
+        'Room ownership transfer request failed: You do not have permission to do this.',
+      );
+      return SuccessState.FAIL;
+    }
+
+    if (res.status === 404) {
+      console.error(
+        'Room ownership transfer request failed: Room or user does not exist.',
+      );
+      return SuccessState.FAIL;
+    }
+
+    console.error(
+      `rooms/{roomId}/users/{user}/transferOwnership API Call Failed: ${res.status}; ${res.status}`,
     );
     return SuccessState.ERROR;
   });
