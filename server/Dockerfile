@@ -1,24 +1,45 @@
-FROM node:22.7.0 as build
+FROM node:22.7.0 AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY server/package*.json server/
+COPY sharedLib/package*.json sharedLib/
 
+WORKDIR /app/server
 RUN npm install
 
-COPY . .
+WORKDIR /app/sharedLib
+RUN npm install
 
+WORKDIR /app
+COPY ./server ./server
+COPY ./sharedLib ./sharedLib
+
+WORKDIR /app/server
+RUN npm run build
+
+WORKDIR /app/sharedLib
 RUN npm run build
 
 FROM node:22.7.0
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY server/package*.json server/
+COPY sharedLib/package*.json sharedLib/
 
+WORKDIR /app/server
 RUN npm install
 
-COPY --from=build /app/dist ./dist
+WORKDIR /app/sharedLib
+RUN npm install
+
+WORKDIR /app
+
+COPY --from=build /app/server/dist ./server/dist
+COPY --from=build /app/sharedLib/dist ./sharedLib/dist
+
+WORKDIR /app/server
 
 EXPOSE 3000
 

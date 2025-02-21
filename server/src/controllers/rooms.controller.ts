@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 
-import userService from "src/services/userService";
-import roomService from "src/services/roomService";
-import User from "src/models/users";
+import userService from "../services/userService";
+import roomService from "../services/roomService";
+import User from "../models/users";
 import { RoomAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
 //import * as service from "../services/rooms.service";
 

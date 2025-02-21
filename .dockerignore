@@ -1,0 +1,5 @@
+*
+!server/*
+!sharedLib/*
+*/node_modules
+*/dist

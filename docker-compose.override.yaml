@@ -1,15 +1,15 @@
 services:
   backend:
     restart: "no"
-    build:
-      context: ./server
-    # command: npm start
+    command:
+      npx tsx watch src/server.ts
     develop:
       watch:
         - action: rebuild
-          path: ./server/src
-          target: /app/src
-          ignore:
-            - node_modules/
+          path: ./sharedLib/src
+        - action: rebuild
+          path: ./sharedLib/package.json
         - action: rebuild
           path: ./server/package.json
+    volumes:
+      - ./server/src:/app/server/src
