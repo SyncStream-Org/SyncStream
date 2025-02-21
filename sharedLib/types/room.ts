@@ -1,6 +1,7 @@
 export interface RoomPermissions {
-  msg: string;
-  // TODO: Complete room permissions setup
+  admin: boolean; // NOTE: all permissions an owner has, EXCEPT deleting the room
+  canInviteUser: boolean;
+  canRemoveUser: boolean;
 }
 
 export interface InviteData {
