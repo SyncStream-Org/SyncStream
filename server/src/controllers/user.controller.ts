@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 
 import * as Auth from "../utils/auth"
-import userService from "src/services/userService";
-import roomService from "src/services/roomService";
-import User from "src/models/users";
+import userService from "../services/userService";
+import roomService from "../services/roomService";
+import User from "../models/users";
 //import * as service from "../services/user.service";
 
 // TODO: update error response codes, and messages

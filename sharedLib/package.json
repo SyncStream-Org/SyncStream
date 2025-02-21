@@ -2,7 +2,7 @@
   "name": "syncstream-sharedlib",
   "version": "0.0.0",
   "description": "Shared library for common code between client and server.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc"
   },

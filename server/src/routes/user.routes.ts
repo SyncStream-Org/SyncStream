@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as controller from "../controllers/user.controller";
 
 import { authMiddleware } from "../middleware/auth"
-import { setUserMiddleware } from "src/middleware/user.middleware";
+import { setUserMiddleware } from "../middleware/user.middleware";
 
 const router = Router();
 
