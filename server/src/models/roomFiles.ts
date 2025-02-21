@@ -3,13 +3,13 @@ import sequelize from '../db';
 import { RoomFileAttributes, RoomFilePermissions } from 'room-types';
 
 class RoomFile extends Model<RoomFileAttributes> implements RoomFileAttributes {
-  public fileName!: string;
-  public roomID!: number;
-  public fileExtension!: string;
-  public permissions!: RoomFilePermissions;
+  declare fileName: string;
+  declare roomID: number;
+  declare fileExtension: string;
+  declare permissions: RoomFilePermissions;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 RoomFile.init({
