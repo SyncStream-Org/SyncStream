@@ -9,6 +9,6 @@ router.use(adminMiddleware)
 
 router.put("/user/", controller.createUser);
 router.delete("/user/:user", controller.deleteUser);
-router.get("/rooms/getRooms", controller.getRooms)
+router.get("/rooms/", controller.getRooms)
 
 export default router;
