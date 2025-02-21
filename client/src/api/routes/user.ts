@@ -45,7 +45,7 @@ export function authenticate(
   });
 }
 
-export function update(data: Types.UserUpdateData): Promise<SuccessState> {
+export function updateUser(data: Types.UserUpdateData): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
@@ -145,7 +145,7 @@ export function getUserDataForRoom(roomId: string): Promise<{
   });
 }
 
-export function deleteRoom(roomId: string): Promise<SuccessState> {
+export function leaveRoom(roomId: string): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
@@ -161,12 +161,12 @@ export function deleteRoom(roomId: string): Promise<SuccessState> {
     if (res.ok) return SuccessState.SUCCESS;
 
     if (res.status === 403) {
-      console.error('Room delete request failed: User does not own room');
+      console.error('Room leave request failed: User is not in room');
       return SuccessState.FAIL;
     }
 
     if (res.status === 404) {
-      console.error('Room delete request failed: Room does not exist.');
+      console.error('Room leave request failed: Room does not exist.');
       return SuccessState.FAIL;
     }
 

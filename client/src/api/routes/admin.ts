@@ -33,14 +33,18 @@ export function createUser(
 
   return fetch(request).then(async (res) => {
     if (res.ok) {
-      const body = await res.json();
-      if (!Validation.isValidStringMessage(body))
-        return { success: SuccessState.ERROR };
+      if (res.bodyUsed) {
+        const body = await res.json();
+        if (!Validation.isValidStringMessage(body))
+          return { success: SuccessState.ERROR };
 
-      return {
-        success: SuccessState.SUCCESS,
-        data: (body as Types.StringMessage).msg,
-      };
+        return {
+          success: SuccessState.SUCCESS,
+          data: (body as Types.StringMessage).msg,
+        };
+      }
+
+      return { success: SuccessState.SUCCESS };
     }
 
     if (res.status === 403) {
