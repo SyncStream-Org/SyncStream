@@ -3,14 +3,14 @@ import sequelize from '../db';
 import { UserAttributes } from 'user-types';
 
 class User extends Model<UserAttributes> implements UserAttributes {
-  public username!: string;
-  public password!: string;
-  public admin!: boolean;
-  public displayName!: string;
-  public email!: string;
+  declare username: string;
+  declare password: string;
+  declare admin: boolean;
+  declare displayName: string;
+  declare email: string;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 User.init({
@@ -42,14 +42,6 @@ User.init({
   sequelize,
   tableName: 'Users',
   timestamps: true,
-  // set the displayName as the username by default
-  hooks: {
-    beforeCreate: (user: User) => {
-      if (!user.displayName) {
-        user.displayName = user.username;
-      }
-    },
-  },
 }
 );
 
