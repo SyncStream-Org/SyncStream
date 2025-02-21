@@ -20,7 +20,7 @@ jobs:
       - uses: whoan/docker-build-with-cache-action@v5
         with:
           context: ./
-          dockefile: ./server/Dockerfile
+          dockerfile: ./server/Dockerfile
           username: SyncStream-Org
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
