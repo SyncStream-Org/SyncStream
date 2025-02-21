@@ -7,6 +7,7 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "lint": "eslint -c eslint.config.mjs src/",
+    "lint:fix": "eslint -c eslint.config.mjs src/ --fix",
     "test": "jest --coverage --passWithNoTests"
   },
   "keywords": [],
