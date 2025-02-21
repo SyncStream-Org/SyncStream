@@ -43,7 +43,7 @@ class UserService {
     await user.destroy();
   }
 
-  public async updateUser(user: User, newPassword?: string, newDisplayName?: string): Promise<User> {
+  public async updateUser(user: User, newPassword?: string, newDisplayName?: string, newEmail?: string): Promise<User> {
     if (await this.getUserByUsername(user.username) == null) {
       throw new Error('updateUser: User not found');
     }
@@ -54,6 +54,9 @@ class UserService {
     }
     if (newDisplayName) {
       user.displayName = newDisplayName;
+    }
+    if (newEmail) {
+      user.email = newEmail;
     }
 
     return await user.save();

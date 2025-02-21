@@ -1,0 +1,19 @@
+import adminRouter from "./admin.routes";
+import roomsRouter from "./rooms.routes";
+import userRouter from "./user.routes";
+import miscRouter from "./misc.routes"
+import { Router } from "express";
+
+import { authMiddleware } from "../middleware/auth"
+
+const router = Router();
+
+router.use("/user", userRouter);
+router.use("/", miscRouter);
+
+router.use(authMiddleware)
+
+router.use("/admin", adminRouter);
+router.use("/rooms", roomsRouter);
+
+export default router;

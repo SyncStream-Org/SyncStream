@@ -9,11 +9,13 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { readFileSync, writeFileSync } from 'fs';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { SessionCache } from '../types/ipctypes';
 
 class AppUpdater {
   constructor() {
@@ -24,12 +26,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-channel', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-channel', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -56,20 +52,6 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function UpsertKeyValue(obj: Record<string, string> | Record<string, string[]>, keyToChange: string, value: string[]) {
-  const keyToChangeLower = keyToChange.toLowerCase();
-  for (const key of Object.keys(obj)) {
-    if (key.toLowerCase() === keyToChangeLower) {
-      // Reassign old key
-      obj[key] = value;
-      // Done
-      return;
-    }
-  }
-  // Insert at end instead
-  obj[keyToChange] = value;
-}
-
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -89,6 +71,7 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      webSecurity: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -121,35 +104,13 @@ const createWindow = async () => {
     return { action: 'deny' };
   });
 
-  // Bypass cors
-  // NOTE: see https://medium.com/@Hiroyoshi_Mori/bypassing-cors-in-electron-v23-cca59425dfde
-  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-    (details, callback) => {
-      const { requestHeaders } = details;
-      UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*']);
-      callback({ requestHeaders });
-    },
-  );
-  
-  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-    const { responseHeaders } = details;
-    if (responseHeaders !== undefined) {
-      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
-      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
-    }
-    
-    callback({
-      responseHeaders,
-    });
-  });
-
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
 };
 
 // Disable hardware acceleration
-app.disableHardwareAcceleration(); 
+app.disableHardwareAcceleration();
 
 /**
  * Add event listeners...
@@ -167,10 +128,60 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+
+    // // Trigger session state load
+    // mainWindow?.webContents.send('get-session-state');
   })
   .catch(console.log);
+
+// ----------- Custom ipc
+// Wait for reply from web browser
+ipcMain.handle('save-session-cache', (event, args) => {
+  const state = args as SessionCache;
+
+  writeFileSync(
+    path.join(app.getPath('userData'), 'sessionCache.json'),
+    JSON.stringify(state),
+  );
+});
+
+// Reply to get session state call
+ipcMain.handle('get-session-cache', (event, args): SessionCache => {
+  try {
+    // Try to load session state
+    const fileData = readFileSync(
+      path.join(app.getPath('userData'), 'sessionCache.json'),
+      'utf-8',
+    );
+
+    return JSON.parse(fileData) as SessionCache;
+  } catch (error) {
+    // Init session state if not found
+    const defaultSessionState: SessionCache = {
+      serverURL: '',
+    };
+
+    writeFileSync(
+      path.join(app.getPath('userData'), 'sessionState.json'),
+      JSON.stringify(defaultSessionState),
+    );
+
+    return defaultSessionState;
+  }
+});
+
+// Show message box
+ipcMain.handle('show-message-box', (event, args) => {
+  return dialog.showMessageBox(args);
+});
+
+// listen the 'app-quit' event to manually quit from browser space
+ipcMain.on('app-quit', (event, info) => {
+  mainWindow?.close();
+});
