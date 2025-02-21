@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { verifyToken } from "src/utils/auth";
+import { verifyToken } from "../utils/auth";
 
-import userService from "src/services/userService";
-import User from "src/models/users";
+import userService from "../services/userService";
+import User from "../models/users";
 
 // ensure requesting user is an admin
 export const adminMiddleware = async (req: Request, res: Response, next: NextFunction) => {

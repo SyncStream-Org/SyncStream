@@ -9,11 +9,13 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { readFileSync, writeFileSync } from 'fs';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { SessionCache } from '../types/ipctypes';
 
 class AppUpdater {
   constructor() {
@@ -24,12 +26,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-channel', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-channel', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -173,10 +169,60 @@ app
   .whenReady()
   .then(() => {
     createWindow();
+
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+
+    // // Trigger session state load
+    // mainWindow?.webContents.send('get-session-state');
   })
   .catch(console.log);
+
+// ----------- Custom ipc
+// Wait for reply from web browser
+ipcMain.handle('save-session-cache', (event, args) => {
+  const state = args as SessionCache;
+
+  writeFileSync(
+    path.join(app.getPath('userData'), 'sessionCache.json'),
+    JSON.stringify(state),
+  );
+});
+
+// Reply to get session state call
+ipcMain.handle('get-session-cache', (event, args): SessionCache => {
+  try {
+    // Try to load session state
+    const fileData = readFileSync(
+      path.join(app.getPath('userData'), 'sessionCache.json'),
+      'utf-8',
+    );
+
+    return JSON.parse(fileData) as SessionCache;
+  } catch (error) {
+    // Init session state if not found
+    const defaultSessionState: SessionCache = {
+      serverURL: '',
+    };
+
+    writeFileSync(
+      path.join(app.getPath('userData'), 'sessionState.json'),
+      JSON.stringify(defaultSessionState),
+    );
+
+    return defaultSessionState;
+  }
+});
+
+// Show message box
+ipcMain.handle('show-message-box', (event, args) => {
+  return dialog.showMessageBox(args);
+});
+
+// listen the 'app-quit' event to manually quit from browser space
+ipcMain.on('app-quit', (event, info) => {
+  mainWindow?.close();
+});

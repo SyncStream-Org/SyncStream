@@ -1,8 +1,10 @@
-import { Types, Validation } from 'shared'
-import { generateUUID } from '../../utilities/random';
-import { generateDefaultHeaders, serverURL } from '../api';
+// ALl misc routes
 
-export function echo(): Promise<boolean | null> {
+import { Types, Validation } from 'syncstream-sharedlib';
+import { generateUUID } from '../../utilities/random';
+import { generateDefaultHeaders, generateRoute } from '../api';
+
+export default function echo(): Promise<boolean | null> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
@@ -11,7 +13,7 @@ export function echo(): Promise<boolean | null> {
   };
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request(`${serverURL}/echo`, {
+  const request: RequestInfo = new Request(generateRoute('echo'), {
     method: 'POST',
     headers,
     body: JSON.stringify(uuid),
@@ -21,14 +23,15 @@ export function echo(): Promise<boolean | null> {
     .then(
       (res) => {
         return res.json();
-      }, 
+      },
       (res) => {
         console.error(`Echo API Call Failed: ${res.status}; ${res.statusText}`);
         return null;
-      }
+      },
     )
     .then((res) => {
-      if (res == null) return res;
+      if (res == null) return null;
+      if (!Validation.isValidStringMessage(res)) return null;
 
       const response = res as Types.StringMessage;
       return response.msg === uuid.msg;
