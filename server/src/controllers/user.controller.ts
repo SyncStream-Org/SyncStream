@@ -7,7 +7,6 @@ import roomService from "../services/roomService";
 import User from "../models/users";
 //import * as service from "../services/user.service";
 
-// TODO: update error response codes, and messages
 export const authenticate = async (req: Request, res: Response) => {
     const userData: Types.UserData = req.body;
     if (!(Validation.isUserDataAuth(userData))) { 
@@ -72,7 +71,7 @@ export const getRoomDetails = async (req: Request, res: Response) => {
 
     const roomDataObj = await roomService.getRoomById(roomID);
     if (!roomDataObj) {
-        res.status(404).json({ error:"Room not found" });
+        res.status(404).json({ error:"Not Found: Room" });
         return;
     }
     const roomName = roomDataObj.roomName;
@@ -81,7 +80,7 @@ export const getRoomDetails = async (req: Request, res: Response) => {
 
     const roomUserObj = await userService.getRoomUser(roomID, user.username);
     if (!roomUserObj) {
-        res.status(403).json({ error:"User not part of Room" });
+        res.status(403).json({ error:"Forbidden: User not part of Room" });
         return;
     }
     // TODO: update userPermissions when we decide on what to send
@@ -99,12 +98,12 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
     try {
         const roomUserObj = await userService.getRoomUser(roomID, user.username);
         if (!roomUserObj) {
-            res.status(403).json({ error:"User not part of Room" });
+            res.status(403).json({ error:"Forbidden: User not part of Room" });
             return;
         }
         await userService.removeRoomUser(roomUserObj);
     } catch(error) {
-        res.status(404).json({ error:"Room not found" })
+        res.status(404).json({ error:"Not Found: Room" })
     } 
 
     res.sendStatus(200);
@@ -118,14 +117,14 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
     try {
         const roomUserObj = await userService.getRoomUser(roomID, user.username);
         if (!roomUserObj) {
-            res.status(403).json({ error:"User not part of Room" });
+            res.status(403).json({ error:"Forbidden: User not part of Room" });
             return;
         }
         const newPermissions = undefined
         const isMember = true
         await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
     } catch(error) {
-        res.status(404).json({ error:"Room not found" })
+        res.status(404).json({ error:"Not Found: Room" })
     } 
 
     res.sendStatus(200)
