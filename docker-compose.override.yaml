@@ -11,5 +11,10 @@ services:
           path: ./sharedLib/package.json
         - action: rebuild
           path: ./server/package.json
-    volumes:
-      - ./server/src:/app/server/src
+        - action: sync
+          path: ./server/src
+          target: /app/server/src
+          
+    build:
+      context: ./
+      dockerfile: server/Dockerfile.dev

@@ -10,7 +10,7 @@ export const getRooms = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
     const userData: Types.UserData = req.body;
-    if (!Validation.isUserDataCreate(userData)) {
+    if (!Validation.isUserDataFull(userData)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }

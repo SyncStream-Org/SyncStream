@@ -9,7 +9,7 @@ import { RoomAttributes, RoomUserAttributes, RoomUserPermissions } from "room-ty
 
 export const createRoom = async (req: Request, res: Response) => {
     const roomNameSM: Types.StringMessage = req.body;
-    if (!Validation.isValidStringMessage(roomNameSM)) {
+    if (!Validation.isStringMessage(roomNameSM)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }
@@ -72,7 +72,7 @@ export const inviteUser = async (req: Request, res: Response) => {
     const { roomID_str } = req.params;
     const roomID = Number(roomID_str);
     const inviteData: Types.InviteData = req.body;
-    if (!Validation.isValidInviteData(inviteData)) {
+    if (!Validation.isInviteDataMinimum(inviteData)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }
@@ -126,7 +126,7 @@ export const updateUser = async (req: Request, res: Response) => {
     const { roomID_str, username } = req.params;
     const roomID = Number(roomID_str);
     const roomPermissions: Types.RoomPermissions = req.body;
-    if (!Validation.isValidRoomPermissions(roomPermissions)) {
+    if (!Validation.isRoomPermissions(roomPermissions)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }

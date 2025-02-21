@@ -1,5 +1,13 @@
 // Misc type validation
 
-export function isValidStringMessage(sm: any): boolean {
-  return !!sm && typeof sm.msg === "string"
+export function isStringMessage(stringMessage: any): boolean {
+  return !!stringMessage && typeof stringMessage.msg === "string";
+}
+
+export function isErrorMessage(errorMessage: any): boolean {
+  return (
+    !!errorMessage &&
+    typeof errorMessage.msg === "string" &&
+    typeof errorMessage.relevantData === "string"
+  );
 }
