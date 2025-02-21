@@ -84,7 +84,7 @@ export const getRoomDetails = async (req: Request, res: Response) => {
         return;
     }
     // TODO: update userPermissions when we decide on what to send
-    const userPermissions: Types.RoomPermissions = { msg:"TODO: must discuss this further as a group" };
+    const userPermissions: Types.RoomPermissions = { admin: false, canInviteUser: false, canRemoveUser: false };
 
     const userRoomData: Types.UserRoomData = { roomData, userPermissions };
     res.json(userRoomData);

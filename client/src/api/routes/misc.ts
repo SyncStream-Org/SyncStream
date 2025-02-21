@@ -21,19 +21,18 @@ export default function echo(): Promise<boolean | null> {
 
   return fetch(request)
     .then(
-      (res) => {
-        return res.json();
-      },
-      (res) => {
-        console.error(`Echo API Call Failed: ${res.status}; ${res.statusText}`);
-        return null;
-      },
-    )
-    .then((res) => {
-      if (res == null) return null;
-      if (!Validation.isValidStringMessage(res)) return null;
+      async (res) => {
+        let body = await res.json();
 
-      const response = res as Types.StringMessage;
-      return response.msg === uuid.msg;
-    });
+        if (res.ok) {
+          if (!Validation.isValidStringMessage(body)) return null;
+
+          const response = body as Types.StringMessage;
+          return response.msg === uuid.msg;
+        }
+
+        console.error(`Echo API Call Failed: ${res.status}; ${body.error}`);
+        return null;
+      }
+    );
 }
