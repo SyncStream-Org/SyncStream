@@ -1,7 +1,7 @@
 // ALl misc routes
 
 import { Types, Validation } from 'syncstream-sharedlib';
-import { generateUUID } from '../../utilities/random';
+import { Random } from 'syncstream-sharedlib/utilities';
 import { generateDefaultHeaders, generateRoute } from '../api';
 
 export default function echo(): Promise<boolean | null> {
@@ -9,7 +9,7 @@ export default function echo(): Promise<boolean | null> {
 
   // Define message to send
   const uuid: Types.StringMessage = {
-    msg: generateUUID(), // Generate UUID for test so static cant fake it
+    msg: Random.generateUUID(), // Generate UUID for test so static cant fake it
   };
 
   // eslint-disable-next-line no-undef
@@ -19,21 +19,17 @@ export default function echo(): Promise<boolean | null> {
     body: JSON.stringify(uuid),
   });
 
-  return fetch(request)
-    .then(
-      (res) => {
-        return res.json();
-      },
-      (res) => {
-        console.error(`Echo API Call Failed: ${res.status}; ${res.statusText}`);
-        return null;
-      },
-    )
-    .then((res) => {
-      if (res == null) return null;
-      if (!Validation.isValidStringMessage(res)) return null;
+  return fetch(request).then(async (res) => {
+    const body = await res.json();
 
-      const response = res as Types.StringMessage;
+    if (res.ok) {
+      if (!Validation.isValidStringMessage(body)) return null;
+
+      const response = body as Types.StringMessage;
       return response.msg === uuid.msg;
-    });
+    }
+
+    console.error(`Echo API Call Failed: ${res.status}; ${body.error}`);
+    return null;
+  });
 }

@@ -1,13 +1,16 @@
 import React from 'react';
 import './launch.css';
 
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction } from 'react-router-dom';
+import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
 import echo from '../../api/routes/misc';
 import { authenticate } from '../../api/routes/user';
 
-export default class Launch extends React.Component<
-  {},
+class Launch extends React.Component<
+  {
+    navigate: NavigateFunction;
+  },
   {
     isLoading: boolean;
     sessionSaved: boolean;
@@ -16,7 +19,7 @@ export default class Launch extends React.Component<
 > {
   handleUnload: (event: BeforeUnloadEvent) => void;
 
-  constructor(props: {}) {
+  constructor(props: { navigate: NavigateFunction }) {
     super(props);
 
     this.state = {
@@ -94,7 +97,7 @@ export default class Launch extends React.Component<
                   message: 'Invalid username or password.',
                 });
               } else {
-                useNavigate()('/home');
+                this.props.navigate('/home');
               }
             },
           );
@@ -108,7 +111,6 @@ export default class Launch extends React.Component<
     ) : (
       <>
         <h1 className="mt-6 mb-6 text-2xl text-center text-white">Login</h1>
-
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
             <label
@@ -184,7 +186,19 @@ export default class Launch extends React.Component<
             Submit
           </button>
         </form>
+        <button
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={() => {
+            this.props.navigate('/home');
+          }}
+        >
+          DEV BYPASS
+        </button>
       </>
     );
   }
 }
+
+// Add wrapper for navigation function
+export default withRouter(Launch);

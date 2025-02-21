@@ -9,11 +9,11 @@ import { authMiddleware } from "../middleware/auth"
 const router = Router();
 
 router.use("/user", userRouter);
+router.use("/", miscRouter);
 
 router.use(authMiddleware)
 
 router.use("/admin", adminRouter);
 router.use("/rooms", roomsRouter);
-router.use("/", miscRouter);
 
 export default router;

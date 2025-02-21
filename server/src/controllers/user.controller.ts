@@ -7,7 +7,6 @@ import roomService from "../services/roomService";
 import User from "../models/users";
 //import * as service from "../services/user.service";
 
-// TODO: update error response codes, and messages
 export const authenticate = async (req: Request, res: Response) => {
     const userData: Types.UserData = req.body;
     if (!(Validation.isUserDataAuth(userData))) { 
@@ -54,11 +53,11 @@ export const listRooms = async (req: Request, res: Response) => {
     const rooms = await userService.getUserRooms(user, isOwner, isMember);
     
     // TODO: add permissions after discussing in group
-    let roomsData: Types.RoomData[] = []; 
+    const roomsData: Types.RoomData[] = []; 
     for (let i=0; i<rooms.length; i++) {
-        let roomName = rooms[i].roomName;
-        let roomOwner = rooms[i].roomOwner;
-        let roomID = rooms[i].roomID;
+        const roomName = rooms[i].roomName;
+        const roomOwner = rooms[i].roomOwner;
+        const roomID = rooms[i].roomID;
         roomsData[i] = { roomName, roomOwner, roomID };
     }
 
@@ -67,26 +66,25 @@ export const listRooms = async (req: Request, res: Response) => {
 
 export const getRoomDetails = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    let { room_id_str } = req.params;
-    let room_id = Number(room_id_str);
+    const { roomID_str } = req.params;
+    const roomID = Number(roomID_str);
 
-    const roomDataObj = await roomService.getRoomById(room_id);
+    const roomDataObj = await roomService.getRoomById(roomID);
     if (!roomDataObj) {
-        res.status(404).json({ error:"Room not found" });
+        res.status(404).json({ error:"Not Found: Room" });
         return;
     }
     const roomName = roomDataObj.roomName;
     const roomOwner = roomDataObj.roomOwner;
-    const roomID = roomDataObj.roomID;
     const roomData: Types.RoomData = {roomName, roomOwner, roomID };
 
-    const roomUserObj = await userService.getRoomUser(room_id, user.username);
+    const roomUserObj = await userService.getRoomUser(roomID, user.username);
     if (!roomUserObj) {
-        res.status(403).json({ error:"User not part of Room" });
+        res.status(403).json({ error:"Forbidden: User not part of Room" });
         return;
     }
     // TODO: update userPermissions when we decide on what to send
-    const userPermissions: Types.RoomPermissions = { msg:"TODO: must discuss this further as a group" };
+    const userPermissions: Types.RoomPermissions = { admin: false, canInviteUser: false, canRemoveUser: false };
 
     const userRoomData: Types.UserRoomData = { roomData, userPermissions };
     res.json(userRoomData);
@@ -94,18 +92,18 @@ export const getRoomDetails = async (req: Request, res: Response) => {
 
 export const removeRoomFromUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    let { room_id_str } = req.params;
-    let room_id = Number(room_id_str);
+    const { roomID_str } = req.params;
+    const roomID = Number(roomID_str);
 
     try {
-        const roomUserObj = await userService.getRoomUser(room_id, user.username);
+        const roomUserObj = await userService.getRoomUser(roomID, user.username);
         if (!roomUserObj) {
-            res.status(403).json({ error:"User not part of Room" });
+            res.status(403).json({ error:"Forbidden: User not part of Room" });
             return;
         }
         await userService.removeRoomUser(roomUserObj);
     } catch(error) {
-        res.status(404).json({ error:"Room not found" })
+        res.status(404).json({ error:"Not Found: Room" })
     } 
 
     res.sendStatus(200);
@@ -113,20 +111,20 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
 
 export const acceptRoomInvite = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    let { room_id_str } = req.params;
-    let room_id = Number(room_id_str);
+    const { roomID_str } = req.params;
+    const roomID = Number(roomID_str);
 
     try {
-        const roomUserObj = await userService.getRoomUser(room_id, user.username);
+        const roomUserObj = await userService.getRoomUser(roomID, user.username);
         if (!roomUserObj) {
-            res.status(403).json({ error:"User not part of Room" });
+            res.status(403).json({ error:"Forbidden: User not part of Room" });
             return;
         }
         const newPermissions = undefined
         const isMember = true
         await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
     } catch(error) {
-        res.status(404).json({ error:"Room not found" })
+        res.status(404).json({ error:"Not Found: Room" })
     } 
 
     res.sendStatus(200)

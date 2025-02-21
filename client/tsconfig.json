@@ -14,7 +14,7 @@
     "allowJs": true,
     "outDir": ".erb/dll",
     "typeRoots": [
-      "./node_modules/@types",
+      "./node_modules/@types"
     ],
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]

@@ -22,31 +22,24 @@ export function authenticate(
     body: JSON.stringify(data),
   });
 
-  return fetch(request)
-    .then(
-      (res) => {
-        return res.json();
-      },
-      (res) => {
-        if (res.status === 401) {
-          console.error(`Authentication Failed: ${res.statusText}`);
-          return false;
-        }
+  return fetch(request).then(async (res) => {
+    const body = await res.json();
+    if (res.ok) {
+      if (!Validation.isValidStringMessage(body)) return null;
 
-        console.error(
-          `Authenticate API Call Failed: ${res.status}; ${res.statusText}`,
-        );
-        return null;
-      },
-    )
-    .then((res) => {
-      if (res == null) return null;
-      if (!Validation.isValidStringMessage(res)) return null;
-
-      const response = res as Types.StringMessage;
+      const response = body as Types.StringMessage;
       SessionState.getInstance().sessionToken = response.msg;
       return true;
-    });
+    }
+
+    if (res.status === 401) {
+      console.error(`Authentication Failed: ${body.error}`);
+      return false;
+    }
+
+    console.error(`Authenticate API Call Failed: ${res.status}; ${body.error}`);
+    return null;
+  });
 }
 
 export function update(): Promise<any | string> {
