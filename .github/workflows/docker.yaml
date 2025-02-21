@@ -19,7 +19,8 @@ jobs:
         uses: actions/checkout@v4
       - uses: whoan/docker-build-with-cache-action@v5
         with:
-          context: ./server
+          context: ./
+          dockefile: ./server/Dockerfile
           username: SyncStream-Org
           password: "${{ secrets.GITHUB_TOKEN }}"
           registry: ghcr.io
