@@ -1,6 +1,6 @@
 declare module 'room-types' {
   export interface RoomAttributes {
-    roomID?: number;
+    roomID?: string;
     roomName: string;
     roomOwner: string;
   }
@@ -15,7 +15,7 @@ declare module 'room-types' {
 
   export interface RoomUserAttributes {
     username: string;
-    roomID: number;
+    roomID: string;
     permissions: RoomUserPermissions;
     isMember: boolean;
   }
@@ -26,9 +26,13 @@ declare module 'room-types' {
   }
 
   export interface RoomFileAttributes {
-    roomID: number;
+    fileID?: string;
+    roomID: string;
     fileName: string;
     fileExtension: string;
     permissions: RoomFilePermissions;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  export interface RoomFileCreationAtributes extends Omit<RoomFileAttributes, 'fileID'> {}
 }

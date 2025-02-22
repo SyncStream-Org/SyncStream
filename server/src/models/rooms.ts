@@ -1,9 +1,10 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, literal } from 'sequelize';
 import sequelize from '../db';
 import { RoomAttributes, RoomCreationAttributes } from 'room-types';
 
+
 class Room extends Model<RoomAttributes, RoomCreationAttributes> implements RoomAttributes {
-  declare roomID: number;
+  declare roomID: string;
   declare roomName: string;
   declare roomOwner: string;
 
@@ -13,8 +14,8 @@ class Room extends Model<RoomAttributes, RoomCreationAttributes> implements Room
 
 Room.init({
   roomID: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
+    type: DataTypes.UUID,
+    defaultValue: literal('gen_random_uuid()'),
     primaryKey: true,
   },
   roomName: {
