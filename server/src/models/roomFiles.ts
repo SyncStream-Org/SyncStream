@@ -1,10 +1,11 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, literal } from 'sequelize';
 import sequelize from '../db';
 import { RoomFileAttributes, RoomFilePermissions } from 'room-types';
 
 class RoomFile extends Model<RoomFileAttributes> implements RoomFileAttributes {
+  declare fileID: string;
   declare fileName: string;
-  declare roomID: number;
+  declare roomID: string;
   declare fileExtension: string;
   declare permissions: RoomFilePermissions;
 
@@ -13,6 +14,11 @@ class RoomFile extends Model<RoomFileAttributes> implements RoomFileAttributes {
 }
 
 RoomFile.init({
+  fileID: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: literal('gen_random_uuid()'),
+  },
   fileName: {
     type: DataTypes.STRING,
     allowNull: false,

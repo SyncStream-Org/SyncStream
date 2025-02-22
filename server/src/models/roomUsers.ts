@@ -4,7 +4,7 @@ import { RoomUserAttributes, RoomUserPermissions } from 'room-types';
 
 class RoomUser extends Model<RoomUserAttributes> implements RoomUserAttributes {
   declare username: string;
-  declare roomID: number;
+  declare roomID: string;
   declare permissions: RoomUserPermissions;
   declare isMember: boolean;
 
