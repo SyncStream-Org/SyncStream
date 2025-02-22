@@ -22,7 +22,7 @@ export default function echo(): Promise<SuccessState> {
   return fetch(request).then(async (res) => {
     if (res.ok) {
       const body = await res.json();
-      if (!Validation.isValidStringMessage(body)) return SuccessState.ERROR;
+      if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
       const response = body as Types.StringMessage;
       return response.msg === uuid.msg

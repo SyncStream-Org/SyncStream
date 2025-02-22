@@ -35,7 +35,7 @@ export function createUser(
     if (res.ok) {
       if (res.bodyUsed) {
         const body = await res.json();
-        if (!Validation.isValidStringMessage(body))
+        if (!Validation.isStringMessage(body))
           return { success: SuccessState.ERROR };
 
         return {
@@ -109,7 +109,14 @@ export function getAllRooms(): Promise<{
   return fetch(request).then(async (res) => {
     if (res.status === 200) {
       const body = await res.json();
-      // TODO: validate body later
+
+      // Validate
+      if (!(Object.prototype.toString.call(body) === '[object Array]'))
+        return { success: SuccessState.ERROR };
+      for (let i = 0; i < body.length; i += 1) {
+        if (!Validation.isRoomDataFull(body[i]))
+          return { success: SuccessState.ERROR };
+      }
 
       return {
         success: SuccessState.SUCCESS,

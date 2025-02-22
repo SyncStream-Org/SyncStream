@@ -25,7 +25,7 @@ export function authenticate(
   return fetch(request).then(async (res) => {
     if (res.ok) {
       const body = await res.json();
-      if (!Validation.isValidStringMessage(body)) return SuccessState.ERROR;
+      if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
       const response = body as Types.StringMessage;
       SessionState.getInstance().sessionToken = response.msg;
@@ -80,7 +80,15 @@ export function getRooms(): Promise<{
   return fetch(request).then(async (res) => {
     if (res.status === 200) {
       const body = await res.json();
-      // TODO: validate data structure
+
+      // Validate
+      if (!(Object.prototype.toString.call(body) === '[object Array]'))
+        return { success: SuccessState.ERROR };
+      for (let i = 0; i < body.length; i += 1) {
+        if (!Validation.isRoomDataFull(body[i]))
+          return { success: SuccessState.ERROR };
+      }
+
       return {
         success: SuccessState.SUCCESS,
         data: body as Types.RoomData[],
@@ -103,7 +111,7 @@ export function getRooms(): Promise<{
 
 export function getUserDataForRoom(roomId: string): Promise<{
   success: SuccessState;
-  data?: Types.RoomData[];
+  data?: Types.UserRoomData;
 }> {
   const headers: Headers = generateDefaultHeaders();
 
@@ -119,10 +127,13 @@ export function getUserDataForRoom(roomId: string): Promise<{
   return fetch(request).then(async (res) => {
     if (res.ok) {
       const body = await res.json();
-      // TODO: validate data structure
+
+      if (!Validation.isUserRoomData(body))
+        return { success: SuccessState.ERROR };
+
       return {
         success: SuccessState.SUCCESS,
-        data: body,
+        data: body as Types.UserRoomData,
       };
     }
 

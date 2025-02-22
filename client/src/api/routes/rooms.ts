@@ -21,7 +21,10 @@ export function createRoom(roomName: string): Promise<{
   return fetch(request).then(async (res) => {
     if (res.ok) {
       const body = await res.json();
-      // TODO: validate body later
+
+      // Validate
+      if (!Validation.isRoomDataFull(body))
+        return { success: SuccessState.ERROR };
 
       return {
         success: SuccessState.SUCCESS,
@@ -116,7 +119,15 @@ export function listMembers(roomId: string): Promise<{
   return fetch(request).then(async (res) => {
     if (res.ok) {
       const body = await res.json();
-      // TODO: validate body later
+
+      // Validate
+      if (!(Object.prototype.toString.call(body) === '[object Array]'))
+        return { success: SuccessState.ERROR };
+      for (let i = 0; i < body.length; i += 1) {
+        if (!Validation.isUserDataMinimum(body[i]))
+          // TODO: may need to change later
+          return { success: SuccessState.ERROR };
+      }
 
       return {
         success: SuccessState.SUCCESS,
