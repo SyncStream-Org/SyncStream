@@ -2,6 +2,12 @@
 
 import SessionState from '../utilities/session-state';
 
+export enum SuccessState {
+  SUCCESS,
+  FAIL,
+  ERROR,
+}
+
 export function generateDefaultHeaders(
   withSessionToken: boolean = true,
 ): Headers {

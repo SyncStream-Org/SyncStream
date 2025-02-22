@@ -16,6 +16,6 @@ export interface RoomData {
 }
 
 export interface UserRoomData {
-  roomData: RoomData;
+  roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
   userPermissions: RoomPermissions;
 }

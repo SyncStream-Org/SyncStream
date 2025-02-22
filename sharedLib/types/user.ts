@@ -6,7 +6,7 @@ export interface UserData {
   displayName?: string;
 }
 
-export interface UserUpdateData {
+export interface UserUpdateData { // Note: One must be defined for this to be valid
   email?: string;
   password?: string;
   displayName?: string;

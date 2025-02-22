@@ -2,9 +2,9 @@
 
 import { Types, Validation } from 'syncstream-sharedlib';
 import { Random } from 'syncstream-sharedlib/utilities';
-import { generateDefaultHeaders, generateRoute } from '../api';
+import { generateDefaultHeaders, generateRoute, SuccessState } from '../api';
 
-export default function echo(): Promise<boolean | null> {
+export default function echo(): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
@@ -20,16 +20,17 @@ export default function echo(): Promise<boolean | null> {
   });
 
   return fetch(request).then(async (res) => {
-    const body = await res.json();
-
     if (res.ok) {
-      if (!Validation.isValidStringMessage(body)) return null;
+      const body = await res.json();
+      if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
       const response = body as Types.StringMessage;
-      return response.msg === uuid.msg;
+      return response.msg === uuid.msg
+        ? SuccessState.SUCCESS
+        : SuccessState.FAIL;
     }
 
-    console.error(`Echo API Call Failed: ${res.status}; ${body.error}`);
-    return null;
+    console.error(`echo API Call Failed: ${res.status}; ${res.status}`);
+    return SuccessState.ERROR;
   });
 }

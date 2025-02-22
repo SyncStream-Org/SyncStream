@@ -6,6 +6,7 @@ import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
 import echo from '../../api/routes/misc';
 import { authenticate } from '../../api/routes/user';
+import { SuccessState } from '../../api/api';
 
 class Launch extends React.Component<
   {
@@ -79,7 +80,7 @@ class Launch extends React.Component<
       }
 
       echo().then((res) => {
-        if (res === null) {
+        if (res === SuccessState.FAIL || res === SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
@@ -90,8 +91,8 @@ class Launch extends React.Component<
         } else {
           authenticate(target.username.value, target.password.value).then(
             (authRes) => {
-              if (authRes === null) return;
-              if (authRes === false) {
+              if (authRes === SuccessState.ERROR) return;
+              if (authRes === SuccessState.FAIL) {
                 window.electron.ipcRenderer.invokeFunction('show-message-box', {
                   title: 'Error',
                   message: 'Invalid username or password.',
