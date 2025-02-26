@@ -1,6 +1,7 @@
 import Room from '../models/rooms';
 
 import { RoomCreationAttributes } from 'room-types';
+import RoomUser from 'src/models/roomUsers';
 
 class RoomService {
   public async getRoomById(roomID: number): Promise<Room | null> {
@@ -15,6 +16,15 @@ class RoomService {
 
   public async deleteRoom(room: Room): Promise<void> {
     await room.destroy();
+  }
+
+  public async listAllRooms(): Promise<Room[]> {
+    const rooms = await Room.findAll();
+    return rooms;
+  }
+
+  public async getAllRoomUsers(roomID: string): Promise<RoomUser[]> {
+    return await RoomUser.findAll({ where:{ roomID:roomID } });
   }
 }
 
