@@ -1,7 +1,12 @@
 // All room routes
 
 import { Types, Validation } from 'syncstream-sharedlib';
-import { generateDefaultHeaders, generateRoute, SuccessState } from '../api';
+import {
+  generateDefaultHeaders,
+  generateRoute,
+  printUnexpectedError,
+} from '../utilities';
+import { SuccessState } from '../types';
 
 export function createRoom(roomName: string): Promise<{
   success: SuccessState;
@@ -37,7 +42,7 @@ export function createRoom(roomName: string): Promise<{
       return { success: SuccessState.FAIL };
     }
 
-    console.error(`rooms API Call Failed: ${res.status}; ${res.status}`);
+    printUnexpectedError('rooms API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -65,9 +70,7 @@ export function joinRoom(roomId: string): Promise<{
       };
     }
 
-    console.error(
-      `rooms/{roomId} GET API Call Failed: ${res.status}; ${res.status}`,
-    );
+    printUnexpectedError('rooms/{roomId} GET API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -94,9 +97,7 @@ export function deleteRoom(roomId: string): Promise<SuccessState> {
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `rooms/{roomId} DELETE API Call Failed: ${res.status}; ${res.status}`,
-    );
+    printUnexpectedError('rooms/{roomId} DELETE API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -135,9 +136,7 @@ export function listMembers(roomId: string): Promise<{
       };
     }
 
-    console.error(
-      `rooms/{roomId}/users GET API Call Failed: ${res.status}; ${res.status}`,
-    );
+    printUnexpectedError('rooms/{roomId}/users GET API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -168,9 +167,7 @@ export function inviteUser(
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `rooms/{roomId}/users PUT API Call Failed: ${res.status}; ${res.status}`,
-    );
+    printUnexpectedError('rooms/{roomId}/users PUT API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -207,8 +204,9 @@ export function removeUser(
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `rooms/{roomId}/users/{user} DELETE API Call Failed: ${res.status}; ${res.status}`,
+    printUnexpectedError(
+      'rooms/{roomId}/users/{user} DELETE API Call Failed',
+      res,
     );
     return SuccessState.ERROR;
   });
@@ -248,8 +246,9 @@ export function updateUserRoomPermissions(
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `rooms/{roomId}/users/{user} PUT API Call Failed: ${res.status}; ${res.status}`,
+    printUnexpectedError(
+      'rooms/{roomId}/users/{user} PUT API Call Failed',
+      res,
     );
     return SuccessState.ERROR;
   });
@@ -287,8 +286,9 @@ export function transferOwnership(
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `rooms/{roomId}/users/{user}/transferOwnership API Call Failed: ${res.status}; ${res.status}`,
+    printUnexpectedError(
+      'rooms/{roomId}/users/{user}/transferOwnership API Call Failed',
+      res,
     );
     return SuccessState.ERROR;
   });

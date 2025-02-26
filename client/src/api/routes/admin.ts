@@ -1,7 +1,12 @@
 // ALl admin routes
 
 import { Types, Validation } from 'syncstream-sharedlib';
-import { generateDefaultHeaders, generateRoute, SuccessState } from '../api';
+import {
+  generateDefaultHeaders,
+  generateRoute,
+  printUnexpectedError,
+} from '../utilities';
+import { SuccessState } from '../types';
 
 export function createUser(
   username: string,
@@ -57,7 +62,7 @@ export function createUser(
       return { success: SuccessState.FAIL };
     }
 
-    console.error(`admin/user API Call Failed: ${res.status}; ${res.status}`);
+    printUnexpectedError('admin/user API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -87,9 +92,7 @@ export function deleteUser(username: string): Promise<SuccessState> {
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `admin/user/{username} API Call Failed: ${res.status}; ${res.status}`,
-    );
+    printUnexpectedError('admin/user/{username} API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -136,7 +139,7 @@ export function getAllRooms(): Promise<{
       return { success: SuccessState.FAIL };
     }
 
-    console.error(`admin/rooms API Call Failed: ${res.status}; ${res.status}`);
+    printUnexpectedError('admin/rooms API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }

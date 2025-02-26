@@ -2,7 +2,12 @@
 
 import { Types, Validation } from 'syncstream-sharedlib';
 import SessionState from '../../utilities/session-state';
-import { generateDefaultHeaders, generateRoute, SuccessState } from '../api';
+import {
+  generateDefaultHeaders,
+  generateRoute,
+  printUnexpectedError,
+} from '../utilities';
+import { SuccessState } from '../types';
 
 export function authenticate(
   username: string,
@@ -38,9 +43,24 @@ export function authenticate(
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `user/authenticate API Call Failed: ${res.status}; ${res.statusText}`,
-    );
+    printUnexpectedError('user/authenticate API Call Failed', res);
+    return SuccessState.ERROR;
+  });
+}
+
+export function disconnect(): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute('user/update'), {
+    method: 'DELETE',
+    headers,
+  });
+
+  return fetch(request).then(async (res) => {
+    if (res.ok) return SuccessState.SUCCESS;
+
+    printUnexpectedError('user/disconnect API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -58,9 +78,7 @@ export function updateUser(data: Types.UserUpdateData): Promise<SuccessState> {
   return fetch(request).then(async (res) => {
     if (res.ok) return SuccessState.SUCCESS;
 
-    console.error(
-      `user/update API Call Failed: ${res.status}; ${res.statusText}`,
-    );
+    printUnexpectedError('user/update API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -102,9 +120,7 @@ export function getRooms(): Promise<{
       };
     }
 
-    console.error(
-      `user/rooms GET API Call Failed: ${res.status}; ${res.statusText}`,
-    );
+    printUnexpectedError('user/rooms GET API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -149,9 +165,7 @@ export function getUserDataForRoom(roomId: string): Promise<{
       return { success: SuccessState.FAIL };
     }
 
-    console.error(
-      `user/rooms/{roomID} GET API Call Failed: ${res.status}; ${res.statusText}`,
-    );
+    printUnexpectedError('user/rooms/{roomID} GET API Call Failed', res);
     return { success: SuccessState.ERROR };
   });
 }
@@ -181,9 +195,7 @@ export function leaveRoom(roomId: string): Promise<SuccessState> {
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `user/rooms/{roomId} DELETE API Call Failed: ${res.status}; ${res.statusText}`,
-    );
+    printUnexpectedError('user/rooms/{roomId} DELETE API Call Failed', res);
     return SuccessState.ERROR;
   });
 }
@@ -215,8 +227,9 @@ export function acceptInviteToRoom(roomId: string): Promise<SuccessState> {
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `user/rooms/{roomID}/invitation PUT API Call Failed: ${res.status}; ${res.statusText}`,
+    printUnexpectedError(
+      'user/rooms/{roomID}/invitation PUT API Call Failed',
+      res,
     );
     return SuccessState.ERROR;
   });
@@ -249,8 +262,9 @@ export function declineInviteToRoom(roomId: string): Promise<SuccessState> {
       return SuccessState.FAIL;
     }
 
-    console.error(
-      `user/rooms/{roomId}/invitation DELETE API Call Failed: ${res.status}; ${res.statusText}`,
+    printUnexpectedError(
+      'user/rooms/{roomId}/invitation DELETE API Call Failed',
+      res,
     );
     return SuccessState.ERROR;
   });

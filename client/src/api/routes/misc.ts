@@ -2,9 +2,14 @@
 
 import { Types, Validation } from 'syncstream-sharedlib';
 import { Random } from 'syncstream-sharedlib/utilities';
-import { generateDefaultHeaders, generateRoute, SuccessState } from '../api';
+import {
+  generateDefaultHeaders,
+  generateRoute,
+  printUnexpectedError,
+} from '../utilities';
+import { SuccessState } from '../types';
 
-export default function echo(): Promise<SuccessState> {
+export function echo(): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
@@ -30,7 +35,7 @@ export default function echo(): Promise<SuccessState> {
         : SuccessState.FAIL;
     }
 
-    console.error(`echo API Call Failed: ${res.status}; ${res.status}`);
+    printUnexpectedError('echo API Call Failed', res);
     return SuccessState.ERROR;
   });
 }

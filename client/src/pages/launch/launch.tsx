@@ -4,9 +4,7 @@ import './launch.css';
 import { NavigateFunction } from 'react-router-dom';
 import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
-import echo from '../../api/routes/misc';
-import { authenticate } from '../../api/routes/user';
-import { SuccessState } from '../../api/api';
+import * as api from '../../api';
 
 class Launch extends React.Component<
   {
@@ -79,8 +77,8 @@ class Launch extends React.Component<
         SessionState.getInstance().serverURL = target.server_url.value;
       }
 
-      echo().then((res) => {
-        if (res === SuccessState.FAIL || res === SuccessState.ERROR) {
+      api.echo().then((res) => {
+        if (res === api.SuccessState.FAIL || res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
@@ -89,19 +87,20 @@ class Launch extends React.Component<
 
           SessionState.getInstance().serverURL = serverURLCache;
         } else {
-          authenticate(target.username.value, target.password.value).then(
-            (authRes) => {
-              if (authRes === SuccessState.ERROR) return;
-              if (authRes === SuccessState.FAIL) {
-                window.electron.ipcRenderer.invokeFunction('show-message-box', {
-                  title: 'Error',
-                  message: 'Invalid username or password.',
-                });
-              } else {
-                this.props.navigate('/home');
-              }
-            },
-          );
+          api.User.authenticate(
+            target.username.value,
+            target.password.value,
+          ).then((authRes) => {
+            if (authRes === api.SuccessState.ERROR) return;
+            if (authRes === api.SuccessState.FAIL) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Invalid username or password.',
+              });
+            } else {
+              this.props.navigate('/home');
+            }
+          });
         }
       });
     };
