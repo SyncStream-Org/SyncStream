@@ -45,6 +45,25 @@ export function authenticate(
   });
 }
 
+export function disconnect(): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute('user/update'), {
+    method: 'DELETE',
+    headers,
+  });
+
+  return fetch(request).then(async (res) => {
+    if (res.ok) return SuccessState.SUCCESS;
+
+    console.error(
+      `user/disconnect API Call Failed: ${res.status}; ${res.statusText}`,
+    );
+    return SuccessState.ERROR;
+  });
+}
+
 export function updateUser(data: Types.UserUpdateData): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
