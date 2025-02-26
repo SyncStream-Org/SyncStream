@@ -3,7 +3,7 @@ import Room from '../models/rooms';
 import { RoomCreationAttributes } from 'room-types';
 
 class RoomService {
-  public async getRoomById(roomID: number): Promise<Room | null> {
+  public async getRoomById(roomID: string): Promise<Room | null> {
     const room = await Room.findOne({ where: { roomID: roomID } });
     return room;
   }
