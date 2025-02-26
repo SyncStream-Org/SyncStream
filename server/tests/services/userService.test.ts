@@ -21,16 +21,16 @@ describe('UserService', () => {
   });
 
   const mockRooms = [
-    { roomID: 1 }, 
-    { roomID: 2 }
+    { roomID: 'mockID-1' }, 
+    { roomID: 'mockID-2' }
   ] as Room[];
   const mockRoomUsers = [
-    { roomID: 3, username: 'testuser1' }, 
-    { roomID: 4, username: 'testuser2' }
+    { roomID: 'mockID-3', username: 'testuser1' }, 
+    { roomID: 'mockID-4', username: 'testuser2' }
   ] as RoomUser[];
   const mockRoomsJoined = [
-    { roomID: 4 }, 
-    { roomID: 4 }
+    { roomID: 'mockID-3' }, 
+    { roomID: 'mockID-4' }
   ] as Room[];
 
   /* Tests for getUserByUsername */
@@ -229,9 +229,9 @@ describe('UserService', () => {
     jest.spyOn(Room, 'findOne').mockResolvedValue(true as unknown as Room);
     jest.spyOn(RoomUser, 'findOne').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
 
-    const result = await UserService.getRoomUser(1, mockUser.username);
+    const result = await UserService.getRoomUser(mockRooms[0].roomID, mockUser.username);
 
-    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: 1, username: mockUser.username } });
+    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: mockRooms[0].roomID, username: mockUser.username } });
     expect(result).toBe(mockRoomUsers[0]);
   });
 
@@ -239,19 +239,19 @@ describe('UserService', () => {
     jest.spyOn(Room, 'findOne').mockResolvedValue(true as unknown as Room);
     jest.spyOn(RoomUser, 'findOne').mockResolvedValue(null);
 
-    const result = await UserService.getRoomUser(1, mockUser.username);
+    const result = await UserService.getRoomUser(mockRooms[0].roomID, mockUser.username);
 
-    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: 1, username: mockUser.username } });
+    expect(RoomUser.findOne).toHaveBeenCalledWith({ where: { roomID: mockRooms[0].roomID, username: mockUser.username } });
     expect(result).toBe(null);
   });
 
   it('getRoomUser - should throw an error if room not found', async () => {
     jest.spyOn(Room, 'findOne').mockResolvedValue(null);
 
-    const result = UserService.getRoomUser(1, mockUser.username);
+    const result = UserService.getRoomUser(mockRooms[0].roomID, mockUser.username);
 
     await expect(result).rejects.toThrow('Room not found');
-    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: 1 } });
+    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: mockRooms[0].roomID } });
   });
 
   /* Tests for createRoomUser */
@@ -259,9 +259,9 @@ describe('UserService', () => {
     jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(null);
     jest.spyOn(RoomUser, 'create').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
 
-    const result = await UserService.createRoomUser(1, mockRoomUsers[0] as unknown as RoomUser);
+    const result = await UserService.createRoomUser(mockRooms[0].roomID, mockRoomUsers[0] as unknown as RoomUser);
 
-    expect(UserService.getRoomUser).toHaveBeenCalledWith(1, mockRoomUsers[0].username);
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(mockRooms[0].roomID, mockRoomUsers[0].username);
     expect(RoomUser.create).toHaveBeenCalledWith(mockRoomUsers[0]);
     expect(result).toBe(mockRoomUsers[0]);
   });
@@ -269,10 +269,10 @@ describe('UserService', () => {
   it('createRoomUser - should throw an error if room user already exists', async () => {
     jest.spyOn(UserService, 'getRoomUser').mockResolvedValue(mockRoomUsers[0] as unknown as RoomUser);
 
-    const result = UserService.createRoomUser(1, mockRoomUsers[0] as unknown as RoomUser);
+    const result = UserService.createRoomUser(mockRooms[0].roomID, mockRoomUsers[0] as unknown as RoomUser);
 
     await expect(result).rejects.toThrow('User already in room');
-    expect(UserService.getRoomUser).toHaveBeenCalledWith(1, mockRoomUsers[0].username);
+    expect(UserService.getRoomUser).toHaveBeenCalledWith(mockRooms[0].roomID, mockRoomUsers[0].username);
   });
 
   /* Tests for removeRoomUser */
