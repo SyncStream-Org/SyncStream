@@ -4,8 +4,7 @@ import './launch.css';
 import { NavigateFunction } from 'react-router-dom';
 import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
-import echo from '../../api/routes/misc';
-import { authenticate } from '../../api/routes/user';
+import * as api from '../../api';
 
 class Launch extends React.Component<
   {
@@ -78,8 +77,8 @@ class Launch extends React.Component<
         SessionState.getInstance().serverURL = target.server_url.value;
       }
 
-      echo().then((res) => {
-        if (res === null) {
+      api.echo().then((res) => {
+        if (res === api.SuccessState.FAIL || res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
@@ -88,19 +87,20 @@ class Launch extends React.Component<
 
           SessionState.getInstance().serverURL = serverURLCache;
         } else {
-          authenticate(target.username.value, target.password.value).then(
-            (authRes) => {
-              if (authRes === null) return;
-              if (authRes === false) {
-                window.electron.ipcRenderer.invokeFunction('show-message-box', {
-                  title: 'Error',
-                  message: 'Invalid username or password.',
-                });
-              } else {
-                this.props.navigate('/home');
-              }
-            },
-          );
+          api.User.authenticate(
+            target.username.value,
+            target.password.value,
+          ).then((authRes) => {
+            if (authRes === api.SuccessState.ERROR) return;
+            if (authRes === api.SuccessState.FAIL) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Invalid username or password.',
+              });
+            } else {
+              this.props.navigate('/home');
+            }
+          });
         }
       });
     };
@@ -186,15 +186,6 @@ class Launch extends React.Component<
             Submit
           </button>
         </form>
-        <button
-          type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          onClick={() => {
-            this.props.navigate('/home');
-          }}
-        >
-          DEV BYPASS
-        </button>
       </>
     );
   }

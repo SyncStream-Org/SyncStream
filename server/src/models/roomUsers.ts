@@ -3,13 +3,13 @@ import sequelize from '../db';
 import { RoomUserAttributes, RoomUserPermissions } from 'room-types';
 
 class RoomUser extends Model<RoomUserAttributes> implements RoomUserAttributes {
-  public username!: string;
-  public roomID!: number;
-  public permissions!: RoomUserPermissions;
-  public isMember!: boolean;
+  declare username: string;
+  declare roomID: string;
+  declare permissions: RoomUserPermissions;
+  declare isMember: boolean;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 RoomUser.init({
