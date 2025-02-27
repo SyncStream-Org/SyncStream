@@ -15,6 +15,9 @@ export type LanguageDict = {
     serverURLLabel: string;
     serverURLButtonText: string;
     submitButtonText: string;
+    messageBoxErrorTitle: string;
+    messageBoxInvalidServer: string;
+    messageBoxInvalidAuth: string;
   };
 };
 
