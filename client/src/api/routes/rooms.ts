@@ -23,28 +23,33 @@ export function createRoom(roomName: string): Promise<{
     body: JSON.stringify(data),
   });
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) {
-      const body = await res.json();
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
 
-      // Validate
-      if (!Validation.isRoomDataFull(body))
-        return { success: SuccessState.ERROR };
+        // Validate
+        if (!Validation.isRoomDataFull(body))
+          return { success: SuccessState.ERROR };
 
-      return {
-        success: SuccessState.SUCCESS,
-        data: body as Types.RoomData,
-      };
-    }
+        return {
+          success: SuccessState.SUCCESS,
+          data: body as Types.RoomData,
+        };
+      }
 
-    if (res.status === 409) {
-      console.error('Create room failed: Room already exists.');
-      return { success: SuccessState.FAIL };
-    }
+      if (res.status === 409) {
+        console.error('Create room failed: Room already exists.');
+        return { success: SuccessState.FAIL };
+      }
 
-    printUnexpectedError('rooms API Call Failed', res);
-    return { success: SuccessState.ERROR };
-  });
+      printUnexpectedError('rooms API Call Failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
 }
 
 export function joinRoom(roomId: string): Promise<{
@@ -59,20 +64,25 @@ export function joinRoom(roomId: string): Promise<{
     headers,
   });
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) {
-      const body = await res.json();
-      // TODO: validate body later
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
+        // TODO: validate body later
 
-      return {
-        success: SuccessState.SUCCESS,
-        data: body as any, // TODO: change to room state type
-      };
-    }
+        return {
+          success: SuccessState.SUCCESS,
+          data: body as any, // TODO: change to room state type
+        };
+      }
 
-    printUnexpectedError('rooms/{roomId} GET API Call Failed', res);
-    return { success: SuccessState.ERROR };
-  });
+      printUnexpectedError('rooms/{roomId} GET API Call Failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
 }
 
 export function deleteRoom(roomId: string): Promise<SuccessState> {
@@ -84,22 +94,27 @@ export function deleteRoom(roomId: string): Promise<SuccessState> {
     headers,
   });
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) return SuccessState.SUCCESS;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
 
-    if (res.status === 403) {
-      console.error('Room delete request failed: User does not own room.');
-      return SuccessState.FAIL;
-    }
+      if (res.status === 403) {
+        console.error('Room delete request failed: User does not own room.');
+        return SuccessState.FAIL;
+      }
 
-    if (res.status === 404) {
-      console.error('Room delete request failed: Room does not exist.');
-      return SuccessState.FAIL;
-    }
+      if (res.status === 404) {
+        console.error('Room delete request failed: Room does not exist.');
+        return SuccessState.FAIL;
+      }
 
-    printUnexpectedError('rooms/{roomId} DELETE API Call Failed', res);
-    return SuccessState.ERROR;
-  });
+      printUnexpectedError('rooms/{roomId} DELETE API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }
 
 export function listMembers(roomId: string): Promise<{
@@ -117,28 +132,33 @@ export function listMembers(roomId: string): Promise<{
     },
   );
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) {
-      const body = await res.json();
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
 
-      // Validate
-      if (!(Object.prototype.toString.call(body) === '[object Array]'))
-        return { success: SuccessState.ERROR };
-      for (let i = 0; i < body.length; i += 1) {
-        if (!Validation.isUserDataMinimum(body[i]))
-          // TODO: may need to change later
+        // Validate
+        if (!(Object.prototype.toString.call(body) === '[object Array]'))
           return { success: SuccessState.ERROR };
+        for (let i = 0; i < body.length; i += 1) {
+          if (!Validation.isUserDataMinimum(body[i]))
+            // TODO: may need to change later
+            return { success: SuccessState.ERROR };
+        }
+
+        return {
+          success: SuccessState.SUCCESS,
+          data: body as Types.UserData[],
+        };
       }
 
-      return {
-        success: SuccessState.SUCCESS,
-        data: body as Types.UserData[],
-      };
-    }
-
-    printUnexpectedError('rooms/{roomId}/users GET API Call Failed', res);
-    return { success: SuccessState.ERROR };
-  });
+      printUnexpectedError('rooms/{roomId}/users GET API Call Failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
 }
 
 export function inviteUser(
@@ -157,19 +177,24 @@ export function inviteUser(
     },
   );
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) return SuccessState.SUCCESS;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
 
-    if (res.status === 409) {
-      console.error(
-        'Invite user request failed: Invite already exists or user is already a member.',
-      );
-      return SuccessState.FAIL;
-    }
+      if (res.status === 409) {
+        console.error(
+          'Invite user request failed: Invite already exists or user is already a member.',
+        );
+        return SuccessState.FAIL;
+      }
 
-    printUnexpectedError('rooms/{roomId}/users PUT API Call Failed', res);
-    return SuccessState.ERROR;
-  });
+      printUnexpectedError('rooms/{roomId}/users PUT API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }
 
 export function removeUser(
@@ -187,29 +212,34 @@ export function removeUser(
     },
   );
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) return SuccessState.SUCCESS;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
 
-    if (res.status === 403) {
-      console.error(
-        'Remove user from room request failed: You do not have permission to do this.',
+      if (res.status === 403) {
+        console.error(
+          'Remove user from room request failed: You do not have permission to do this.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error(
+          'Remove user from room request failed: Room or user does not exist.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError(
+        'rooms/{roomId}/users/{user} DELETE API Call Failed',
+        res,
       );
-      return SuccessState.FAIL;
-    }
-
-    if (res.status === 404) {
-      console.error(
-        'Remove user from room request failed: Room or user does not exist.',
-      );
-      return SuccessState.FAIL;
-    }
-
-    printUnexpectedError(
-      'rooms/{roomId}/users/{user} DELETE API Call Failed',
-      res,
-    );
-    return SuccessState.ERROR;
-  });
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }
 
 export function updateUserRoomPermissions(
@@ -229,29 +259,34 @@ export function updateUserRoomPermissions(
     },
   );
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) return SuccessState.SUCCESS;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
 
-    if (res.status === 403) {
-      console.error(
-        'Update user room permissions request failed: You do not have permission to do this.',
+      if (res.status === 403) {
+        console.error(
+          'Update user room permissions request failed: You do not have permission to do this.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error(
+          'Update user room permissions request failed: Room or user does not exist.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError(
+        'rooms/{roomId}/users/{user} PUT API Call Failed',
+        res,
       );
-      return SuccessState.FAIL;
-    }
-
-    if (res.status === 404) {
-      console.error(
-        'Update user room permissions request failed: Room or user does not exist.',
-      );
-      return SuccessState.FAIL;
-    }
-
-    printUnexpectedError(
-      'rooms/{roomId}/users/{user} PUT API Call Failed',
-      res,
-    );
-    return SuccessState.ERROR;
-  });
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }
 
 export function transferOwnership(
@@ -269,27 +304,32 @@ export function transferOwnership(
     },
   );
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) return SuccessState.SUCCESS;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
 
-    if (res.status === 403) {
-      console.error(
-        'Room ownership transfer request failed: You do not have permission to do this.',
+      if (res.status === 403) {
+        console.error(
+          'Room ownership transfer request failed: You do not have permission to do this.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error(
+          'Room ownership transfer request failed: Room or user does not exist.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError(
+        'rooms/{roomId}/users/{user}/transferOwnership API Call Failed',
+        res,
       );
-      return SuccessState.FAIL;
-    }
-
-    if (res.status === 404) {
-      console.error(
-        'Room ownership transfer request failed: Room or user does not exist.',
-      );
-      return SuccessState.FAIL;
-    }
-
-    printUnexpectedError(
-      'rooms/{roomId}/users/{user}/transferOwnership API Call Failed',
-      res,
-    );
-    return SuccessState.ERROR;
-  });
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }

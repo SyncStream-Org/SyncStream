@@ -29,6 +29,9 @@ class Launch extends React.Component<Props, State> {
   }
 
   render() {
+    // Grab localize engine
+    const localize = Localize.getInstance().localize();
+
     // Try to authenticate with server
     const login = (event: React.SyntheticEvent) => {
       event.preventDefault();
@@ -76,7 +79,6 @@ class Launch extends React.Component<Props, State> {
     };
 
     // ---- RENDER BLOCK ----
-    const localize = Localize.getInstance().localize();
     return (
       <>
         <h1 className="mt-6 mb-6 text-2xl text-center text-gray-900 dark:text-white">

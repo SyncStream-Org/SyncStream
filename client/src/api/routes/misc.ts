@@ -24,18 +24,23 @@ export function echo(): Promise<SuccessState> {
     body: JSON.stringify(uuid),
   });
 
-  return fetch(request).then(async (res) => {
-    if (res.ok) {
-      const body = await res.json();
-      if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
+        if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
-      const response = body as Types.StringMessage;
-      return response.msg === uuid.msg
-        ? SuccessState.SUCCESS
-        : SuccessState.FAIL;
-    }
+        const response = body as Types.StringMessage;
+        return response.msg === uuid.msg
+          ? SuccessState.SUCCESS
+          : SuccessState.FAIL;
+      }
 
-    printUnexpectedError('echo API Call Failed', res);
-    return SuccessState.ERROR;
-  });
+      printUnexpectedError('echo API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }
