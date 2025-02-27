@@ -25,6 +25,12 @@ module.exports = {
     'no-use-before-define': 'off',
     'promise/no-nesting': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/prefer-stateless-function': 'off',
+    'react/static-property-placement': 'off',
+    'react/button-has-type': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
   },
   parserOptions: {

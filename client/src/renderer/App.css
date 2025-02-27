@@ -1,9 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 body {
-  position: relative;
-  height: 100vh;
-  background: var(--color-gray-950);
   font-family: sans-serif;
-  overflow-y: hidden;
 } 

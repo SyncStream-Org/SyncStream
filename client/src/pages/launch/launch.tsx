@@ -2,60 +2,28 @@ import React from 'react';
 import './launch.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
 import * as api from '../../api';
+import { asPage } from '../../utilities/page-wrapper';
+import NormalButton from '../../components/buttons/normal-button';
 
-class Launch extends React.Component<
-  {
-    navigate: NavigateFunction;
-  },
-  {
-    isLoading: boolean;
-    sessionSaved: boolean;
-    forceServerURL: boolean;
-  }
-> {
-  handleUnload: (event: BeforeUnloadEvent) => void;
+interface Props {
+  // eslint-disable-next-line react/no-unused-prop-types
+  toggleDarkMode: () => void;
+  navigate: NavigateFunction;
+}
 
-  constructor(props: { navigate: NavigateFunction }) {
+interface State {
+  forceServerURL: boolean;
+}
+
+class Launch extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
-      isLoading: true,
-      sessionSaved: false,
       forceServerURL: false,
     };
-
-    this.handleUnload = (event: BeforeUnloadEvent) => {
-      // If session is not saved, save and call app quit again
-      if (!this.state.sessionSaved) {
-        event.preventDefault();
-
-        // Handle saving and then quite
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            this.setState({ sessionSaved: true });
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-  }
-
-  componentDidMount() {
-    // Load session state from memory on window load (only once)
-    SessionState.getInstance()
-      .loadCache()
-      .then((ret: any) => {
-        this.setState({ isLoading: false });
-      });
-
-    window.addEventListener('beforeunload', this.handleUnload);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.handleUnload);
   }
 
   render() {
@@ -106,11 +74,11 @@ class Launch extends React.Component<
     };
 
     // ---- RENDER BLOCK ----
-    return this.state.isLoading ? (
-      <span>loading...</span>
-    ) : (
+    return (
       <>
-        <h1 className="mt-6 mb-6 text-2xl text-center text-white">Login</h1>
+        <h1 className="mt-6 mb-6 text-2xl text-center text-gray-900 dark:text-white">
+          Login
+        </h1>
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
             <label
@@ -179,12 +147,7 @@ class Launch extends React.Component<
             )}
           </div>
 
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Submit
-          </button>
+          <NormalButton text="Submit" type="submit" />
         </form>
       </>
     );
@@ -192,4 +155,4 @@ class Launch extends React.Component<
 }
 
 // Add wrapper for navigation function
-export default withRouter(Launch);
+export default asPage(Launch);

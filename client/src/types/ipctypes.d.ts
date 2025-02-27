@@ -2,4 +2,5 @@
 
 export interface SessionCache {
   serverURL: string;
+  darkMode: boolean;
 }
