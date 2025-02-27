@@ -3,13 +3,14 @@ import './room-card.css';
 
 import { Types } from 'syncstream-sharedlib';
 
-export default class RoomCard extends React.Component<
-  {
-    roomData: Types.RoomData;
-  },
-  {}
-> {
-  constructor(props: { roomData: Types.RoomData }) {
+interface Props {
+  roomData: Types.RoomData;
+}
+
+interface State {}
+
+export default class RoomCard extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {};
@@ -19,11 +20,13 @@ export default class RoomCard extends React.Component<
   render() {
     // ---- RENDER BLOCK ----
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="dark:bg-gray-800 p-6 rounded-lg shadow-md">
         <h3 className="text-xl font-bold mb-4">
           {this.props.roomData.roomName}
         </h3>
-        <p className="text-gray-600">Owner: {this.props.roomData.roomOwner}</p>
+        <p className="text-gray-600 dark:text-gray-300">
+          Owner: {this.props.roomData.roomOwner}
+        </p>
       </div>
     );
   }

@@ -2,60 +2,30 @@ import React from 'react';
 import './launch.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import { withRouter } from '../../utilities/with-router';
 import SessionState from '../../utilities/session-state';
 import * as api from '../../api';
+import { asPage } from '../../utilities/page-wrapper';
+import PrimaryButton from '../../components/buttons/primary-button';
+import PrimaryInput from '../../components/inputs/primary-input';
+import Localize from '../../utilities/localize';
 
-class Launch extends React.Component<
-  {
-    navigate: NavigateFunction;
-  },
-  {
-    isLoading: boolean;
-    sessionSaved: boolean;
-    forceServerURL: boolean;
-  }
-> {
-  handleUnload: (event: BeforeUnloadEvent) => void;
+interface Props {
+  // eslint-disable-next-line react/no-unused-prop-types
+  toggleDarkMode: () => void;
+  navigate: NavigateFunction;
+}
 
-  constructor(props: { navigate: NavigateFunction }) {
+interface State {
+  forceServerURL: boolean;
+}
+
+class Launch extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
-      isLoading: true,
-      sessionSaved: false,
       forceServerURL: false,
     };
-
-    this.handleUnload = (event: BeforeUnloadEvent) => {
-      // If session is not saved, save and call app quit again
-      if (!this.state.sessionSaved) {
-        event.preventDefault();
-
-        // Handle saving and then quite
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            this.setState({ sessionSaved: true });
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-  }
-
-  componentDidMount() {
-    // Load session state from memory on window load (only once)
-    SessionState.getInstance()
-      .loadCache()
-      .then((ret: any) => {
-        this.setState({ isLoading: false });
-      });
-
-    window.addEventListener('beforeunload', this.handleUnload);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.handleUnload);
   }
 
   render() {
@@ -63,7 +33,7 @@ class Launch extends React.Component<
     const login = (event: React.SyntheticEvent) => {
       event.preventDefault();
       const target = event.target as typeof event.target & {
-        server_url: { value: string };
+        serverURL: { value: string };
         username: { value: string };
         password: { value: string };
       };
@@ -74,7 +44,7 @@ class Launch extends React.Component<
         SessionState.getInstance().serverURL === '' ||
         this.state.forceServerURL
       ) {
-        SessionState.getInstance().serverURL = target.server_url.value;
+        SessionState.getInstance().serverURL = target.serverURL.value;
       }
 
       api.echo().then((res) => {
@@ -106,85 +76,61 @@ class Launch extends React.Component<
     };
 
     // ---- RENDER BLOCK ----
-    return this.state.isLoading ? (
-      <span>loading...</span>
-    ) : (
+    const localize = Localize.getInstance().localize();
+    return (
       <>
-        <h1 className="mt-6 mb-6 text-2xl text-center text-white">Login</h1>
+        <h1 className="mt-6 mb-6 text-2xl text-center text-gray-900 dark:text-white">
+          {localize.launchPage.title}
+        </h1>
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
-            <label
-              htmlFor="username"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Username
-            </label>
-            <input
-              type="text"
+            <PrimaryInput
+              label={localize.launchPage.usernameLabel}
               id="username"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Username"
+              type="text"
               required
             />
           </div>
+
           <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Password
-            </label>
-            <input
-              type="password"
+            <PrimaryInput
+              label={localize.launchPage.passwordLabel}
               id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Password"
+              type="password"
               required
             />
           </div>
+
           <div className="mb-6">
             {SessionState.getInstance().serverURL === '' ||
             this.state.forceServerURL ? (
-              <>
-                <label
-                  htmlFor="Server URL"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Server URL
-                </label>
-                <input
-                  type="url"
-                  id="server_url"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={
-                    SessionState.getInstance().serverURL === ''
-                      ? 'https://domain.com'
-                      : SessionState.getInstance().serverURL
-                  }
-                  required
-                />
-              </>
+              <PrimaryInput
+                label={localize.launchPage.serverURLLabel}
+                id="serverURL"
+                type="url"
+                placeholder={
+                  SessionState.getInstance().serverURL === ''
+                    ? 'https://domain.com'
+                    : SessionState.getInstance().serverURL
+                }
+                required
+              />
             ) : (
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              <PrimaryButton
+                text={localize.launchPage.serverURLButtonText}
                 onClick={() => {
                   this.setState((prevState) => ({
                     forceServerURL: !prevState.forceServerURL,
                   }));
                 }}
-              >
-                Change Server URL
-              </button>
+              />
             )}
           </div>
 
-          <button
+          <PrimaryButton
+            text={localize.launchPage.submitButtonText}
             type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          >
-            Submit
-          </button>
+          />
         </form>
       </>
     );
@@ -192,4 +138,4 @@ class Launch extends React.Component<
 }
 
 // Add wrapper for navigation function
-export default withRouter(Launch);
+export default asPage(Launch);

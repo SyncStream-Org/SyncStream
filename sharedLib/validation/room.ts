@@ -38,13 +38,13 @@ export function isRoomDataMinimum(roomData: any): roomData is {
 export function isRoomDataFull(roomData: any): roomData is {
   roomName: string;
   roomOwner: string;
-  roomID: number;
+  roomID: string;
 } {
   return (
     !!roomData &&
     typeof roomData.roomName === "string" &&
     typeof roomData.roomOwner === "string" &&
-    typeof roomData.roomID === "number"
+    typeof roomData.roomID === "string"
   );
 }
 

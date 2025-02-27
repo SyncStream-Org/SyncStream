@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 import userService from "../services/userService";
-import roomService from "src/services/roomService";
+import roomService from "../services/roomService";
 //import * as service from "../services/admin.service";
 
 export const getRooms = async (req: Request, res: Response) => {

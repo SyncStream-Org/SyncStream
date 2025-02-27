@@ -1,54 +1,33 @@
 import React from 'react';
 import './home.css';
 
-import SessionState from '../../utilities/session-state';
+import { NavigateFunction } from 'react-router-dom';
 import RoomCard from '../../components/room-card/room-card';
+import { asPage } from '../../utilities/page-wrapper';
+import lightSettingsIcon from '../../../assets/icons/settings_light_mode.png';
+import darkSettingsIcon from '../../../assets/icons/settings_dark_mode.png';
+import SessionState from '../../utilities/session-state';
 
-export default class Home extends React.Component<
-  {},
-  {
-    sessionSaved: boolean;
-  }
-> {
-  handleUnload: (event: BeforeUnloadEvent) => void;
+interface Props {
+  // eslint-disable-next-line react/no-unused-prop-types
+  toggleDarkMode: () => void;
+  navigate: NavigateFunction;
+}
 
-  constructor(props: {}) {
+interface State {}
+
+class Home extends React.Component<Props, State> {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(props: Props) {
     super(props);
-
-    this.state = {
-      sessionSaved: false,
-    };
-
-    this.handleUnload = (event: BeforeUnloadEvent) => {
-      // If session is not saved, save and call app quit again
-      if (!this.state.sessionSaved) {
-        event.preventDefault();
-
-        // Handle saving and then quite
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            this.setState({ sessionSaved: true });
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-  }
-
-  componentDidMount() {
-    window.addEventListener('beforeunload', this.handleUnload);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('beforeunload', this.handleUnload);
   }
 
   render() {
     // ---- RENDER BLOCK ----
     return (
-      <div className="min-h-screen bg-gray-100 flex">
+      <div className="min-h-screen flex">
         {/* Sidebar */}
-        <div className="w-64 bg-white shadow-lg p-6">
+        <div className="w-64 dark:bg-gray-800 shadow-lg p-6">
           <h2 className="text-xl font-bold mb-6">Online Users</h2>
           <ul>
             <li className="flex items-center mb-4">
@@ -81,13 +60,24 @@ export default class Home extends React.Component<
         {/* Main Content */}
         <div className="flex-1 p-8">
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Room Collaboration</h1>
+            <h1 className="text-3xl font-bold">Rooms</h1>
             <div className="flex items-center">
               <button
                 type="button"
                 className="mr-4 p-2 bg-gray-200 rounded-full"
+                onClick={() => {
+                  this.props.navigate('/settings');
+                }}
               >
-                <img src="https://placehold.co/24x24" alt="Settings" />
+                <img
+                  src={
+                    SessionState.getInstance().getDarkMode()
+                      ? darkSettingsIcon
+                      : lightSettingsIcon
+                  }
+                  alt="Settings"
+                  className="max-h-7"
+                />
               </button>
               <img
                 src="https://placehold.co/40x40"
@@ -106,3 +96,6 @@ export default class Home extends React.Component<
     );
   }
 }
+
+// Add wrapper for navigation function
+export default asPage(Home);
