@@ -57,7 +57,7 @@ export function getCurrentUser(): Promise<{
   success: SuccessState;
   data?: Types.UserData;
 }> {
-  const headers: Headers = generateDefaultHeaders(false);
+  const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(generateRoute('user'), {

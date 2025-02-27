@@ -33,7 +33,7 @@ export default class PrimaryInput extends React.Component<Props, State> {
       <>
         <label
           htmlFor={this.props.id}
-          className={`block mb-2 text-sm font-medium text-gray-900 dark:text-white ${this.props.labelClassName}`}
+          className={`block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300 ${this.props.labelClassName}`}
         >
           {this.props.label}
         </label>
