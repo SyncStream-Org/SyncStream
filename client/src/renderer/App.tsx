@@ -7,7 +7,12 @@ import Settings from '../pages/settings/settings';
 
 export default function App() {
   return (
-    <Router>
+    <Router
+      future={{
+        v7_relativeSplatPath: false, // These silence the annoying future features warning
+        v7_startTransition: false,
+      }}
+    >
       <Routes>
         <Route path="/" element={<Launch />} />
         <Route path="/home" element={<Home />} />
