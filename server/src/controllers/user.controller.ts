@@ -31,6 +31,18 @@ export const authenticate = async (req: Request, res: Response) => {
     res.json(response)
 };
 
+export const getUserDetails = async (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+
+    const username = user.username;
+    const email = user.email;
+    const admin = user.admin;
+    const displayName = user.displayName;
+    const userData: Types.UserData = { username, email, admin, displayName };
+
+    res.json(userData);
+}
+
 export const update = async (req: Request, res: Response) => {
     const userUpdateData: Types.UserUpdateData = req.body;
     if (!(Validation.isUserUpdateDate(userUpdateData))) { 
