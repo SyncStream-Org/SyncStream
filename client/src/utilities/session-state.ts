@@ -1,6 +1,7 @@
 // The complete session state. Also handles loading and unloading the session cache
 
 import { SessionCache } from '../types/ipctypes';
+import Localize from './localize';
 
 export default class SessionState {
   private static instance: SessionState = new SessionState();
@@ -31,9 +32,13 @@ export default class SessionState {
     return window.electron.ipcRenderer
       .invokeFunction('get-session-cache')
       .then((ret: any) => {
+        // Grab relevant values for session state
         const cache = ret as SessionCache;
         this.serverURL = cache.serverURL;
         this.darkMode = cache.darkMode;
+
+        // Load cached language into localize singleton
+        Localize.getInstance().currentLanguage = cache.language;
       });
   }
 
@@ -42,16 +47,17 @@ export default class SessionState {
     return window.electron.ipcRenderer.invokeFunction('save-session-cache', {
       serverURL: this.serverURL,
       darkMode: this.darkMode,
+      language: Localize.getInstance().currentLanguage,
     } as SessionCache);
   }
 
   // Get dark mode
-  public getDarkMode() {
+  public getDarkMode(this: SessionState) {
     return this.darkMode;
   }
 
   // Set dark mode, WARNING: This does not actually change dark mode for the page, only updates for the cache
-  public updateDarkMode(newMode: boolean) {
+  public updateDarkMode(this: SessionState, newMode: boolean) {
     this.darkMode = newMode;
   }
 }

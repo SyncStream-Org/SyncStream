@@ -1,0 +1,10 @@
+{
+  "launchPage": {
+    "title": "Login",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password",
+    "serverURLLabel": "Server URL",
+    "serverURLButtonText": "Change Server URL",
+    "submitButtonText": "Submit"
+  }
+}

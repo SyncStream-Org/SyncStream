@@ -7,6 +7,7 @@ import * as api from '../../api';
 import { asPage } from '../../utilities/page-wrapper';
 import PrimaryButton from '../../components/buttons/primary-button';
 import PrimaryInput from '../../components/inputs/primary-input';
+import Localize from '../../utilities/localize';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -75,19 +76,25 @@ class Launch extends React.Component<Props, State> {
     };
 
     // ---- RENDER BLOCK ----
+    const localize = Localize.getInstance().localize();
     return (
       <>
         <h1 className="mt-6 mb-6 text-2xl text-center text-gray-900 dark:text-white">
-          Login
+          {localize.launchPage.title}
         </h1>
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
-            <PrimaryInput label="Username" id="username" type="text" required />
+            <PrimaryInput
+              label={localize.launchPage.usernameLabel}
+              id="username"
+              type="text"
+              required
+            />
           </div>
 
           <div className="mb-6">
             <PrimaryInput
-              label="Password"
+              label={localize.launchPage.passwordLabel}
               id="password"
               type="password"
               required
@@ -98,7 +105,7 @@ class Launch extends React.Component<Props, State> {
             {SessionState.getInstance().serverURL === '' ||
             this.state.forceServerURL ? (
               <PrimaryInput
-                label="Server URL"
+                label={localize.launchPage.serverURLLabel}
                 id="serverURL"
                 type="url"
                 placeholder={
@@ -110,7 +117,7 @@ class Launch extends React.Component<Props, State> {
               />
             ) : (
               <PrimaryButton
-                text="Change Server URL"
+                text={localize.launchPage.serverURLButtonText}
                 onClick={() => {
                   this.setState((prevState) => ({
                     forceServerURL: !prevState.forceServerURL,
@@ -120,7 +127,10 @@ class Launch extends React.Component<Props, State> {
             )}
           </div>
 
-          <PrimaryButton text="Submit" type="submit" />
+          <PrimaryButton
+            text={localize.launchPage.submitButtonText}
+            type="submit"
+          />
         </form>
       </>
     );

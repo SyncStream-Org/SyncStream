@@ -166,6 +166,7 @@ ipcMain.handle('get-session-cache', (event, args): SessionCache => {
     const defaultSessionState: SessionCache = {
       serverURL: '',
       darkMode: false,
+      language: 'english',
     };
 
     writeFileSync(
