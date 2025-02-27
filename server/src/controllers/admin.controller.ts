@@ -1,11 +1,27 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 import userService from "../services/userService";
+import roomService from "src/services/roomService";
 //import * as service from "../services/admin.service";
 
 export const getRooms = async (req: Request, res: Response) => {
-    // TODO: services not yet implemented
-    res.status(501).json({ error: "Not yet implemented" });
+    const rooms = await roomService.listAllRooms();
+    let roomsData: Types.RoomData[] = [];
+
+    if (!rooms.length) {
+        res.sendStatus(204);
+        return;
+    }
+
+    for (let i=0; i<rooms.length; i++) {
+        let roomName = rooms[i].roomName;
+        let roomOwner = rooms[i].roomOwner;
+        let roomID = rooms[i].roomID;
+        let temp: Types.RoomData = { roomName, roomOwner, roomID };
+        roomsData[i] = temp;
+    }
+
+    res.json(roomsData);
 };
 
 export const createUser = async (req: Request, res: Response) => {
