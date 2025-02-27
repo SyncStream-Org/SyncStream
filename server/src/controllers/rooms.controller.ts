@@ -30,14 +30,12 @@ export const joinRoom = async (req: Request, res: Response) => {
     res.status(501).json({ error: "Not yet implemented" });
     return;
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 };
 
 export const deleteRoom = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 
     const room = await roomService.getRoomById(roomID);
     if (!room) {
@@ -51,12 +49,8 @@ export const deleteRoom = async (req: Request, res: Response) => {
 };
 
 export const listUsers = async (req: Request, res: Response) => {
-    // TODO: requires additional method on roomService to get list of roomUsers 
-    res.status(501).json({ error: "Not yet implemented" });
-    return;
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 
     const room = await roomService.getRoomById(roomID);
     if (!room) {
@@ -64,13 +58,30 @@ export const listUsers = async (req: Request, res: Response) => {
         return;
     }
 
-        
+    const users = await roomService.getAllRoomUsers(roomID);
+    const usersData: Types.RoomsUserData[] = [];
+
+    for (let i=0; i<users.length; i++) {
+        const username = users[i].username;
+        const isMember = users[i].isMember;
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            // shouldn't happen
+            res.sendStatus(500);
+            return;
+        }
+        const email = user.email;
+        const displayName = user.displayName;
+        const temp: Types.RoomsUserData = { username, email, displayName, isMember };
+        usersData[i] = temp;
+    }
+
+    res.json(usersData);
 };
 
 export const inviteUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
     const inviteData: Types.InviteData = req.body;
     if (!Validation.isInviteDataMinimum(inviteData)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
@@ -99,8 +110,7 @@ export const inviteUser = async (req: Request, res: Response) => {
 
 export const removeUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str, username } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID, username } = req.params;
 
     // ensure requesting user has permissions to edit room state
     const requestingRoomUser = await userService.getRoomUser(roomID, user.username);
@@ -123,8 +133,7 @@ export const removeUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str, username } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID, username } = req.params;
     const roomPermissions: Types.RoomPermissions = req.body;
     if (!Validation.isRoomPermissions(roomPermissions)) {
         res.status(400).json({ error: "Bad Request: invalid format" });

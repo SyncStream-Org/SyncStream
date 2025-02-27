@@ -28,7 +28,7 @@ RoomFile.init({
     allowNull: false,
   },
   roomID: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
   },
   permissions: {

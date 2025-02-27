@@ -1,3 +1,4 @@
+import { mock } from 'node:test';
 import Room from '../../src/models/rooms';
 import RoomService from '../../src/services/roomService';
 
@@ -8,7 +9,7 @@ describe('RoomService', () => {
   let mockRoom: Room;
   beforeEach(() => {
     mockRoom = {
-      roomID: 1,
+      roomID: 'mockID',
       roomName: 'Test Room',
       roomOwner: 'Test Owner',
     } as Room;
@@ -19,17 +20,17 @@ describe('RoomService', () => {
   it('getRoomById should return room when found', async () => {
     (Room.findOne as jest.Mock).mockResolvedValue(mockRoom);
 
-    const room = await RoomService.getRoomById(1);
+    const room = await RoomService.getRoomById(mockRoom.roomID);
     expect(room).toEqual(mockRoom);
-    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: 1 } });
+    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: mockRoom.roomID } });
   });
 
   it('getRoomById should return null when room not found', async () => {
     (Room.findOne as jest.Mock).mockResolvedValue(null);
 
-    const room = await RoomService.getRoomById(999);
+    const room = await RoomService.getRoomById(mockRoom.roomID);
     expect(room).toBeNull();
-    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: 999 } });
+    expect(Room.findOne).toHaveBeenCalledWith({ where: { roomID: mockRoom.roomID } });
   });
 
   /* Tests for createRoom */

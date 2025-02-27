@@ -12,7 +12,7 @@ export interface InviteData {
 export interface RoomData {
   roomName: string;
   roomOwner?: string;
-  roomID?: number;
+  roomID?: string;
 }
 
 export interface UserRoomData {
