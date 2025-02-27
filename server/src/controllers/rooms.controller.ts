@@ -49,9 +49,6 @@ export const deleteRoom = async (req: Request, res: Response) => {
 };
 
 export const listUsers = async (req: Request, res: Response) => {
-    // TODO: requires additional method on roomService to get list of roomUsers 
-    res.status(501).json({ error: "Not yet implemented" });
-    return;
     const user: User = (req as any).user;
     const { roomID } = req.params;
 
@@ -61,7 +58,25 @@ export const listUsers = async (req: Request, res: Response) => {
         return;
     }
 
-        
+    const users = await roomService.getAllRoomUsers(roomID);
+    const usersData: Types.RoomsUserData[] = [];
+
+    for (let i=0; i<users.length; i++) {
+        const username = users[i].username;
+        const isMember = users[i].isMember;
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            // shouldn't happen
+            res.sendStatus(500);
+            return;
+        }
+        const email = user.email;
+        const displayName = user.displayName;
+        const temp: Types.RoomsUserData = { username, email, displayName, isMember };
+        usersData[i] = temp;
+    }
+
+    res.json(usersData);
 };
 
 export const inviteUser = async (req: Request, res: Response) => {
