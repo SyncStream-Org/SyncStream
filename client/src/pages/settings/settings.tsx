@@ -4,6 +4,9 @@ import './settings.css';
 import { NavigateFunction } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
 import { asPage } from '../../utilities/page-wrapper';
+import { Language, LanguageArray } from '../../utilities/localize';
+import PrimaryButton from '../../components/buttons/primary-button';
+import PrimarySelect from '../../components/selects/primary-select';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -17,21 +20,16 @@ interface State {
   categories: string[];
 }
 
+// TODO: localize
 class Settings extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
       activeCategory: 'General',
-      categories: [
-        'General',
-        'Privacy',
-        'Security',
-        'Notifications',
-        'Appearance',
-        'Language',
-        'Advanced',
-      ],
+      categories: SessionState.getInstance().isCurrentUserAdmin
+        ? ['General', 'Appearance', 'Language', 'User Management']
+        : ['General', 'Appearance', 'Language'],
     };
   }
 
@@ -39,11 +37,11 @@ class Settings extends React.Component<Props, State> {
     // ---- RENDER BLOCK ----
     return (
       <div className="flex h-screen">
-        <div className="w-64 dark:bg-gray-800 shadow-lg">
+        <div className="flex flex-col w-64 dark:bg-gray-800 shadow-lg">
           <div className="p-6">
             <h2 className="text-lg font-semibold">Settings</h2>
           </div>
-          <nav>
+          <nav className="grow">
             {this.state.categories.map((category) => (
               <div
                 key={category}
@@ -56,6 +54,13 @@ class Settings extends React.Component<Props, State> {
               </div>
             ))}
           </nav>
+          <PrimaryButton
+            text="Go Back"
+            className="mx-4 mb-4"
+            onClick={() => {
+              this.props.navigate('/home');
+            }}
+          />
         </div>
         <div className="flex-1 p-10">
           <h1 className="text-2xl font-bold">
@@ -69,45 +74,31 @@ class Settings extends React.Component<Props, State> {
                 </p>
               </div>
             )}
-            {this.state.activeCategory === 'Privacy' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Privacy settings content goes here...
-                </p>
-              </div>
-            )}
-            {this.state.activeCategory === 'Security' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Security settings content goes here...
-                </p>
-              </div>
-            )}
-            {this.state.activeCategory === 'Notifications' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Notifications settings content goes here...
-                </p>
-              </div>
-            )}
             {this.state.activeCategory === 'Appearance' && (
               <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Appearance settings content goes here...
-                </p>
+                <p className="text-gray-600 dark:text-gray-300">Color Scheme</p>
+                <PrimaryButton
+                  text={
+                    SessionState.getInstance().getDarkMode()
+                      ? 'Turn on Light Mode'
+                      : 'Turn on Dark Mode'
+                  }
+                  onClick={this.props.toggleDarkMode}
+                />
               </div>
             )}
             {this.state.activeCategory === 'Language' && (
               <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Language settings content goes here...
-                </p>
+                <PrimarySelect
+                  label="App Language"
+                  categories={LanguageArray}
+                />
               </div>
             )}
-            {this.state.activeCategory === 'Advanced' && (
+            {this.state.activeCategory === 'User Management' && (
               <div>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Advanced settings content goes here...
+                  User Management settings content goes here...
                 </p>
               </div>
             )}

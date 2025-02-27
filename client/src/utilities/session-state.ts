@@ -1,18 +1,24 @@
 // The complete session state. Also handles loading and unloading the session cache
 
+import { Types } from 'syncstream-sharedlib';
 import { SessionCache } from '../types/ipctypes';
 import Localize from './localize';
 
 export default class SessionState {
+  // logic variables
   private static instance: SessionState = new SessionState();
 
   private hasLoaded: boolean = false;
 
+  // cached variables
   private darkMode: boolean = false;
 
   public serverURL: string = '';
 
+  // non-cached variables
   public sessionToken: string = '';
+
+  public isCurrentUserAdmin: boolean = false;
 
   public static getInstance(): SessionState {
     return this.instance;

@@ -71,6 +71,23 @@ class Launch extends React.Component<Props, State> {
                 message: 'Invalid username or password.',
               });
             } else {
+              api.User.getCurrentUser().then((userData) => {
+                if (
+                  userData.success === api.SuccessState.FAIL ||
+                  userData.success === api.SuccessState.ERROR
+                ) {
+                  throw new Error(
+                    'Unable to get the current user data, something has gone wrong server side.',
+                  );
+                }
+
+                if (userData.data?.admin === undefined)
+                  throw new Error('Unreachable');
+
+                SessionState.getInstance().isCurrentUserAdmin =
+                  userData.data?.admin;
+              });
+
               this.props.navigate('/home');
             }
           });
