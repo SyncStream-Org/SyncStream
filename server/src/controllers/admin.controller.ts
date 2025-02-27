@@ -6,7 +6,7 @@ import roomService from "src/services/roomService";
 
 export const getRooms = async (req: Request, res: Response) => {
     const rooms = await roomService.listAllRooms();
-    let roomsData: Types.RoomData[] = [];
+    const roomsData: Types.RoomData[] = [];
 
     if (!rooms.length) {
         res.sendStatus(204);
@@ -14,10 +14,10 @@ export const getRooms = async (req: Request, res: Response) => {
     }
 
     for (let i=0; i<rooms.length; i++) {
-        let roomName = rooms[i].roomName;
-        let roomOwner = rooms[i].roomOwner;
-        let roomID = rooms[i].roomID;
-        let temp: Types.RoomData = { roomName, roomOwner, roomID };
+        const roomName = rooms[i].roomName;
+        const roomOwner = rooms[i].roomOwner;
+        const roomID = rooms[i].roomID;
+        const temp: Types.RoomData = { roomName, roomOwner, roomID };
         roomsData[i] = temp;
     }
 

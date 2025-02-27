@@ -59,20 +59,20 @@ export const listUsers = async (req: Request, res: Response) => {
     }
 
     const users = await roomService.getAllRoomUsers(roomID);
-    let usersData: Types.RoomsUserData[] = [];
+    const usersData: Types.RoomsUserData[] = [];
 
     for (let i=0; i<users.length; i++) {
-        let username = users[i].username;
-        let isMember = users[i].isMember;
+        const username = users[i].username;
+        const isMember = users[i].isMember;
         const user = await userService.getUserByUsername(username);
         if (!user) {
             // shouldn't happen
             res.sendStatus(500);
             return;
         }
-        let email = user.email;
-        let displayName = user.displayName;
-        let temp: Types.RoomsUserData = { username, email, displayName, isMember };
+        const email = user.email;
+        const displayName = user.displayName;
+        const temp: Types.RoomsUserData = { username, email, displayName, isMember };
         usersData[i] = temp;
     }
 
