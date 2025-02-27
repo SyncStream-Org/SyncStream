@@ -10,7 +10,7 @@ interface Props {
 
 interface State {}
 
-export default class NormalButton extends React.Component<Props, State> {
+export default class PrimaryButton extends React.Component<Props, State> {
   static defaultProps: Partial<Props> = {
     text: '',
     type: 'button',

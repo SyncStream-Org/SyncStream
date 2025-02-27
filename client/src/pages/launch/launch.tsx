@@ -5,7 +5,8 @@ import { NavigateFunction } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
 import * as api from '../../api';
 import { asPage } from '../../utilities/page-wrapper';
-import NormalButton from '../../components/buttons/normal-button';
+import PrimaryButton from '../../components/buttons/primary-button';
+import PrimaryInput from '../../components/inputs/primary-input';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -31,7 +32,7 @@ class Launch extends React.Component<Props, State> {
     const login = (event: React.SyntheticEvent) => {
       event.preventDefault();
       const target = event.target as typeof event.target & {
-        server_url: { value: string };
+        serverURL: { value: string };
         username: { value: string };
         password: { value: string };
       };
@@ -42,7 +43,7 @@ class Launch extends React.Component<Props, State> {
         SessionState.getInstance().serverURL === '' ||
         this.state.forceServerURL
       ) {
-        SessionState.getInstance().serverURL = target.server_url.value;
+        SessionState.getInstance().serverURL = target.serverURL.value;
       }
 
       api.echo().then((res) => {
@@ -81,73 +82,45 @@ class Launch extends React.Component<Props, State> {
         </h1>
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
-            <label
-              htmlFor="username"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Username
-            </label>
-            <input
-              type="text"
-              id="username"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Username"
-              required
-            />
+            <PrimaryInput label="Username" id="username" type="text" required />
           </div>
+
           <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Password
-            </label>
-            <input
-              type="password"
+            <PrimaryInput
+              label="Password"
               id="password"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Password"
+              type="password"
               required
             />
           </div>
+
           <div className="mb-6">
             {SessionState.getInstance().serverURL === '' ||
             this.state.forceServerURL ? (
-              <>
-                <label
-                  htmlFor="Server URL"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Server URL
-                </label>
-                <input
-                  type="url"
-                  id="server_url"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={
-                    SessionState.getInstance().serverURL === ''
-                      ? 'https://domain.com'
-                      : SessionState.getInstance().serverURL
-                  }
-                  required
-                />
-              </>
+              <PrimaryInput
+                label="Server URL"
+                id="serverURL"
+                type="url"
+                placeholder={
+                  SessionState.getInstance().serverURL === ''
+                    ? 'https://domain.com'
+                    : SessionState.getInstance().serverURL
+                }
+                required
+              />
             ) : (
-              <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              <PrimaryButton
+                text="Change Server URL"
                 onClick={() => {
                   this.setState((prevState) => ({
                     forceServerURL: !prevState.forceServerURL,
                   }));
                 }}
-              >
-                Change Server URL
-              </button>
+              />
             )}
           </div>
 
-          <NormalButton text="Submit" type="submit" />
+          <PrimaryButton text="Submit" type="submit" />
         </form>
       </>
     );
