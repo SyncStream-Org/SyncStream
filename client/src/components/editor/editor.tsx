@@ -30,6 +30,11 @@ const COLORS = [
   '#ff5722',
 ];
 
+interface User {
+  name: string;
+  color: string;
+}
+
 export default function DocumentEditor() {
   const [status, setStatus] = useState('connecting');
   const [ydoc, setYdoc] = useState<Y.Doc | null>(null);
@@ -39,6 +44,8 @@ export default function DocumentEditor() {
   const [userColor] = useState(
     COLORS[Math.floor(Math.random() * COLORS.length)],
   );
+
+  const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const doc = new Y.Doc();
@@ -52,6 +59,18 @@ export default function DocumentEditor() {
 
     websocketProvider.on('status', (event: { status: string }) => {
       setStatus(event.status);
+    });
+
+    websocketProvider.awareness.on('update', () => {
+      const awarenessStates = websocketProvider.awareness.getStates();
+      const newUsers = [];
+
+      for (const [clientID, awareness] of awarenessStates) {
+        if (clientID !== websocketProvider.awareness.clientID) {
+          newUsers.push(awareness.user);
+        }
+      }
+      setOtherUsers(newUsers);
     });
 
     websocketProvider.awareness.setLocalStateField('user', {
@@ -126,12 +145,16 @@ export default function DocumentEditor() {
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 mt-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: userColor }}
-          />
-          <span className="text-sm">{username}</span>
+        <div className="flex items-center gap-4 mt-2">
+          {otherUsers.map((user, _) => (
+            <div key={user.name} className="flex items-center gap-2">
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: user.color }}
+              />
+              <span className="text-sm">{user.name}</span>
+            </div>
+          ))}
         </div>
       </div>
       <Toolbar editor={editor} />
