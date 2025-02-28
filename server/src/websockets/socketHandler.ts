@@ -10,28 +10,28 @@ expressWs(routerWs as unknown as Application);
 
 const docCounts = new Map<string, number>();
 
-routerWs.ws('/rooms/:roomID/doc/:docName', (ws: WebSocket, req: Request) => {
-  const persistence = {
-    bindState: (docName: string, ydoc: Y.Doc) => {
-      console.log('Binding state');
-    },
-    writeState: async (docName: string, ydoc: Y.Doc) => {
-      console.log('Writing state');
-    }
+const persistence = {
+  bindState: (docName: string, ydoc: Y.Doc) => {
+    console.log('Binding state');
+  },
+  writeState: async (docName: string, ydoc: Y.Doc) => {
+    console.log('Writing state');
   }
-  
-  const initContent = (ydoc: Y.Doc) => {
-    console.log('Initializing content');
-    ydoc.getMap('position').set(username, docCount);
-    const watch = ydoc.getXmlFragment('default');
-    const paragraph = new Y.XmlElement('paragraph');
-    paragraph.insert(0, [new Y.XmlText('This is a new paragraph.\n')]);
-    watch.insert(0, [paragraph]);
-    watch.observeDeep(() => {
-      console.log(watch.toString());
-    });
-  }
+}
 
+const initContent = (ydoc: Y.Doc) => {
+  // TODO: move to inside route, needs access to filename
+  console.log('Initializing content');
+  const watch = ydoc.getXmlFragment('default');
+  const paragraph = new Y.XmlElement('paragraph');
+  paragraph.insert(0, [new Y.XmlText('This is a new paragraph.\n')]);
+  watch.insert(0, [paragraph]);
+  watch.observeDeep(() => {
+    console.log(watch.toString());
+  });
+}
+
+routerWs.ws('/rooms/:roomID/doc/:docName', (ws: WebSocket, req: Request) => {
   const roomName = req.params.roomID.toString() + '-' + req.params.docName;
 
   docCounts.set(roomName, docCounts.get(roomName) ? docCounts.get(roomName)! + 1 : 0);

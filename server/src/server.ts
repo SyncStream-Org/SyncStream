@@ -12,7 +12,7 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin';
 
 // Create an Express application
 const app = expressWs(express()).app;
-// const app = express();
+
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(routerWs);
 app.use(routes);
