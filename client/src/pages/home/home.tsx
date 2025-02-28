@@ -4,9 +4,7 @@ import './home.css';
 import { NavigateFunction } from 'react-router-dom';
 import RoomCard from '../../components/room-card/room-card';
 import { asPage } from '../../utilities/page-wrapper';
-import lightSettingsIcon from '../../../assets/icons/settings_light_mode.png';
-import darkSettingsIcon from '../../../assets/icons/settings_dark_mode.png';
-import SessionState from '../../utilities/session-state';
+import { Settings } from 'lucide-react';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -70,15 +68,7 @@ class Home extends React.Component<Props, State> {
                   this.props.navigate('/settings');
                 }}
               >
-                <img
-                  src={
-                    SessionState.getInstance().getDarkMode()
-                      ? darkSettingsIcon
-                      : lightSettingsIcon
-                  }
-                  alt="Settings"
-                  className="max-h-7"
-                />
+                <Settings className="max-h-7" />
               </button>
               <img
                 src="https://placehold.co/40x40"
