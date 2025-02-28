@@ -18,7 +18,7 @@ export default class SessionState {
   // non-cached variables
   public sessionToken: string = '';
 
-  public isCurrentUserAdmin: boolean = false;
+  public currentUser: Types.UserData = { username: '' }; // Current user (NO PASS)
 
   public static getInstance(): SessionState {
     return this.instance;

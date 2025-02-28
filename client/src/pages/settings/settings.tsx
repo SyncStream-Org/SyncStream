@@ -27,7 +27,7 @@ class Settings extends React.Component<Props, State> {
 
     this.state = {
       activeCategory: 'General',
-      categories: SessionState.getInstance().isCurrentUserAdmin
+      categories: SessionState.getInstance().currentUser.admin
         ? ['General', 'Appearance', 'Language', 'User Management']
         : ['General', 'Appearance', 'Language'],
     };
