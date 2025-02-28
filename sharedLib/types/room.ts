@@ -12,10 +12,10 @@ export interface InviteData {
 export interface RoomData {
   roomName: string;
   roomOwner?: string;
-  roomID?: number;
+  roomID?: string;
 }
 
 export interface UserRoomData {
-  roomData: RoomData;
+  roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
   userPermissions: RoomPermissions;
 }

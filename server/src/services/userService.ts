@@ -90,7 +90,7 @@ class UserService {
     return rooms;
   }
 
-  public async getRoomUser(roomID: number, username: string): Promise<RoomUser | null> {
+  public async getRoomUser(roomID: string, username: string): Promise<RoomUser | null> {
     if (await Room.findOne({ where: { roomID: roomID } }) == null) {
       throw new Error('getRoomUser: Room not found');
     }
@@ -100,7 +100,7 @@ class UserService {
     return roomUser;
   }
 
-  public async createRoomUser(roomID: number, roomUser: RoomUserAttributes): Promise<RoomUser> {
+  public async createRoomUser(roomID: string, roomUser: RoomUserAttributes): Promise<RoomUser> {
     if (await this.getRoomUser(roomID, roomUser.username) != null) {
       throw new Error('createRoomUser: User already in room');
     }

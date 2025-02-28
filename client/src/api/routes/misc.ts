@@ -2,9 +2,14 @@
 
 import { Types, Validation } from 'syncstream-sharedlib';
 import { Random } from 'syncstream-sharedlib/utilities';
-import { generateDefaultHeaders, generateRoute } from '../api';
+import {
+  generateDefaultHeaders,
+  generateRoute,
+  printUnexpectedError,
+} from '../utilities';
+import { SuccessState } from '../types';
 
-export default function echo(): Promise<boolean | null> {
+export function echo(): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders(false);
 
   // Define message to send
@@ -19,17 +24,23 @@ export default function echo(): Promise<boolean | null> {
     body: JSON.stringify(uuid),
   });
 
-  return fetch(request).then(async (res) => {
-    const body = await res.json();
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
+        if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
-    if (res.ok) {
-      if (!Validation.isValidStringMessage(body)) return null;
+        const response = body as Types.StringMessage;
+        return response.msg === uuid.msg
+          ? SuccessState.SUCCESS
+          : SuccessState.FAIL;
+      }
 
-      const response = body as Types.StringMessage;
-      return response.msg === uuid.msg;
-    }
-
-    console.error(`Echo API Call Failed: ${res.status}; ${body.error}`);
-    return null;
-  });
+      printUnexpectedError('echo API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
 }

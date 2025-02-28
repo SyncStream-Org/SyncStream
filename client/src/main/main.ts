@@ -165,10 +165,12 @@ ipcMain.handle('get-session-cache', (event, args): SessionCache => {
     // Init session state if not found
     const defaultSessionState: SessionCache = {
       serverURL: '',
+      darkMode: false,
+      language: 'english',
     };
 
     writeFileSync(
-      path.join(app.getPath('userData'), 'sessionState.json'),
+      path.join(app.getPath('userData'), 'sessionCache.json'),
       JSON.stringify(defaultSessionState),
     );
 

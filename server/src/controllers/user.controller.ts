@@ -31,6 +31,18 @@ export const authenticate = async (req: Request, res: Response) => {
     res.json(response)
 };
 
+export const getUserDetails = async (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+
+    const username = user.username;
+    const email = user.email;
+    const admin = user.admin;
+    const displayName = user.displayName;
+    const userData: Types.UserData = { username, email, admin, displayName };
+
+    res.json(userData);
+}
+
 export const update = async (req: Request, res: Response) => {
     const userUpdateData: Types.UserUpdateData = req.body;
     if (!(Validation.isUserUpdateDate(userUpdateData))) { 
@@ -66,8 +78,7 @@ export const listRooms = async (req: Request, res: Response) => {
 
 export const getRoomDetails = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 
     const roomDataObj = await roomService.getRoomById(roomID);
     if (!roomDataObj) {
@@ -92,8 +103,7 @@ export const getRoomDetails = async (req: Request, res: Response) => {
 
 export const removeRoomFromUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 
     try {
         const roomUserObj = await userService.getRoomUser(roomID, user.username);
@@ -111,8 +121,7 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
 
 export const acceptRoomInvite = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const { roomID_str } = req.params;
-    const roomID = Number(roomID_str);
+    const { roomID } = req.params;
 
     try {
         const roomUserObj = await userService.getRoomUser(roomID, user.username);

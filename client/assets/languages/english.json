@@ -1,0 +1,13 @@
+{
+  "launchPage": {
+    "title": "Login",
+    "usernameLabel": "Username",
+    "passwordLabel": "Password",
+    "serverURLLabel": "Server URL",
+    "serverURLButtonText": "Change Server URL",
+    "submitButtonText": "Submit",
+    "messageBoxErrorTitle": "Error",
+    "messageBoxInvalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
+    "messageBoxInvalidAuth": "Invalid username or password."
+  }
+}
