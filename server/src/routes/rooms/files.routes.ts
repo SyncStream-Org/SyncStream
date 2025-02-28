@@ -8,8 +8,8 @@ const router = Router();
 router.put("/", controller.getAllRoomFiles);
 router.put("/", controller.createFile);
 
-router.get("/:document_id", controller.getRoomFile);
-router.put("/:document_id", controller.updateRoomFile);
-router.delete("/:document_id", controller.deleteRoomFile);
+router.get("/:fileName", controller.getRoomFile);
+router.put("/:fileName", controller.updateRoomFile);
+router.delete("/:fileName", controller.deleteRoomFile);
 
 export default router;

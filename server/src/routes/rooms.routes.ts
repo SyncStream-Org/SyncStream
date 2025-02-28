@@ -7,14 +7,14 @@ const router = Router();
 
 router.put("/", controller.createRoom)
 
-router.get("/:room_id", controller.joinRoom)
-router.delete("/:room_id", controller.deleteRoom)
-router.get("/:room_id/users", controller.listUsers)
-router.put("/:room_id/users", controller.inviteUser)
-router.delete("/:room_id/users/:username", controller.removeUser)
-router.put("/:room_id/users/:username", controller.updateUser)
+router.get("/:roomID", controller.joinRoom)
+router.delete("/:roomID", controller.deleteRoom)
+router.get("/:roomID/users", controller.listUsers)
+router.put("/:roomID/users", controller.inviteUser)
+router.delete("/:roomID/users/:username", controller.removeUser)
+router.put("/:roomID/users/:username", controller.updateUser)
 
 // imported routers
-router.use("/{room_id}/markdown", filesRouter);
+router.use("/:roomID/markdown", filesRouter);
 
 export default router;
