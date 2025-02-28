@@ -99,7 +99,6 @@
     "electron-log": "^4.4.8",
     "electron-updater": "^6.1.4",
     "lucide-react": "^0.476.0",
-    "preline": "^2.7.0",
     "prosemirror-example-setup": "^1.2.3",
     "prosemirror-keymap": "^1.2.2",
     "prosemirror-schema-basic": "^1.2.3",
@@ -268,5 +267,10 @@
       ".erb/dll/**"
     ],
     "logLevel": "quiet"
+  },
+  "overrides": {
+    "y-websocket": {
+      "y-leveldb": "/dev/null"
+    }
   }
 }

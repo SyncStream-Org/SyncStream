@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
-import "preline/preline";
-import SessionState from "../../utilities/session-state";
-import ProsemirrorEditor from "../../components/editor/editor";
-import DocEditor from "../../components/editor/editor";
+import { useState, useEffect } from 'react';
+import SessionState from '../../utilities/session-state';
+import DocEditor from '../../components/editor/editor';
 
 export default function ChatPage() {
-  const [onlineUsers, setOnlineUsers] = useState(["Alice", "Bob", "Charlie"]);
-  const [files, setFiles] = useState(["Document1.txt", "Notes.md", "Project.pdf"]);
+  const [onlineUsers, setOnlineUsers] = useState(['Alice', 'Bob', 'Charlie']);
+  const [files, setFiles] = useState([
+    'Document1.txt',
+    'Notes.md',
+    'Project.pdf',
+  ]);
   const [sessionSaved, setSessionSaved] = useState(false);
 
   useEffect(() => {
@@ -17,12 +19,12 @@ export default function ChatPage() {
           .saveCache()
           .then(() => {
             setSessionSaved(true);
-            window.electron.ipcRenderer.sendMessage("app-quit");
+            window.electron.ipcRenderer.sendMessage('app-quit');
           });
       }
     };
-    window.addEventListener("beforeunload", handleUnload);
-    return () => window.removeEventListener("beforeunload", handleUnload);
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
   }, [sessionSaved]);
 
   return (
@@ -32,8 +34,15 @@ export default function ChatPage() {
         <h2 className="text-lg font-semibold mb-4">Online Users</h2>
         <ul className="space-y-2">
           {onlineUsers.map((user, index) => (
-            <li key={index} className="p-2 bg-white rounded shadow flex items-center">
-              <img src="https://placehold.co/40x40" alt="User" className="rounded-full" />
+            <li
+              key={index}
+              className="p-2 bg-white rounded shadow flex items-center"
+            >
+              <img
+                src="https://placehold.co/40x40"
+                alt="User"
+                className="rounded-full"
+              />
               <span className="ml-3">{user}</span>
             </li>
           ))}
@@ -41,7 +50,9 @@ export default function ChatPage() {
         <h2 className="text-lg font-semibold mt-6 mb-4">Files</h2>
         <ul className="space-y-2">
           {files.map((file, index) => (
-            <li key={index} className="p-2 bg-white rounded shadow">{file}</li>
+            <li key={index} className="p-2 bg-white rounded shadow">
+              {file}
+            </li>
           ))}
         </ul>
       </aside>
@@ -49,7 +60,10 @@ export default function ChatPage() {
       {/* Main Content */}
       <main className="flex-1 p-4 flex flex-col">
         {/* Text Editor */}
-        <div className="flex-1 bg-white border rounded shadow p-4 overflow-hidden" style={{ minHeight: '500px' }}>
+        <div
+          className="flex-1 bg-white border rounded shadow p-4 overflow-hidden"
+          style={{ minHeight: '500px' }}
+        >
           <DocEditor docName="doc.md" username="User" />
         </div>
       </main>
