@@ -45,6 +45,9 @@ export const getRoomFile = async (req: Request, res: Response) => {
 
 // TODO: server side events
 export const updateRoomFile = async (req: Request, res: Response) => {
+    // TODO: requires further developing as a group on what it means to join room
+    res.status(501).json({ error: "Not yet implemented" });
+    return;
     const { roomID } = req.params;
 };
 
