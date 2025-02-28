@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as controller from "../controllers/user.controller";
 
-import { authMiddleware } from "../middleware/auth"
+import { authMiddleware } from "../middleware/setup"
 
 const router = Router();
 
@@ -12,9 +12,9 @@ router.use(authMiddleware)
 router.get("/user", controller.getUserDetails);
 router.put("/update", controller.update);
 router.get("/rooms", controller.listRooms);
-router.get("/rooms/:room_id", controller.getRoomDetails);
-router.delete("/rooms/:room_id", controller.removeRoomFromUser);
-router.put("/rooms/:room_id/invitation", controller.acceptRoomInvite)
-router.delete("/rooms/:room_id/invitation", controller.declineRoomInvite)
+router.get("/rooms/:roomID", controller.getRoomDetails);
+router.delete("/rooms/:roomID", controller.removeRoomFromUser);
+router.put("/rooms/:roomID/invitation", controller.acceptRoomInvite)
+router.delete("/rooms/:roomID/invitation", controller.declineRoomInvite)
 
 export default router;
