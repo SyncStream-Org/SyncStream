@@ -4,7 +4,8 @@ import { verifyToken } from "../utils/auth";
 import userService from "../services/userService";
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization;
+  console.log(req.headers)
+  const token = req.headers['session-token'] as string;
   if (!token) {
     res.status(401).json({ error: "Unauthorized: No Token Present" });
     return;
