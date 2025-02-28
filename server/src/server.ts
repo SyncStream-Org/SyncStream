@@ -1,5 +1,7 @@
 import express, { Application, Request, Response } from 'express';
+import expressWs from 'express-ws';
 import sequelize from './db';
+import routerWs from './websockets/socketHandler';
 import routes from "./routes";
 import UserService from './services/userService';
 
@@ -8,9 +10,12 @@ const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD || 'admin';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin';
 
-const app: Application = express();
-app.use(express.json());
-app.use(routes)
+// Create an Express application
+const app = expressWs(express()).app;
+// const app = express();
+app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(routerWs);
+app.use(routes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);  

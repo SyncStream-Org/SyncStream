@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "preline/preline";
 import SessionState from "../../utilities/session-state";
 import ProsemirrorEditor from "../../components/editor/editor";
+import DocEditor from "../../components/editor/editor";
 
 export default function ChatPage() {
   const [onlineUsers, setOnlineUsers] = useState(["Alice", "Bob", "Charlie"]);
@@ -43,20 +44,13 @@ export default function ChatPage() {
             <li key={index} className="p-2 bg-white rounded shadow">{file}</li>
           ))}
         </ul>
-        {/* Voice Control Panel */}
-        {/* <div className="mt-6 bg-white border rounded shadow p-4 flex justify-between items-center">
-          <h3 className="text-md font-semibold">Voice Control</h3>
-          <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-            Start Call
-          </button>
-        </div> */}
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 flex">
+      <main className="flex-1 p-4 flex flex-col">
         {/* Text Editor */}
-        <div className="flex-1 bg-white border rounded shadow p-4">
-          <ProsemirrorEditor />
+        <div className="flex-1 bg-white border rounded shadow p-4 overflow-hidden" style={{ minHeight: '500px' }}>
+          <DocEditor docName="doc.md" username="User" />
         </div>
       </main>
     </div>
