@@ -34,5 +34,5 @@ declare module 'room-types' {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface RoomFileCreationAtributes extends Omit<RoomFileAttributes, 'fileID'> {}
+  export interface RoomFileCreationAttributes extends Omit<RoomFileAttributes, 'fileID'> {}
 }
