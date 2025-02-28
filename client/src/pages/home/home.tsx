@@ -16,6 +16,7 @@ interface Props {
 
 interface State {}
 
+// TODO: localize
 class Home extends React.Component<Props, State> {
   // eslint-disable-next-line no-useless-constructor
   constructor(props: Props) {

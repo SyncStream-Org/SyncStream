@@ -20,6 +20,21 @@ export function isUserDataAuth(userData: any): userData is {
   );
 }
 
+export function isUserDataNoPass(userData: any): userData is {
+  username: string;
+  email: string;
+  admin: boolean;
+  displayName: string;
+} {
+  return (
+    !!userData &&
+    typeof userData.username === "string" &&
+    typeof userData.email === "string" &&
+    typeof userData.admin === "boolean" &&
+    typeof userData.displayName === "string"
+  );
+}
+
 export function isUserDataFull(userData: any): userData is {
   username: string;
   password: string;

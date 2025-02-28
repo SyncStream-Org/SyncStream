@@ -33,9 +33,9 @@ export default function ChatPage() {
       <aside className="w-64 bg-gray-100 p-4 border-r border-gray-300 flex flex-col">
         <h2 className="text-lg font-semibold mb-4">Online Users</h2>
         <ul className="space-y-2">
-          {onlineUsers.map((user, index) => (
+          {onlineUsers.map((user) => (
             <li
-              key={index}
+              key={user}
               className="p-2 bg-white rounded shadow flex items-center"
             >
               <img
@@ -49,8 +49,8 @@ export default function ChatPage() {
         </ul>
         <h2 className="text-lg font-semibold mt-6 mb-4">Files</h2>
         <ul className="space-y-2">
-          {files.map((file, index) => (
-            <li key={index} className="p-2 bg-white rounded shadow">
+          {files.map((file) => (
+            <li key={file} className="p-2 bg-white rounded shadow">
               {file}
             </li>
           ))}

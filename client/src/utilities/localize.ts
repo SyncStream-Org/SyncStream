@@ -4,7 +4,8 @@ import englishDict from '../../assets/languages/english.json';
 import gibberishDict from '../../assets/languages/gibberish.json';
 
 // Export languages available
-export type Language = 'english' | 'gibberish';
+export const LanguageArray = ['english', 'gibberish'] as const;
+export type Language = (typeof LanguageArray)[number];
 
 // Export available ids for strings
 export type LanguageDict = {
