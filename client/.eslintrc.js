@@ -31,6 +31,7 @@ module.exports = {
     'react/prefer-stateless-function': 'off',
     'react/static-property-placement': 'off',
     'react/button-has-type': 'off',
+    'jsx-a11y/control-has-associated-label': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
   },
   parserOptions: {

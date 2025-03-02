@@ -158,3 +158,55 @@ export function getAllRooms(): Promise<{
       return { success: SuccessState.ERROR };
     });
 }
+
+export function getAllUsers(): Promise<{
+  success: SuccessState;
+  data?: Types.UserData[];
+}> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute('admin/users'), {
+    method: 'GET',
+    headers,
+  });
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.status === 200) {
+        const body = await res.json();
+
+        // Validate
+        if (!(Object.prototype.toString.call(body) === '[object Array]'))
+          return { success: SuccessState.ERROR };
+        for (let i = 0; i < body.length; i += 1) {
+          if (!Validation.isUserDataNoPass(body[i]))
+            return { success: SuccessState.ERROR };
+        }
+
+        return {
+          success: SuccessState.SUCCESS,
+          data: body as Types.UserData[],
+        };
+      }
+
+      if (res.status === 204) {
+        return {
+          success: SuccessState.SUCCESS,
+          data: [],
+        };
+      }
+
+      if (res.status === 403) {
+        console.error('Get all users failed: Not admin.');
+        return { success: SuccessState.FAIL };
+      }
+
+      printUnexpectedError('admin/users API Call Failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
+}

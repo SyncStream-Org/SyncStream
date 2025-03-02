@@ -1,13 +1,99 @@
 {
   "launchPage": {
-    "title": "crstcrstgcrsdcypw",
-    "usernameLabel": "rsofg$rESN",
-    "passwordLabel": "oynheritnluon/v",
-    "serverURLLabel": "fou'wpfuogdh/,",
-    "serverURLButtonText": "ASdASfqweqweczxc",
-    "submitButtonText": "fasdfewrrqwedfzx",
-    "messageBoxErrorTitle": "erohivnsmkfn,gfsiue",
-    "messageBoxInvalidServer": "sdfgjkhdlkfjsojierhsgosjk/dflvms.fn.glekj;/lfkd",
-    "messageBoxInvalidAuth": "sdfhsgjyteyrhtsgfbngm nghrdth"
+    "title": "f;oalijsduhliaeurwhnfg;ouiahndsg",
+    "form": {
+      "username": "sdofl;kgjnk;lasdfjgnlksdjfnbg",
+      "password": ";akdsfgjnm;alsdikfngo;iwaenr",
+      "serverURL": "gaoineoptifujnawe;oifjn;olaskdjf",
+      "serverURLButton": "agoeriujhngf;oiasjnd;flkjsd;flk",
+      "submit": "agoine;foij;awoeijkf;oklsdaj;flkn"
+    },
+    "messageBox": {
+      "errorTitle": "poaiksdkfj;lasidjf;oaisjdf",
+      "invalidServer": "asoidjfoaihjepfliouhjalsdiujhfnlkasjdbnflkajsdbnflhjkasbdflkjashdflkjahsdlfkhjbasldfkjhnasldkfjh",
+      "invalidAuth": "oq89u734hf98hp98ujhpq908hj4fpiuasdhpfoijap[o0iuf[a09ufhpaosiudfjoiasd"
+    }
+  },
+  "settingsPage": {
+    "title": "oasdiuhfjp",
+    "backButtonText": "aeoifjpaoiejfpoaisdjf;lkans",
+    "categories": {
+      "general": {
+        "title": "aopijhgpoiajf;lkjsd;flkjanlfiuvnpwaeiuofj",
+        "shortTitle": "aolsdikjfaoisdjfpo"
+      },
+      "appearance": {
+        "title": "asdflijapwoiejfoiawj;fkljnsda;lkjudfhnal;",
+        "shortTitle": "as;ldjkf;asd"
+      },
+      "language": {
+        "title": "aoisdjnfpaiouwejhflijansdlkfjbnalsdkjfn",
+        "shortTitle": "jasdnflkjhas;df"
+      },
+      "userManagement": {
+        "title": "oaskdijnf;aoisjpo;ewijfm;laskdnf",
+        "shortTitle": "alksdnmf;laksdjf"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "asdfasg",
+        "username": "adsfjhaoweiufjhaldj",
+        "displayName": "Daghjerrawefsadf",
+        "email": "hdgfjhsaeewfsaef"
+      },
+      "changeProfile": {
+        "title": "aghserthsergawef",
+        "displayName": "awetashsdfgvdfgs",
+        "email": "aefargasdfasd",
+        "password": "eawtryeerhrtgerf",
+        "submit": "gaeraefagaerg"
+      },
+      "dangerZone": {
+        "title": "awetgertyhrwtsasfd",
+        "logOut": "sdhrtertsdgsdfgb"
+      },
+      "messageBox": {
+        "errorTitle": "adsgfadgf",
+        "updateError": "shertaefasedfawefasdfa"
+      }
+    },
+    "language": {
+      "languageChange": "asfdlgijh;aowierjakjsdfj"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "asodjfn;alkwiejf;alks",
+        "lightMode": "aewifj;oaisasdgasd",
+        "darkMode": "tgywerhsadfgawerfa"
+      }
+    },
+    "userManagement": {
+      "users": {
+        "title": "asdgsjgaer",
+        "noUsers": "ahgrtsdgafasewfeasfea",
+        "username": "adfgsdfhsdfg",
+        "displayName": "sdfgsfhjserfa",
+        "email": "sdfgsh",
+        "admin": "uyerjhwre"
+      },
+      "createUser": {
+        "title": "wretgsfhds",
+        "username": "wertgsdf",
+        "email": "eudgfhjndg",
+        "password": "wretgweyh",
+        "displayName": "dfghrtedrew",
+        "admin": "dfghrtee",
+        "submit": "dfghrtrt"
+      },
+      "messageBox": {
+        "successTitle": "asgaag",
+        "errorTitle": "sdfghsdgfs",
+        "userGetError": "aagafdgsateyhgesrthdtyyertge4rtser",
+        "userDeleteError": "dht5reywargdjnfdghjdrtyesrt",
+        "userCreateError": "sh5jrtyhertgserg",
+        "userCreateAutogenPass": "sdfhrteysertsgerhbdrtjhrtysertge"
+      }
+    }
   }
 }
