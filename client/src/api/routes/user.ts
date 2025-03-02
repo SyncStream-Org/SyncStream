@@ -53,6 +53,38 @@ export function authenticate(
     });
 }
 
+export function getCurrentUser(): Promise<{
+  success: SuccessState;
+  data?: Types.UserData;
+}> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute('user'), {
+    method: 'GET',
+    headers,
+  });
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) {
+        const body = await res.json();
+        if (!Validation.isUserDataNoPass(body))
+          return { success: SuccessState.ERROR };
+
+        const response = body as Types.UserData;
+        return { success: SuccessState.SUCCESS, data: response };
+      }
+
+      printUnexpectedError('user/authenticate API Call Failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
+}
+
 export function updateUser(data: Types.UserUpdateData): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 

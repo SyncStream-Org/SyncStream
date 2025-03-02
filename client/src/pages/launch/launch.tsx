@@ -53,9 +53,8 @@ class Launch extends React.Component<Props, State> {
       api.echo().then((res) => {
         if (res === api.SuccessState.FAIL || res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Invalid server address. Please enter correct address or contact your administrator for help.',
+            title: localize.launchPage.messageBox.errorTitle,
+            message: localize.launchPage.messageBox.invalidServer,
           });
 
           SessionState.getInstance().serverURL = serverURLCache;
@@ -67,10 +66,24 @@ class Launch extends React.Component<Props, State> {
             if (authRes === api.SuccessState.ERROR) return;
             if (authRes === api.SuccessState.FAIL) {
               window.electron.ipcRenderer.invokeFunction('show-message-box', {
-                title: 'Error',
-                message: 'Invalid username or password.',
+                title: localize.launchPage.messageBox.errorTitle,
+                message: localize.launchPage.messageBox.invalidAuth,
               });
             } else {
+              api.User.getCurrentUser().then((userData) => {
+                if (
+                  userData.success === api.SuccessState.FAIL ||
+                  userData.success === api.SuccessState.ERROR
+                ) {
+                  throw new Error(
+                    'Unable to get the current user data, something has gone wrong server side.',
+                  );
+                }
+
+                if (userData.data === undefined) throw new Error('Unreachable');
+                SessionState.getInstance().currentUser = userData.data;
+              });
+
               this.props.navigate('/home');
             }
           });
@@ -87,7 +100,7 @@ class Launch extends React.Component<Props, State> {
         <form onSubmit={login} className="m-10">
           <div className="mb-6">
             <PrimaryInput
-              label={localize.launchPage.usernameLabel}
+              label={localize.launchPage.form.username}
               id="username"
               type="text"
               required
@@ -96,7 +109,7 @@ class Launch extends React.Component<Props, State> {
 
           <div className="mb-6">
             <PrimaryInput
-              label={localize.launchPage.passwordLabel}
+              label={localize.launchPage.form.password}
               id="password"
               type="password"
               required
@@ -107,7 +120,7 @@ class Launch extends React.Component<Props, State> {
             {SessionState.getInstance().serverURL === '' ||
             this.state.forceServerURL ? (
               <PrimaryInput
-                label={localize.launchPage.serverURLLabel}
+                label={localize.launchPage.form.serverURL}
                 id="serverURL"
                 type="url"
                 placeholder={
@@ -119,7 +132,7 @@ class Launch extends React.Component<Props, State> {
               />
             ) : (
               <PrimaryButton
-                text={localize.launchPage.serverURLButtonText}
+                text={localize.launchPage.form.serverURLButton}
                 onClick={() => {
                   this.setState((prevState) => ({
                     forceServerURL: !prevState.forceServerURL,
@@ -129,11 +142,17 @@ class Launch extends React.Component<Props, State> {
             )}
           </div>
 
-          <PrimaryButton
-            text={localize.launchPage.submitButtonText}
-            type="submit"
-          />
+          <PrimaryButton text={localize.launchPage.form.submit} type="submit" />
         </form>
+        <button
+          type="button"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          onClick={() => {
+            this.props.navigate('/room');
+          }}
+        >
+          DEV BYPASS (ROOM)
+        </button>
       </>
     );
   }

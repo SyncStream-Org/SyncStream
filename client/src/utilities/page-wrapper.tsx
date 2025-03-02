@@ -78,7 +78,7 @@ export const asPage = (Component: any) => {
         // Handles dark theme as well
         <div
           data-theme={this.state.darkMode ? 'dark' : ''}
-          className="bg-white dark:bg-gray-900 text-black dark:text-white h-screen w-screen fixed"
+          className="bg-white dark:bg-gray-900 text-black dark:text-white w-screen h-screen overflow-hidden"
         >
           <Component toggleDarkMode={this.toggleDarkMode} {...this.props} />
         </div>

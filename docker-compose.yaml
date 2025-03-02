@@ -55,9 +55,12 @@ services:
     
     ports:
       - 80:3000
-
+    
+    volumes:
+      - sync-stream-file-data:/var/lib/sync-stream/docs
 volumes:
   sync-stream-db-data:
+  sync-stream-file-data:
 
 networks:
   sync-stream:

@@ -1,13 +1,99 @@
 {
   "launchPage": {
     "title": "Login",
-    "usernameLabel": "Username",
-    "passwordLabel": "Password",
-    "serverURLLabel": "Server URL",
-    "serverURLButtonText": "Change Server URL",
-    "submitButtonText": "Submit",
-    "messageBoxErrorTitle": "Error",
-    "messageBoxInvalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
-    "messageBoxInvalidAuth": "Invalid username or password."
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "serverURL": "Server URL",
+      "serverURLButton": "Change Server URL",
+      "submit": "Submit"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "invalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
+      "invalidAuth": "Invalid username or password."
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "backButtonText": "Go Back",
+    "categories": {
+      "general": {
+        "title": "General Settings",
+        "shortTitle": "General"
+      },
+      "appearance": {
+        "title": "Appearance Settings",
+        "shortTitle": "Appearance"
+      },
+      "language": {
+        "title": "Language Settings",
+        "shortTitle": "Language"
+      },
+      "userManagement": {
+        "title": "User Management Settings",
+        "shortTitle": "User Management"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "Profile",
+        "username": "Username:",
+        "displayName": "Display Name:",
+        "email": "Email:"
+      },
+      "changeProfile": {
+        "title": "Change Profile",
+        "displayName": "Display Name",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Submit"
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "logOut": "Log Out"
+      },
+      "messageBox": {
+        "errorTitle": "Error",
+        "updateError": "Unable to update user at this time. Try again in a few minutes."
+      }
+    },
+    "language": {
+      "languageChange": "App Language"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "Color Scheme",
+        "lightMode": "Turn on Dark Mode",
+        "darkMode": "Turn on Light Mode"
+      }
+    },
+    "userManagement": {
+      "users": {
+        "title": "Users",
+        "noUsers": "No users to display...",
+        "username": "Username",
+        "displayName": "Display Name",
+        "email": "Email",
+        "admin": "Is Admin?"
+      },
+      "createUser": {
+        "title": "Create User",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "displayName": "Display Name",
+        "admin": "Is Admin?",
+        "submit": "Sumbit"
+      },
+      "messageBox": {
+        "successTitle": "Success",
+        "errorTitle": "Error",
+        "userGetError": "Unable to get users from server.",
+        "userDeleteError": "Unable to delete user.",
+        "userCreateError": "Unable to create user.",
+        "userCreateAutogenPass": "New user has auto generated password:"
+      }
+    }
   }
 }

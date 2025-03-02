@@ -2,8 +2,14 @@ import React from 'react';
 import './settings.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import SessionState from '../../utilities/session-state';
+import PrimaryButton from '../../components/buttons/primary-button';
+import Localize, { SettingsPageCategories } from '../../utilities/localize';
 import { asPage } from '../../utilities/page-wrapper';
+import SessionState from '../../utilities/session-state';
+import AppearanceSettings from './appearance';
+import GeneralSettings from './general';
+import LanguageSettings from './language';
+import UserManagementSettings from './userManagment';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -22,28 +28,27 @@ class Settings extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      activeCategory: 'General',
-      categories: [
-        'General',
-        'Privacy',
-        'Security',
-        'Notifications',
-        'Appearance',
-        'Language',
-        'Advanced',
-      ],
+      activeCategory: 'general',
+      categories: SessionState.getInstance().currentUser.admin
+        ? ['general', 'appearance', 'language', 'userManagement']
+        : ['general', 'appearance', 'language'],
     };
   }
 
   render() {
+    // Grab localize engine
+    const localize = Localize.getInstance().localize();
+
     // ---- RENDER BLOCK ----
     return (
       <div className="flex h-screen">
-        <div className="w-64 dark:bg-gray-800 shadow-lg">
+        <div className="flex flex-col w-64 dark:bg-gray-800 shadow-lg">
           <div className="p-6">
-            <h2 className="text-lg font-semibold">Settings</h2>
+            <h2 className="text-lg font-semibold">
+              {localize.settingsPage.title}
+            </h2>
           </div>
-          <nav>
+          <nav className="grow">
             {this.state.categories.map((category) => (
               <div
                 key={category}
@@ -52,64 +57,46 @@ class Settings extends React.Component<Props, State> {
                   this.setState({ activeCategory: category });
                 }}
               >
-                {category}
+                {
+                  localize.settingsPage.categories[
+                    category as SettingsPageCategories
+                  ].shortTitle
+                }
               </div>
             ))}
           </nav>
+          <PrimaryButton
+            text={localize.settingsPage.backButtonText}
+            className="mx-4 mb-4"
+            onClick={() => {
+              this.props.navigate('/home');
+            }}
+          />
         </div>
-        <div className="flex-1 p-10">
+        <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
           <h1 className="text-2xl font-bold">
-            {this.state.activeCategory} Settings
+            {
+              localize.settingsPage.categories[
+                this.state.activeCategory as SettingsPageCategories
+              ].title
+            }
           </h1>
           <div className="mt-6">
-            {this.state.activeCategory === 'General' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  General settings content goes here...
-                </p>
-              </div>
+            {this.state.activeCategory === 'general' && (
+              <GeneralSettings navigate={this.props.navigate} />
             )}
-            {this.state.activeCategory === 'Privacy' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Privacy settings content goes here...
-                </p>
-              </div>
+            {this.state.activeCategory === 'appearance' && (
+              <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
             )}
-            {this.state.activeCategory === 'Security' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Security settings content goes here...
-                </p>
-              </div>
+            {this.state.activeCategory === 'language' && (
+              <LanguageSettings
+                forceUpdate={() => {
+                  this.forceUpdate();
+                }}
+              />
             )}
-            {this.state.activeCategory === 'Notifications' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Notifications settings content goes here...
-                </p>
-              </div>
-            )}
-            {this.state.activeCategory === 'Appearance' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Appearance settings content goes here...
-                </p>
-              </div>
-            )}
-            {this.state.activeCategory === 'Language' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Language settings content goes here...
-                </p>
-              </div>
-            )}
-            {this.state.activeCategory === 'Advanced' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Advanced settings content goes here...
-                </p>
-              </div>
+            {this.state.activeCategory === 'userManagement' && (
+              <UserManagementSettings />
             )}
           </div>
         </div>

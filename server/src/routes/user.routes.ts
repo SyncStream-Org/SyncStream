@@ -9,7 +9,7 @@ router.post("/authenticate", controller.authenticate);
 
 router.use(authMiddleware)
 
-router.get("/user", controller.getUserDetails);
+router.get("/", controller.getUserDetails);
 router.put("/update", controller.update);
 router.get("/rooms", controller.listRooms);
 router.get("/rooms/:roomID", controller.getRoomDetails);

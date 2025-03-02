@@ -4,20 +4,100 @@ import englishDict from '../../assets/languages/english.json';
 import gibberishDict from '../../assets/languages/gibberish.json';
 
 // Export languages available
-export type Language = 'english' | 'gibberish';
+export const LanguageArray = ['english', 'gibberish'] as const;
+export type Language = (typeof LanguageArray)[number];
 
 // Export available ids for strings
+export type SettingsPageCategories =
+  | 'general'
+  | 'appearance'
+  | 'language'
+  | 'userManagement';
 export type LanguageDict = {
   launchPage: {
     title: string;
-    usernameLabel: string;
-    passwordLabel: string;
-    serverURLLabel: string;
-    serverURLButtonText: string;
-    submitButtonText: string;
-    messageBoxErrorTitle: string;
-    messageBoxInvalidServer: string;
-    messageBoxInvalidAuth: string;
+    form: {
+      username: string;
+      password: string;
+      serverURL: string;
+      serverURLButton: string;
+      submit: string;
+    };
+    messageBox: {
+      errorTitle: string;
+      invalidServer: string;
+      invalidAuth: string;
+    };
+  };
+  settingsPage: {
+    title: string;
+    backButtonText: string;
+    categories: {
+      [key in SettingsPageCategories]: {
+        title: string;
+        shortTitle: string;
+      };
+    };
+    general: {
+      profile: {
+        title: string;
+        username: string;
+        displayName: string;
+        email: string;
+      };
+      changeProfile: {
+        title: string;
+        displayName: string;
+        email: string;
+        password: string;
+        submit: string;
+      };
+      dangerZone: {
+        title: string;
+        logOut: string;
+      };
+      messageBox: {
+        errorTitle: string;
+        updateError: string;
+      };
+    };
+    language: {
+      languageChange: string;
+    };
+    appearance: {
+      colorScheme: {
+        label: string;
+        lightMode: string;
+        darkMode: string;
+      };
+    };
+    userManagement: {
+      users: {
+        title: string;
+        noUsers: string;
+        username: string;
+        displayName: string;
+        email: string;
+        admin: string;
+      };
+      createUser: {
+        title: string;
+        username: string;
+        email: string;
+        password: string;
+        displayName: string;
+        admin: string;
+        submit: string;
+      };
+      messageBox: {
+        successTitle: string;
+        errorTitle: string;
+        userGetError: string;
+        userDeleteError: string;
+        userCreateError: string;
+        userCreateAutogenPass: string;
+      };
+    };
   };
 };
 
