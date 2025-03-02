@@ -67,6 +67,33 @@
         "lightMode": "Turn on Dark Mode",
         "darkMode": "Turn on Light Mode"
       }
+    },
+    "userManagement": {
+      "users": {
+        "title": "Users",
+        "noUsers": "No users to display...",
+        "username": "Username",
+        "displayName": "Display Name",
+        "email": "Email",
+        "admin": "Is Admin?"
+      },
+      "createUser": {
+        "title": "Create User",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "displayName": "Display Name",
+        "admin": "Is Admin?",
+        "submit": "Sumbit"
+      },
+      "messageBox": {
+        "successTitle": "Success",
+        "errorTitle": "Error",
+        "userGetError": "Unable to get users from server.",
+        "userDeleteError": "Unable to delete user.",
+        "userCreateError": "Unable to create user.",
+        "userCreateAutogenPass": "New user has auto generated password:"
+      }
     }
   }
 }

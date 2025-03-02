@@ -2,9 +2,9 @@ import React from 'react';
 import './home.css';
 
 import { NavigateFunction } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import RoomCard from '../../components/room-card/room-card';
 import { asPage } from '../../utilities/page-wrapper';
-import { Settings } from 'lucide-react';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types

@@ -67,6 +67,33 @@
         "lightMode": "aewifj;oaisasdgasd",
         "darkMode": "tgywerhsadfgawerfa"
       }
+    },
+    "userManagement": {
+      "users": {
+        "title": "asdgsjgaer",
+        "noUsers": "ahgrtsdgafasewfeasfea",
+        "username": "adfgsdfhsdfg",
+        "displayName": "sdfgsfhjserfa",
+        "email": "sdfgsh",
+        "admin": "uyerjhwre"
+      },
+      "createUser": {
+        "title": "wretgsfhds",
+        "username": "wertgsdf",
+        "email": "eudgfhjndg",
+        "password": "wretgweyh",
+        "displayName": "dfghrtedrew",
+        "admin": "dfghrtee",
+        "submit": "dfghrtrt"
+      },
+      "messageBox": {
+        "successTitle": "asgaag",
+        "errorTitle": "sdfghsdgfs",
+        "userGetError": "aagafdgsateyhgesrthdtyyertge4rtser",
+        "userDeleteError": "dht5reywargdjnfdghjdrtyesrt",
+        "userCreateError": "sh5jrtyhertgserg",
+        "userCreateAutogenPass": "sdfhrteysertsgerhbdrtjhrtysertge"
+      }
     }
   }
 }

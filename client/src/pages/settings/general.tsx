@@ -2,13 +2,13 @@ import React from 'react';
 import './settings.css';
 
 import { NavigateFunction } from 'react-router-dom';
+import { Types } from 'syncstream-sharedlib';
+import { Time } from 'syncstream-sharedlib/utilities';
 import SessionState from '../../utilities/session-state';
 import * as api from '../../api';
 import Localize from '../../utilities/localize';
 import PrimaryButton from '../../components/buttons/primary-button';
 import PrimaryInput from '../../components/inputs/primary-input';
-import { Types } from 'syncstream-sharedlib';
-import { Time } from 'syncstream-sharedlib/utilities';
 
 interface Props {
   navigate: NavigateFunction;
@@ -45,7 +45,7 @@ export default class GeneralSettings extends React.Component<Props, State> {
         updateObj.password = target.password.value;
 
       api.User.updateUser(updateObj).then(async (res) => {
-        if (res === api.SuccessState.ERROR) {
+        if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: localize.settingsPage.general.messageBox.errorTitle,
             message: localize.settingsPage.general.messageBox.updateError,

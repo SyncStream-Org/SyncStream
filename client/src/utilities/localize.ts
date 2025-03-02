@@ -71,6 +71,33 @@ export type LanguageDict = {
         darkMode: string;
       };
     };
+    userManagement: {
+      users: {
+        title: string;
+        noUsers: string;
+        username: string;
+        displayName: string;
+        email: string;
+        admin: string;
+      };
+      createUser: {
+        title: string;
+        username: string;
+        email: string;
+        password: string;
+        displayName: string;
+        admin: string;
+        submit: string;
+      };
+      messageBox: {
+        successTitle: string;
+        errorTitle: string;
+        userGetError: string;
+        userDeleteError: string;
+        userCreateError: string;
+        userCreateAutogenPass: string;
+      };
+    };
   };
 };
 

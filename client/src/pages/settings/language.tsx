@@ -24,17 +24,15 @@ export default class LanguageSettings extends React.Component<Props, State> {
 
     // ---- RENDER BLOCK ----
     return (
-      <>
-        <PrimarySelect
-          label={localize.settingsPage.language.languageChange}
-          categories={LanguageArray}
-          defaultCategory={Localize.getInstance().currentLanguage}
-          onChange={(category) => {
-            Localize.getInstance().currentLanguage = category as Language;
-            this.props.forceUpdate();
-          }}
-        />
-      </>
+      <PrimarySelect
+        label={localize.settingsPage.language.languageChange}
+        categories={LanguageArray}
+        defaultCategory={Localize.getInstance().currentLanguage}
+        onChange={(category) => {
+          Localize.getInstance().currentLanguage = category as Language;
+          this.props.forceUpdate();
+        }}
+      />
     );
   }
 }
