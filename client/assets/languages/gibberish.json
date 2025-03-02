@@ -36,6 +36,29 @@
       }
     },
     "general": {
+      "profile": {
+        "title": "asdfasg",
+        "username": "adsfjhaoweiufjhaldj",
+        "displayName": "Daghjerrawefsadf",
+        "email": "hdgfjhsaeewfsaef"
+      },
+      "changeProfile": {
+        "title": "aghserthsergawef",
+        "displayName": "awetashsdfgvdfgs",
+        "email": "aefargasdfasd",
+        "password": "eawtryeerhrtgerf",
+        "submit": "gaeraefagaerg"
+      },
+      "dangerZone": {
+        "title": "awetgertyhrwtsasfd",
+        "logOut": "sdhrtertsdgsdfgb"
+      },
+      "messageBox": {
+        "errorTitle": "adsgfadgf",
+        "updateError": "shertaefasedfawefasdfa"
+      }
+    },
+    "language": {
       "languageChange": "asfdlgijh;aowierjakjsdfj"
     },
     "appearance": {

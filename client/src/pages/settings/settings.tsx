@@ -2,23 +2,14 @@ import React from 'react';
 import './settings.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import SessionState from '../../utilities/session-state';
-import { asPage } from '../../utilities/page-wrapper';
-import * as api from '../../api';
-import Localize, {
-  Language,
-  LanguageArray,
-  SettingsPageCategories,
-} from '../../utilities/localize';
 import PrimaryButton from '../../components/buttons/primary-button';
-import PrimarySelect from '../../components/selects/primary-select';
-import PrimaryInput from '../../components/inputs/primary-input';
-import { Types } from 'syncstream-sharedlib';
-import { Time } from 'syncstream-sharedlib/utilities';
-import UserManagementSettings from './userManagment';
-import LanguageSettings from './language';
+import Localize, { SettingsPageCategories } from '../../utilities/localize';
+import { asPage } from '../../utilities/page-wrapper';
+import SessionState from '../../utilities/session-state';
 import AppearanceSettings from './appearance';
 import GeneralSettings from './general';
+import LanguageSettings from './language';
+import UserManagementSettings from './userManagment';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -97,7 +88,13 @@ class Settings extends React.Component<Props, State> {
             {this.state.activeCategory === 'appearance' && (
               <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
             )}
-            {this.state.activeCategory === 'language' && <LanguageSettings />}
+            {this.state.activeCategory === 'language' && (
+              <LanguageSettings
+                forceUpdate={() => {
+                  this.forceUpdate();
+                }}
+              />
+            )}
             {this.state.activeCategory === 'userManagement' && (
               <UserManagementSettings />
             )}

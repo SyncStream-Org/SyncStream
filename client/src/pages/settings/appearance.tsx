@@ -6,7 +6,6 @@ import Localize from '../../utilities/localize';
 import PrimaryButton from '../../components/buttons/primary-button';
 
 interface Props {
-  // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
 }
 

@@ -11,7 +11,6 @@ import { Types } from 'syncstream-sharedlib';
 import { Time } from 'syncstream-sharedlib/utilities';
 
 interface Props {
-  // eslint-disable-next-line react/no-unused-prop-types
   navigate: NavigateFunction;
 }
 
@@ -48,9 +47,8 @@ export default class GeneralSettings extends React.Component<Props, State> {
       api.User.updateUser(updateObj).then(async (res) => {
         if (res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Unable to update user at this time. Try again in a few minutes.',
+            title: localize.settingsPage.general.messageBox.errorTitle,
+            message: localize.settingsPage.general.messageBox.updateError,
           });
         } else {
           await Time.delay(100);
@@ -75,22 +73,30 @@ export default class GeneralSettings extends React.Component<Props, State> {
     // ---- RENDER BLOCK ----
     return (
       <>
-        <h2 className="text-xl text-gray-800 dark:text-gray-100">Profile</h2>
+        <h2 className="text-xl text-gray-800 dark:text-gray-100">
+          {localize.settingsPage.general.profile.title}
+        </h2>
         <div>
           <div className="flex flex-row">
-            <p className="text-gray-600 dark:text-gray-300">Username:</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              {localize.settingsPage.general.profile.username}
+            </p>
             <p className="text-gray-600 dark:text-gray-300 grow text-right">
               {SessionState.getInstance().currentUser.username}
             </p>
           </div>
           <div className="flex flex-row">
-            <p className="text-gray-600 dark:text-gray-300">Display Name:</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              {localize.settingsPage.general.profile.displayName}
+            </p>
             <p className="text-gray-600 dark:text-gray-300 grow text-right">
               {SessionState.getInstance().currentUser.displayName}
             </p>
           </div>
           <div className="flex flex-row">
-            <p className="text-gray-600 dark:text-gray-300">Email:</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              {localize.settingsPage.general.profile.email}
+            </p>
             <p className="text-gray-600 dark:text-gray-300 grow text-right">
               {SessionState.getInstance().currentUser.email}
             </p>
@@ -100,38 +106,42 @@ export default class GeneralSettings extends React.Component<Props, State> {
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
 
         <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
-          Change Profile
+          {localize.settingsPage.general.changeProfile.title}
         </h2>
         <form onSubmit={updateUser}>
           <PrimaryInput
             labelClassName="mt-1"
-            label="Display Name"
+            label={localize.settingsPage.general.changeProfile.displayName}
             id="displayName"
             type="text"
           />
           <PrimaryInput
             labelClassName="mt-3"
-            label="Email"
+            label={localize.settingsPage.general.changeProfile.email}
             id="email"
             type="email"
           />
           <PrimaryInput
             labelClassName="mt-3"
-            label="Password"
+            label={localize.settingsPage.general.changeProfile.password}
             id="password"
             type="password"
           />
-          <PrimaryButton className="mt-3" text="Submit" type="submit" />
+          <PrimaryButton
+            className="mt-3"
+            text={localize.settingsPage.general.changeProfile.submit}
+            type="submit"
+          />
         </form>
 
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
 
         <h2 className="text-xl text-gray-800 dark:text-gray-100">
-          Danger Zone
+          {localize.settingsPage.general.dangerZone.title}
         </h2>
         <PrimaryButton
           className="mt-2"
-          text="Log Out"
+          text={localize.settingsPage.general.dangerZone.logOut}
           type="button"
           onClick={() => {
             SessionState.getInstance().sessionToken = '';

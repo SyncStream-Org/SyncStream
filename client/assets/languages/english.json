@@ -36,6 +36,29 @@
       }
     },
     "general": {
+      "profile": {
+        "title": "Profile",
+        "username": "Username:",
+        "displayName": "Display Name:",
+        "email": "Email:"
+      },
+      "changeProfile": {
+        "title": "Change Profile",
+        "displayName": "Display Name",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Submit"
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "logOut": "Log Out"
+      },
+      "messageBox": {
+        "errorTitle": "Error",
+        "updateError": "Unable to update user at this time. Try again in a few minutes."
+      }
+    },
+    "language": {
       "languageChange": "App Language"
     },
     "appearance": {

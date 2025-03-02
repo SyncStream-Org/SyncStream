@@ -39,6 +39,29 @@ export type LanguageDict = {
       };
     };
     general: {
+      profile: {
+        title: string;
+        username: string;
+        displayName: string;
+        email: string;
+      };
+      changeProfile: {
+        title: string;
+        displayName: string;
+        email: string;
+        password: string;
+        submit: string;
+      };
+      dangerZone: {
+        title: string;
+        logOut: string;
+      };
+      messageBox: {
+        errorTitle: string;
+        updateError: string;
+      };
+    };
+    language: {
       languageChange: string;
     };
     appearance: {
