@@ -69,7 +69,6 @@ export function getCurrentUser(): Promise<{
     .then(async (res) => {
       if (res.ok) {
         const body = await res.json();
-        console.log(body);
         if (!Validation.isUserDataNoPass(body))
           return { success: SuccessState.ERROR };
 

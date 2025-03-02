@@ -1,13 +1,49 @@
 {
   "launchPage": {
     "title": "Login",
-    "usernameLabel": "Username",
-    "passwordLabel": "Password",
-    "serverURLLabel": "Server URL",
-    "serverURLButtonText": "Change Server URL",
-    "submitButtonText": "Submit",
-    "messageBoxErrorTitle": "Error",
-    "messageBoxInvalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
-    "messageBoxInvalidAuth": "Invalid username or password."
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "serverURL": "Server URL",
+      "serverURLButton": "Change Server URL",
+      "submit": "Submit"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "invalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
+      "invalidAuth": "Invalid username or password."
+    }
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "backButtonText": "Go Back",
+    "categories": {
+      "general": {
+        "title": "General Settings",
+        "shortTitle": "General"
+      },
+      "appearance": {
+        "title": "Appearance Settings",
+        "shortTitle": "Appearance"
+      },
+      "language": {
+        "title": "Language Settings",
+        "shortTitle": "Language"
+      },
+      "userManagement": {
+        "title": "User Management Settings",
+        "shortTitle": "User Management"
+      }
+    },
+    "general": {
+      "languageChange": "App Language"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "Color Scheme",
+        "lightMode": "Turn on Dark Mode",
+        "darkMode": "Turn on Light Mode"
+      }
+    }
   }
 }

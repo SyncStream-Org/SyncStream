@@ -4,7 +4,11 @@ import './settings.css';
 import { NavigateFunction } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
 import { asPage } from '../../utilities/page-wrapper';
-import { Language, LanguageArray } from '../../utilities/localize';
+import Localize, {
+  Language,
+  LanguageArray,
+  SettingsPageCategories,
+} from '../../utilities/localize';
 import PrimaryButton from '../../components/buttons/primary-button';
 import PrimarySelect from '../../components/selects/primary-select';
 
@@ -20,26 +24,30 @@ interface State {
   categories: string[];
 }
 
-// TODO: localize
 class Settings extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      activeCategory: 'General',
+      activeCategory: 'general',
       categories: SessionState.getInstance().currentUser.admin
-        ? ['General', 'Appearance', 'Language', 'User Management']
-        : ['General', 'Appearance', 'Language'],
+        ? ['general', 'appearance', 'language', 'userManagement']
+        : ['general', 'appearance', 'language'],
     };
   }
 
   render() {
+    // Grab localize engine
+    const localize = Localize.getInstance().localize();
+
     // ---- RENDER BLOCK ----
     return (
       <div className="flex h-screen">
         <div className="flex flex-col w-64 dark:bg-gray-800 shadow-lg">
           <div className="p-6">
-            <h2 className="text-lg font-semibold">Settings</h2>
+            <h2 className="text-lg font-semibold">
+              {localize.settingsPage.title}
+            </h2>
           </div>
           <nav className="grow">
             {this.state.categories.map((category) => (
@@ -50,12 +58,16 @@ class Settings extends React.Component<Props, State> {
                   this.setState({ activeCategory: category });
                 }}
               >
-                {category}
+                {
+                  localize.settingsPage.categories[
+                    category as SettingsPageCategories
+                  ].shortTitle
+                }
               </div>
             ))}
           </nav>
           <PrimaryButton
-            text="Go Back"
+            text={localize.settingsPage.backButtonText}
             className="mx-4 mb-4"
             onClick={() => {
               this.props.navigate('/home');
@@ -64,38 +76,50 @@ class Settings extends React.Component<Props, State> {
         </div>
         <div className="flex-1 p-10">
           <h1 className="text-2xl font-bold">
-            {this.state.activeCategory} Settings
+            {
+              localize.settingsPage.categories[
+                this.state.activeCategory as SettingsPageCategories
+              ].title
+            }
           </h1>
           <div className="mt-6">
-            {this.state.activeCategory === 'General' && (
+            {this.state.activeCategory === 'general' && (
               <div>
                 <p className="text-gray-600 dark:text-gray-300">
                   General settings content goes here...
                 </p>
               </div>
             )}
-            {this.state.activeCategory === 'Appearance' && (
+            {this.state.activeCategory === 'appearance' && (
               <div>
-                <p className="text-gray-600 dark:text-gray-300">Color Scheme</p>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {localize.settingsPage.appearance.colorScheme.label}
+                </p>
                 <PrimaryButton
                   text={
                     SessionState.getInstance().getDarkMode()
-                      ? 'Turn on Light Mode'
-                      : 'Turn on Dark Mode'
+                      ? localize.settingsPage.appearance.colorScheme.darkMode
+                      : localize.settingsPage.appearance.colorScheme.lightMode
                   }
                   onClick={this.props.toggleDarkMode}
                 />
               </div>
             )}
-            {this.state.activeCategory === 'Language' && (
+            {this.state.activeCategory === 'language' && (
               <div>
                 <PrimarySelect
-                  label="App Language"
+                  label={localize.settingsPage.general.languageChange}
                   categories={LanguageArray}
+                  defaultCategory={Localize.getInstance().currentLanguage}
+                  onChange={(category) => {
+                    Localize.getInstance().currentLanguage =
+                      category as Language;
+                    this.forceUpdate();
+                  }}
                 />
               </div>
             )}
-            {this.state.activeCategory === 'User Management' && (
+            {this.state.activeCategory === 'userManagement' && (
               <div>
                 <p className="text-gray-600 dark:text-gray-300">
                   User Management settings content goes here...

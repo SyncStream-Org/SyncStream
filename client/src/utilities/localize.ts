@@ -8,17 +8,46 @@ export const LanguageArray = ['english', 'gibberish'] as const;
 export type Language = (typeof LanguageArray)[number];
 
 // Export available ids for strings
+export type SettingsPageCategories =
+  | 'general'
+  | 'appearance'
+  | 'language'
+  | 'userManagement';
 export type LanguageDict = {
   launchPage: {
     title: string;
-    usernameLabel: string;
-    passwordLabel: string;
-    serverURLLabel: string;
-    serverURLButtonText: string;
-    submitButtonText: string;
-    messageBoxErrorTitle: string;
-    messageBoxInvalidServer: string;
-    messageBoxInvalidAuth: string;
+    form: {
+      username: string;
+      password: string;
+      serverURL: string;
+      serverURLButton: string;
+      submit: string;
+    };
+    messageBox: {
+      errorTitle: string;
+      invalidServer: string;
+      invalidAuth: string;
+    };
+  };
+  settingsPage: {
+    title: string;
+    backButtonText: string;
+    categories: {
+      [key in SettingsPageCategories]: {
+        title: string;
+        shortTitle: string;
+      };
+    };
+    general: {
+      languageChange: string;
+    };
+    appearance: {
+      colorScheme: {
+        label: string;
+        lightMode: string;
+        darkMode: string;
+      };
+    };
   };
 };
 

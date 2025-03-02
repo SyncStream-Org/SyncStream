@@ -63,12 +63,12 @@ class Home extends React.Component<Props, State> {
             <div className="flex items-center">
               <button
                 type="button"
-                className="mr-4 p-2 bg-gray-200 rounded-full"
+                className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
                 onClick={() => {
                   this.props.navigate('/settings');
                 }}
               >
-                <Settings className="max-h-7" />
+                <Settings className="max-h-7 " />
               </button>
               <img
                 src="https://placehold.co/40x40"
