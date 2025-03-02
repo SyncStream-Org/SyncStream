@@ -2,8 +2,8 @@ import React from 'react';
 import './inputs.css';
 
 interface Props {
-  label: string;
   id: string;
+  label?: string;
   type: React.HTMLInputTypeAttribute;
   labelClassName?: string;
   inputClassName?: string;
@@ -15,6 +15,7 @@ interface State {}
 
 export default class PrimaryInput extends React.Component<Props, State> {
   static defaultProps: Partial<Props> = {
+    label: '',
     labelClassName: '',
     inputClassName: '',
     placeholder: '',
@@ -31,12 +32,14 @@ export default class PrimaryInput extends React.Component<Props, State> {
     // ---- RENDER BLOCK ----
     return (
       <>
-        <label
-          htmlFor={this.props.id}
-          className={`block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300 ${this.props.labelClassName}`}
-        >
-          {this.props.label}
-        </label>
+        {this.props.label !== '' && (
+          <label
+            htmlFor={this.props.id}
+            className={`block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300 ${this.props.labelClassName}`}
+          >
+            {this.props.label}
+          </label>
+        )}
         <input
           type={this.props.type}
           id={this.props.id}

@@ -4,6 +4,7 @@ import './settings.css';
 import { NavigateFunction } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
 import { asPage } from '../../utilities/page-wrapper';
+import * as api from '../../api';
 import Localize, {
   Language,
   LanguageArray,
@@ -11,6 +12,13 @@ import Localize, {
 } from '../../utilities/localize';
 import PrimaryButton from '../../components/buttons/primary-button';
 import PrimarySelect from '../../components/selects/primary-select';
+import PrimaryInput from '../../components/inputs/primary-input';
+import { Types } from 'syncstream-sharedlib';
+import { Time } from 'syncstream-sharedlib/utilities';
+import UserManagementSettings from './userManagment';
+import LanguageSettings from './language';
+import AppearanceSettings from './appearance';
+import GeneralSettings from './general';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -74,7 +82,7 @@ class Settings extends React.Component<Props, State> {
             }}
           />
         </div>
-        <div className="flex-1 p-10">
+        <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
           <h1 className="text-2xl font-bold">
             {
               localize.settingsPage.categories[
@@ -84,47 +92,14 @@ class Settings extends React.Component<Props, State> {
           </h1>
           <div className="mt-6">
             {this.state.activeCategory === 'general' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  General settings content goes here...
-                </p>
-              </div>
+              <GeneralSettings navigate={this.props.navigate} />
             )}
             {this.state.activeCategory === 'appearance' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  {localize.settingsPage.appearance.colorScheme.label}
-                </p>
-                <PrimaryButton
-                  text={
-                    SessionState.getInstance().getDarkMode()
-                      ? localize.settingsPage.appearance.colorScheme.darkMode
-                      : localize.settingsPage.appearance.colorScheme.lightMode
-                  }
-                  onClick={this.props.toggleDarkMode}
-                />
-              </div>
+              <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
             )}
-            {this.state.activeCategory === 'language' && (
-              <div>
-                <PrimarySelect
-                  label={localize.settingsPage.general.languageChange}
-                  categories={LanguageArray}
-                  defaultCategory={Localize.getInstance().currentLanguage}
-                  onChange={(category) => {
-                    Localize.getInstance().currentLanguage =
-                      category as Language;
-                    this.forceUpdate();
-                  }}
-                />
-              </div>
-            )}
+            {this.state.activeCategory === 'language' && <LanguageSettings />}
             {this.state.activeCategory === 'userManagement' && (
-              <div>
-                <p className="text-gray-600 dark:text-gray-300">
-                  User Management settings content goes here...
-                </p>
-              </div>
+              <UserManagementSettings />
             )}
           </div>
         </div>
