@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { useEditor, EditorContent, BubbleMenu, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
@@ -10,7 +10,7 @@ import { Loader2 } from 'lucide-react';
 
 import { Toolbar } from '../toolbar/toolbar';
 import './editor.css';
-// Random user colors for collaboration cursors
+
 const COLORS = [
   '#f44336',
   '#e91e63',
@@ -35,11 +35,22 @@ interface User {
   color: string;
 }
 
-export default function DocumentEditor() {
+interface EditorProps {
+  username: string;
+  sessionToken: string;
+  docName: string;
+  roomID: string;
+}
+
+export default function DocumentEditor({
+  username,
+  sessionToken,
+  docName,
+  roomID,
+}: EditorProps) {
   const [status, setStatus] = useState('connecting');
   const [ydoc, setYdoc] = useState<Y.Doc | null>(null);
   const [provider, setProvider] = useState<WebsocketProvider | null>(null);
-  const [username] = useState(`User ${Math.floor(Math.random() * 1000)}`);
 
   const [userColor] = useState(
     COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -52,8 +63,8 @@ export default function DocumentEditor() {
     setYdoc(doc);
 
     const websocketProvider = new WebsocketProvider(
-      'ws://localhost/rooms/1/doc',
-      'document-editor',
+      `ws://localhost/rooms/${roomID}/doc`,
+      docName,
       doc,
     );
 
@@ -84,14 +95,12 @@ export default function DocumentEditor() {
       websocketProvider.disconnect();
       doc.destroy();
     };
-  }, [username, userColor]);
+  }, [username, roomID, docName, userColor]);
 
   const editor = useEditor(
     {
       extensions: [
-        StarterKit.configure({
-          // history: false,
-        }),
+        StarterKit.configure(),
         Placeholder.configure({
           placeholder: 'Start writing your document...',
         }),
