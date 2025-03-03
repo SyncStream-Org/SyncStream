@@ -38,8 +38,10 @@ interface User {
 interface EditorProps {
   username: string;
   sessionToken: string;
-  docName: string;
+  // eslint-disable-next-line react/require-default-props
+  docName?: string;
   roomID: string;
+  serverURL: string;
 }
 
 export default function DocumentEditor({
@@ -47,6 +49,7 @@ export default function DocumentEditor({
   sessionToken,
   docName,
   roomID,
+  serverURL,
 }: EditorProps) {
   const [status, setStatus] = useState('connecting');
   const [ydoc, setYdoc] = useState<Y.Doc | null>(null);
@@ -59,14 +62,16 @@ export default function DocumentEditor({
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   useEffect(() => {
+    if (!docName) {
+      return () => {};
+    }
+    const webSocketPrefix = serverURL.includes('https') ? 'wss' : 'ws';
+    const wsURL = `${webSocketPrefix}://${serverURL.split('//')[1]}/rooms/${roomID}/doc`;
+
     const doc = new Y.Doc();
     setYdoc(doc);
 
-    const websocketProvider = new WebsocketProvider(
-      `ws://localhost/rooms/${roomID}/doc`,
-      docName,
-      doc,
-    );
+    const websocketProvider = new WebsocketProvider(wsURL, docName, doc);
 
     websocketProvider.on('status', (event: { status: string }) => {
       setStatus(event.status);
@@ -95,7 +100,7 @@ export default function DocumentEditor({
       websocketProvider.disconnect();
       doc.destroy();
     };
-  }, [username, roomID, docName, userColor]);
+  }, [username, roomID, docName, userColor, serverURL]);
 
   const editor = useEditor(
     {
@@ -132,16 +137,16 @@ export default function DocumentEditor({
   if (!editor || !ydoc || !provider) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <p>Select a Document To Begin Editing</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="editor-container w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Collaborative Document Editor</h2>
+          <h2 className="text-xl font-bold">{docName}</h2>
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 rounded-full"
@@ -167,7 +172,7 @@ export default function DocumentEditor({
         </div>
       </div>
       <Toolbar editor={editor} />
-      <div className="border-t">
+      <div className="editor-content">
         {editor && (
           <>
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>

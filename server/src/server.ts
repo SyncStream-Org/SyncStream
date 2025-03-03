@@ -4,11 +4,13 @@ import sequelize from './db';
 import routerWs from './websockets/socketHandler';
 import routes from "./routes";
 import UserService from './services/userService';
+import fs from 'fs';
 
 const port: number = 3000;
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD || 'admin';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin';
+const USER_FILES = process.env.USER_FILES;
 
 // Create an Express application
 const app = expressWs(express()).app;
@@ -33,3 +35,9 @@ sequelize.sync({ force: true }).then(() => {
     console.log('Admin user created');
   });
 });
+
+if (USER_FILES) {
+  for (const file of fs.readdirSync(USER_FILES)) {
+    fs.rmSync(`${USER_FILES}/${file}`);
+  }
+}
