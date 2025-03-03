@@ -2,9 +2,11 @@ import React from 'react';
 import './room-card.css';
 
 import { Types } from 'syncstream-sharedlib';
+import { NavigateFunction } from 'react-router-dom';
 
 interface Props {
   roomData: Types.RoomData;
+  navigate: NavigateFunction;
 }
 
 interface State {}
@@ -20,7 +22,12 @@ export default class RoomCard extends React.Component<Props, State> {
   render() {
     // ---- RENDER BLOCK ----
     return (
-      <div className="dark:bg-gray-800 p-6 rounded-lg shadow-md">
+      <div
+        className="dark:bg-gray-800 p-6 rounded-lg shadow-md"
+        onClick={() => {
+          this.props.navigate(`/room/${this.props.roomData.roomID}`);
+        }}
+      >
         <h3 className="text-xl font-bold mb-4">
           {this.props.roomData.roomName}
         </h3>

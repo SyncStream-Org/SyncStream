@@ -80,7 +80,10 @@ class Home extends React.Component<Props, State> {
 
           {/* Grid of Rooms */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <RoomCard roomData={{ roomName: 'Test', roomOwner: 'Dev' }} />
+            <RoomCard
+              roomData={{ roomName: 'Test', roomOwner: 'Dev', roomID: '1' }}
+              navigate={this.props.navigate}
+            />
           </div>
         </div>
       </div>
