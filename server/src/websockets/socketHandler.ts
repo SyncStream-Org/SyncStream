@@ -5,8 +5,9 @@ import * as Y from 'yjs';
 // @ts-expect-error - no types available
 import { setupWSConnection, docs, setPersistence, setContentInitializor } from '../../node_modules/y-websocket/bin/utils.cjs';
 import fs from 'fs';
+import path from 'path';
 
-const USER_FILES = process.env.USER_FILES;
+const ROOT_DIR = process.env.USER_FILES;
 
 const routerWs = Router();
 expressWs(routerWs as unknown as Application);
@@ -15,17 +16,25 @@ const persistence = {
   bindState: (docName: string, ydoc: Y.Doc) => {
   },
   writeState: async (docName: string, ydoc: Y.Doc) => {
+    const resolvedPath = path.resolve(ROOT_DIR!, docName);
+    if (!resolvedPath.startsWith(ROOT_DIR!)) {
+      throw new Error('Invalid docName');
+    }
     console.log('Writing state for:', docName);
     const file = Y.encodeStateAsUpdate(ydoc);
-    fs.writeFileSync(`${USER_FILES}/${docName}`, file); // Save state as JSON
+    fs.writeFileSync(`${ROOT_DIR}/${docName}`, file); // Save state as JSON
   }
 };
 
 setPersistence(persistence);
 
 const initContent = (ydoc: Y.Doc, docName: string) => {
-  if (fs.existsSync(`${USER_FILES}/${docName}`)) {
-    const file = fs.readFileSync(`${USER_FILES}/${docName}`);
+  const resolvedPath = path.resolve(ROOT_DIR!, docName);
+  if (!resolvedPath.startsWith(ROOT_DIR!)) {
+    throw new Error('Invalid docName');
+  }
+  if (fs.existsSync(`${ROOT_DIR}/${docName}`)) {
+    const file = fs.readFileSync(`${ROOT_DIR}/${docName}`);
     try {
       Y.applyUpdate(ydoc, file);
     } catch (error) {
