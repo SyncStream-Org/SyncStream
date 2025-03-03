@@ -5,7 +5,7 @@ import * as Y from 'yjs';
 // @ts-expect-error - no types available
 import { setupWSConnection, docs, setPersistence, setContentInitializor } from '../../node_modules/y-websocket/bin/utils.cjs';
 import fs from 'fs';
-import path from 'path';
+import path, { resolve } from 'path';
 
 const ROOT_DIR = process.env.USER_FILES;
 
@@ -22,7 +22,7 @@ const persistence = {
     }
     console.log('Writing state for:', docName);
     const file = Y.encodeStateAsUpdate(ydoc);
-    fs.writeFileSync(`${ROOT_DIR}/${docName}`, file); // Save state as JSON
+    fs.writeFileSync(resolvedPath, file); // Save state as JSON
   }
 };
 
@@ -33,8 +33,8 @@ const initContent = (ydoc: Y.Doc, docName: string) => {
   if (!resolvedPath.startsWith(ROOT_DIR!)) {
     throw new Error('Invalid docName');
   }
-  if (fs.existsSync(`${ROOT_DIR}/${docName}`)) {
-    const file = fs.readFileSync(`${ROOT_DIR}/${docName}`);
+  if (fs.existsSync(resolvedPath)) {
+    const file = fs.readFileSync(resolvedPath);
     try {
       Y.applyUpdate(ydoc, file);
     } catch (error) {
