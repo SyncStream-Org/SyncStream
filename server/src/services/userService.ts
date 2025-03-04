@@ -129,6 +129,10 @@ class UserService {
 
     return await roomUser.save();
   }
+
+  public async listAllUsers(): Promise<User[]> {
+    return await User.findAll();
+  }
 }
 
 export default new UserService();
