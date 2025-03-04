@@ -24,6 +24,27 @@ export const getRooms = async (req: Request, res: Response) => {
   res.json(roomsData);
 };
 
+export const listUsers = async (req: Request, res: Response) => {
+  const users = await userService.listAllUsers();
+
+  if (!users.length) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const userData: Types.UserData[] = [];
+  for(let i=0; i<users.length; i++) {
+    const username = users[i].username;
+    const email = users[i].email;
+    const admin = users[i].admin;
+    const displayName = users[i].displayName;
+    const temp: Types.UserData = { username, email, admin, displayName };
+    userData[i] = temp;
+  }
+
+  res.json(userData);
+}
+
 export const createUser = async (req: Request, res: Response) => {
   const userData: Types.UserData = req.body;
   if (!Validation.isUserDataFull(userData)) {

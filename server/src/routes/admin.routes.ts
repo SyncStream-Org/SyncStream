@@ -8,6 +8,7 @@ const router = Router();
 router.use(adminMiddleware)
 
 router.put("/user/", controller.createUser);
+router.get("/users/", controller.listUsers);
 router.delete("/user/:username", controller.deleteUser);
 router.get("/rooms/", controller.getRooms)
 
