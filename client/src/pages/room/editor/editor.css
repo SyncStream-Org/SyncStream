@@ -24,3 +24,25 @@
   user-select: none;
   white-space: nowrap;
 }
+
+/* Ensure the editor container takes up the full height */
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Ensure the editor content takes up the remaining space and scrolls on overflow */
+.editor-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+/* Additional styles for the toolbar */
+.toolbar {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+}

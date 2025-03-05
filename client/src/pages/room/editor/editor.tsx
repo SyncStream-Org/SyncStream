@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { useEditor, EditorContent, BubbleMenu, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
@@ -8,9 +8,9 @@ import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { Loader2 } from 'lucide-react';
 
-import { Toolbar } from '../toolbar/toolbar';
+import { Toolbar } from './toolbar';
 import './editor.css';
-// Random user colors for collaboration cursors
+
 const COLORS = [
   '#f44336',
   '#e91e63',
@@ -35,11 +35,25 @@ interface User {
   color: string;
 }
 
-export default function DocumentEditor() {
+interface EditorProps {
+  username: string;
+  sessionToken: string;
+  // eslint-disable-next-line react/require-default-props
+  docName?: string;
+  roomID: string;
+  serverURL: string;
+}
+
+export default function DocumentEditor({
+  username,
+  sessionToken,
+  docName,
+  roomID,
+  serverURL,
+}: EditorProps) {
   const [status, setStatus] = useState('connecting');
   const [ydoc, setYdoc] = useState<Y.Doc | null>(null);
   const [provider, setProvider] = useState<WebsocketProvider | null>(null);
-  const [username] = useState(`User ${Math.floor(Math.random() * 1000)}`);
 
   const [userColor] = useState(
     COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -48,14 +62,16 @@ export default function DocumentEditor() {
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   useEffect(() => {
+    if (!docName) {
+      return () => {};
+    }
+    const webSocketPrefix = serverURL.includes('https') ? 'wss' : 'ws';
+    const wsURL = `${webSocketPrefix}://${serverURL.split('//')[1]}/rooms/${roomID}/doc`;
+
     const doc = new Y.Doc();
     setYdoc(doc);
 
-    const websocketProvider = new WebsocketProvider(
-      'ws://localhost/rooms/1/doc',
-      'document-editor',
-      doc,
-    );
+    const websocketProvider = new WebsocketProvider(wsURL, docName, doc);
 
     websocketProvider.on('status', (event: { status: string }) => {
       setStatus(event.status);
@@ -84,14 +100,12 @@ export default function DocumentEditor() {
       websocketProvider.disconnect();
       doc.destroy();
     };
-  }, [username, userColor]);
+  }, [username, roomID, docName, userColor, serverURL]);
 
   const editor = useEditor(
     {
       extensions: [
-        StarterKit.configure({
-          // history: false,
-        }),
+        StarterKit.configure(),
         Placeholder.configure({
           placeholder: 'Start writing your document...',
         }),
@@ -123,16 +137,18 @@ export default function DocumentEditor() {
   if (!editor || !ydoc || !provider) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <p>Select a Document To Begin Editing</p>
       </div>
     );
   }
 
+  // TODO: localize
+
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="editor-container w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Collaborative Document Editor</h2>
+          <h2 className="text-xl font-bold">{docName}</h2>
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 rounded-full"
@@ -140,7 +156,7 @@ export default function DocumentEditor() {
                 backgroundColor: status === 'connected' ? '#4caf50' : '#ff9800',
               }}
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600  dark:text-gray-300">
               {status === 'connected' ? 'Connected' : 'Connecting...'}
             </span>
           </div>
@@ -158,7 +174,7 @@ export default function DocumentEditor() {
         </div>
       </div>
       <Toolbar editor={editor} />
-      <div className="border-t">
+      <div className="editor-content no-scrollbar">
         {editor && (
           <>
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>

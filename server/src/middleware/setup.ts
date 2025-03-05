@@ -6,7 +6,6 @@ import User from "../models/users";
 import roomService from "../services/roomService";
 
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.headers)
   const token = req.headers['session-token'] as string;
   if (!token) {
     res.status(401).json({ error: "Unauthorized: No Token Present" });
