@@ -81,7 +81,7 @@ export default class UserManagementSettings extends React.Component<
         username: { value: string };
         email: { value: string };
         password: { value: string };
-        isAdmin: { value: string };
+        isAdmin: { checked: boolean };
         displayName: { value: string };
       };
 
@@ -90,7 +90,7 @@ export default class UserManagementSettings extends React.Component<
         target.username.value,
         target.email.value,
         target.password.value,
-        target.isAdmin.value === 'on',
+        target.isAdmin.checked,
         target.displayName.value,
       ).then(async (res) => {
         if (

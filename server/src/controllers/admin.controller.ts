@@ -33,7 +33,7 @@ export const listUsers = async (req: Request, res: Response) => {
   }
 
   const userData: Types.UserData[] = [];
-  for(let i=0; i<users.length; i++) {
+  for (let i = 0; i < users.length; i++) {
     const username = users[i].username;
     const email = users[i].email;
     const admin = users[i].admin;
@@ -43,7 +43,7 @@ export const listUsers = async (req: Request, res: Response) => {
   }
 
   res.json(userData);
-}
+};
 
 export const createUser = async (req: Request, res: Response) => {
   const userData: Types.UserData = req.body;

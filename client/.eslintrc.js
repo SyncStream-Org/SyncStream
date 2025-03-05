@@ -33,6 +33,7 @@ module.exports = {
     'react/button-has-type': 'off',
     'jsx-a11y/control-has-associated-label': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,

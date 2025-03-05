@@ -18,7 +18,7 @@ export default class RoomCard extends React.Component<Props, State> {
     this.state = {};
   }
 
-  // TODO: make card open room on click
+  // TODO: Make card display if you are part of a room officially or not if the user is admin
   render() {
     // ---- RENDER BLOCK ----
     return (
