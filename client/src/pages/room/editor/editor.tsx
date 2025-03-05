@@ -8,7 +8,7 @@ import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { Loader2 } from 'lucide-react';
 
-import { Toolbar } from '../toolbar/toolbar';
+import { Toolbar } from './toolbar';
 import './editor.css';
 
 const COLORS = [
@@ -142,8 +142,10 @@ export default function DocumentEditor({
     );
   }
 
+  // TODO: localize
+
   return (
-    <div className="editor-container w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+    <div className="editor-container w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{docName}</h2>
@@ -154,7 +156,7 @@ export default function DocumentEditor({
                 backgroundColor: status === 'connected' ? '#4caf50' : '#ff9800',
               }}
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600  dark:text-gray-300">
               {status === 'connected' ? 'Connected' : 'Connecting...'}
             </span>
           </div>
@@ -172,7 +174,7 @@ export default function DocumentEditor({
         </div>
       </div>
       <Toolbar editor={editor} />
-      <div className="editor-content">
+      <div className="editor-content no-scrollbar">
         {editor && (
           <>
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>

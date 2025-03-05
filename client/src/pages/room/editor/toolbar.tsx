@@ -36,72 +36,72 @@ export function Toolbar({ editor }: ToolbarProps) {
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Heading1 className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Heading2 className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Heading3 className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
-        className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Bold className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={`p-2 rounded ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Italic className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleCode().run()}
-        className={`p-2 rounded ${editor.isActive('code') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('code') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Code className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`p-2 rounded ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <List className="w-4 h-4" />
       </button>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`p-2 rounded ${editor.isActive('orderedList') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <ListOrdered className="w-4 h-4" />
       </button>
 
-      <div className="w-px h-6 bg-gray-300 mx-1" />
+      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
 
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={`p-2 rounded ${editor.isActive('blockquote') ? 'bg-gray-200' : ''}`}
+        className={`p-2 rounded ${editor.isActive('blockquote') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
       >
         <Quote className="w-4 h-4" />
       </button>

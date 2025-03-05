@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import SessionState from '../../utilities/session-state';
-import DocEditor from '../../components/editor/editor';
-import { asPage } from '../../utilities/page-wrapper';
 import { useParams, NavigateFunction } from 'react-router-dom';
+import SessionState from '../../utilities/session-state';
+import DocEditor from './editor/editor';
+import { asPage } from '../../utilities/page-wrapper';
 
 interface Props {
+  // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
   navigate: NavigateFunction;
 }
@@ -39,14 +40,14 @@ function RoomPage(props: Props) {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-100 p-4 border-r border-gray-300 flex flex-col justify-between">
+      <aside className="w-64 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between">
         <div>
           <h2 className="text-lg font-semibold mb-4">Online Users</h2>
           <ul className="space-y-2">
             {onlineUsers.map((user) => (
               <li
                 key={user}
-                className="p-2 bg-white rounded shadow flex items-center"
+                className="p-2 bg-white dark:bg-gray-700 rounded shadow flex items-center"
               >
                 <img
                   src="https://placehold.co/40x40"
@@ -63,7 +64,9 @@ function RoomPage(props: Props) {
               <li
                 key={file}
                 className={`p-2 rounded shadow cursor-pointer ${
-                  docName === file ? 'bg-blue-200' : 'bg-white'
+                  docName === file
+                    ? 'bg-blue-200 dark:bg-gray-600'
+                    : 'bg-white dark:bg-gray-700'
                 }`}
                 onClick={() => setDocName(file)}
               >
@@ -84,14 +87,14 @@ function RoomPage(props: Props) {
       <main className="flex-1 p-4 flex flex-col">
         {/* Text Editor */}
         <div
-          className="flex-1 bg-white border rounded shadow p-4 overflow-hidden"
+          className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
           style={{ minHeight: '500px' }}
         >
-          <DocEditor 
-            docName={docName}
-            username={SessionState.getInstance().currentUser.username} 
-            sessionToken='' 
-            roomID={roomID} 
+          <DocEditor
+            docName={docName === null ? '' : docName}
+            username={SessionState.getInstance().currentUser.username}
+            sessionToken=""
+            roomID={roomID}
             serverURL={SessionState.getInstance().serverURL}
           />
         </div>

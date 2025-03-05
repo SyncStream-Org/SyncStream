@@ -32,8 +32,6 @@ class UserService {
 
     const rooms = await this.getUserRooms(user, false, true);
 
-    console.log(rooms);
-
     // TODO: delete owned rooms once room service is implemented
     for (const room of rooms) {
       const roomUser = await this.getRoomUser(room.roomID!, user.username);

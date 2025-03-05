@@ -1,7 +1,7 @@
 {
   "name": "syncstream-client-dev",
   "description": "A self-hosted collaboration workspace.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "homepage": "https://github.com/syncstream-org/syncstream#readme",
   "bugs": {
     "url": "https://github.com/syncstream-org/syncstream/issues"
