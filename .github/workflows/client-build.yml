@@ -94,7 +94,7 @@ jobs:
 
       - name: Build Client
         working-directory: ./client
-        run: npm run make -- --targets=@electron-forge/maker-dmg
+        run: npm run package
 
       - name: Upload .dmg to Github
         uses: actions/upload-artifact@v4
