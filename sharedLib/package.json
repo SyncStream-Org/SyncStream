@@ -12,5 +12,9 @@
   "devDependencies": {
     "@types/node": "^22.13.4",
     "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "winston": "^3.17.0"
   }
 }
