@@ -13,6 +13,7 @@ export interface RoomData {
   roomName: string;
   roomOwner?: string;
   roomID?: string;
+  isMember?: boolean;
 }
 
 export interface UserRoomData {
