@@ -59,10 +59,12 @@ export const update = async (req: Request, res: Response) => {
 
 export const listRooms = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
-    const isOwner = false;
     const isMember = true;
 
-    const rooms = await userService.getUserRooms(user, isOwner, isMember);
+    const roomsOwned = await userService.getUserRooms(user, true, isMember);
+    const roomsPartof = await userService.getUserRooms(user, false, isMember);
+    const roomsInvited = await userService.getUserRooms(user, false, false);
+    const rooms = roomsOwned.concat(roomsPartof).concat(roomsInvited);
     
     // TODO: add permissions after discussing in group
     const roomsData: Types.RoomData[] = []; 
