@@ -72,7 +72,8 @@ export const listRooms = async (req: Request, res: Response) => {
         const roomName = rooms[i].roomName;
         const roomOwner = rooms[i].roomOwner;
         const roomID = rooms[i].roomID;
-        roomsData[i] = { roomName, roomOwner, roomID };
+        const isMember = i<(roomsOwned.length+roomsPartof.length);
+        roomsData[i] = { roomName, roomOwner, roomID, isMember };
     }
 
     res.json(roomsData)
