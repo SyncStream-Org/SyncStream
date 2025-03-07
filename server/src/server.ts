@@ -5,6 +5,7 @@ import routerWs from './websockets/socketHandler';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
+import { loggingMiddleware, preLoggingMiddleWare } from './middleware/logs';
 
 const port: number = 3000;
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
@@ -16,8 +17,12 @@ const USER_FILES = process.env.USER_FILES;
 const app = expressWs(express()).app;
 
 app.use(express.json()); // Middleware to parse JSON request bodies
+app.use(preLoggingMiddleWare);
+
 app.use(routerWs);
 app.use(routes);
+ 
+app.use(loggingMiddleware);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);  
