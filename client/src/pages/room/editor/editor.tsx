@@ -6,7 +6,6 @@ import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-import { Loader2 } from 'lucide-react';
 
 import { Toolbar } from './toolbar';
 import './editor.css';
