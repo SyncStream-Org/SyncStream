@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useEditor, EditorContent, BubbleMenu, Editor } from '@tiptap/react';
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import Placeholder from '@tiptap/extension-placeholder';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
-
 import { Toolbar } from './toolbar';
 import './editor.css';
 
@@ -104,10 +103,7 @@ export default function DocumentEditor({
   const editor = useEditor(
     {
       extensions: [
-        StarterKit.configure(),
-        Placeholder.configure({
-          placeholder: 'Start writing your document...',
-        }),
+        StarterKit,
         ...(ydoc
           ? [
               Collaboration.configure({
@@ -126,7 +122,7 @@ export default function DocumentEditor({
       editorProps: {
         attributes: {
           class:
-            'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none min-h-[450px] p-4',
+            'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none min-h-[450px] p-4 dark:prose-invert',
         },
       },
     },
