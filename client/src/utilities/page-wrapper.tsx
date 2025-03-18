@@ -6,13 +6,15 @@ import { NavigateFunction } from 'react-router-dom';
 import SessionState from './session-state';
 import { withRouter } from './with-router';
 
-export const asPage = (Component: any) => {
+export const asPage = (Component: any, manualLoading: boolean) => {
   class Wrapper extends React.Component<
     {
       navigate: NavigateFunction;
     },
     {
+      isLoading: boolean;
       isLoadingCache: boolean;
+      isLoadingManual: boolean;
       sessionSaved: boolean;
       darkMode: boolean;
     }
@@ -21,11 +23,15 @@ export const asPage = (Component: any) => {
 
     toggleDarkMode: () => void;
 
+    doneLoading: () => void;
+
     constructor(props: { navigate: NavigateFunction }) {
       super(props);
 
       this.state = {
+        isLoading: true,
         isLoadingCache: true,
+        isLoadingManual: true,
         sessionSaved: false,
         darkMode: false,
       };
@@ -51,6 +57,13 @@ export const asPage = (Component: any) => {
         const session = SessionState.getInstance();
         session.updateDarkMode(!session.getDarkMode());
       };
+
+      this.doneLoading = () => {
+        if (manualLoading && !this.state.isLoadingCache)
+          this.setState({ isLoading: false, isLoadingManual: false });
+        else if (manualLoading && this.state.isLoadingCache)
+          this.setState({ isLoadingManual: false });
+      };
     }
 
     componentDidMount() {
@@ -58,10 +71,11 @@ export const asPage = (Component: any) => {
       SessionState.getInstance()
         .loadCache()
         .then((ret: any) => {
-          this.setState({
+          this.setState((prev) => ({
             isLoadingCache: false,
+            isLoading: manualLoading && prev.isLoadingManual,
             darkMode: SessionState.getInstance().getDarkMode(),
-          });
+          }));
         });
 
       window.addEventListener('beforeunload', this.handleUnload);
@@ -72,7 +86,7 @@ export const asPage = (Component: any) => {
     }
 
     render() {
-      return this.state.isLoadingCache ? (
+      return this.state.isLoading ? (
         <span>loading...</span>
       ) : (
         // Handles dark theme as well
@@ -80,7 +94,11 @@ export const asPage = (Component: any) => {
           data-theme={this.state.darkMode ? 'dark' : ''}
           className="bg-white dark:bg-gray-900 text-black dark:text-white w-screen h-screen overflow-hidden"
         >
-          <Component toggleDarkMode={this.toggleDarkMode} {...this.props} />
+          <Component
+            toggleDarkMode={this.toggleDarkMode}
+            doneLoading={this.doneLoading}
+            {...this.props}
+          />
         </div>
       );
     }

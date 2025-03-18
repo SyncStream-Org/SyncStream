@@ -7,6 +7,8 @@ import { asPage } from '../../utilities/page-wrapper';
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  doneLoading: () => void;
   navigate: NavigateFunction;
 }
 
@@ -103,4 +105,4 @@ function RoomPage(props: Props) {
   );
 }
 
-export default asPage(RoomPage);
+export default asPage(RoomPage, false);
