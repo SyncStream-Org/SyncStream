@@ -90,6 +90,11 @@
   },
   "dependencies": {
     "@electron/notarize": "^2.3.2",
+    "@radix-ui/react-context-menu": "^2.2.6",
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@tiptap/extension-collaboration": "^2.11.5",
     "@tiptap/extension-collaboration-cursor": "^2.11.5",
     "@tiptap/extension-placeholder": "^2.11.5",
