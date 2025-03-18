@@ -4,15 +4,19 @@ import './home.css';
 import { NavigateFunction } from 'react-router-dom';
 import { Settings, CirclePlus } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import Localize from '@/utilities/localize';
+import SessionState from '@/utilities/session-state';
+import { asPage } from '@/utilities/page-wrapper';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
-import { asPage } from '../../utilities/page-wrapper';
-import SessionState from '../../utilities/session-state';
-// import {
-//   Popover,
-//   PopoverContent,
-//   PopoverTrigger,
-// } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -71,6 +75,42 @@ class Home extends React.Component<Props, State> {
   }
 
   render() {
+    // Grab localize engine
+    const localize = Localize.getInstance().localize();
+
+    // Try to authenticate with server
+    const addRoom = (event: React.SyntheticEvent) => {
+      event.preventDefault();
+      const target = event.target as typeof event.target & {
+        roomName: { value: string };
+      };
+
+      api.Rooms.createRoom(target.roomName.value).then((res) => {
+        if (res.success === api.SuccessState.ERROR) return;
+        if (res.success === api.SuccessState.FAIL) {
+          window.electron.ipcRenderer.invokeFunction('show-message-box', {
+            title: 'Error',
+            message: 'Unable to create room. Room with name may already exist',
+          });
+        } else {
+          api.User.getRooms().then((roomRes) => {
+            if (
+              roomRes.success === api.SuccessState.ERROR ||
+              roomRes.success === api.SuccessState.FAIL
+            ) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Unable to get room data at this time.',
+              });
+            } else {
+              if (roomRes.data === undefined) throw Error('Unreachable');
+              this.setState({ rooms: roomRes.data });
+            }
+          });
+        }
+      });
+    };
+
     // ---- RENDER BLOCK ----
     return (
       <div className="min-h-screen flex">
@@ -78,15 +118,35 @@ class Home extends React.Component<Props, State> {
           <header className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold">Rooms</h1>
             <div className="flex items-center">
-              <button
-                type="button"
-                className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
-                onClick={() => {
-                  this.props.navigate('/settings');
-                }}
-              >
-                <CirclePlus className="max-h-7 " />
-              </button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
+                  >
+                    <CirclePlus className="max-h-7" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <h4 className="space-y-2 font-medium leading-none">
+                      Add Room
+                    </h4>
+                    <form onSubmit={addRoom} className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="roomName">Room Name</Label>
+                        <Input
+                          id="roomName"
+                          defaultValue=""
+                          className="col-span-2 h-8"
+                        />
+                      </div>
+                      <Button type="submit">Submit</Button>
+                    </form>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
               <button
                 type="button"
                 className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
@@ -107,7 +167,11 @@ class Home extends React.Component<Props, State> {
           {/* Grid of Rooms */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {this.state.rooms.map((room) => (
-              <RoomCard roomData={room} navigate={this.props.navigate} />
+              <RoomCard
+                key={room.roomName}
+                roomData={room}
+                navigate={this.props.navigate}
+              />
             ))}
             {/* TODO: remove once room managment is finished */}
             <RoomCard
