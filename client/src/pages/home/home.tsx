@@ -14,9 +14,9 @@ import { Input } from '@/components/ui/input';
 import Localize from '@/utilities/localize';
 import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
+import { Button } from '@/components/ui/button';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
-import { Button } from '@/components/ui/button';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -27,20 +27,25 @@ interface Props {
 }
 
 interface State {
-  rooms: Types.RoomData[];
+  currentRooms: Types.RoomData[];
+  invitedRooms: Types.RoomData[];
 }
 
 // TODO: localize
 class Home extends React.Component<Props, State> {
-  // eslint-disable-next-line no-useless-constructor
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      rooms: [],
+      currentRooms: [],
+      invitedRooms: [],
     };
 
     // Grab all rooms available to user (or all rooms if admin)
+    this.updateRoomList();
+  }
+
+  updateRoomList() {
     if (SessionState.getInstance().currentUser.admin) {
       api.Admin.getAllRooms().then((res) => {
         if (
@@ -53,7 +58,13 @@ class Home extends React.Component<Props, State> {
           });
         } else {
           if (res.data === undefined) throw Error('Unreachable');
-          this.setState({ rooms: res.data });
+
+          const current = res.data.filter((roomData) => !roomData.isInvited);
+          const invited = res.data.filter((roomData) => roomData.isInvited);
+          this.setState({
+            currentRooms: current,
+            invitedRooms: invited,
+          });
         }
       });
     } else {
@@ -68,7 +79,13 @@ class Home extends React.Component<Props, State> {
           });
         } else {
           if (res.data === undefined) throw Error('Unreachable');
-          this.setState({ rooms: res.data });
+
+          const current = res.data.filter((roomData) => roomData.isMember);
+          const invited = res.data.filter((roomData) => !roomData.isMember);
+          this.setState({
+            currentRooms: current,
+            invitedRooms: invited,
+          });
         }
       });
     }
@@ -78,7 +95,7 @@ class Home extends React.Component<Props, State> {
     // Grab localize engine
     const localize = Localize.getInstance().localize();
 
-    // Try to authenticate with server
+    // Add room
     const addRoom = (event: React.SyntheticEvent) => {
       event.preventDefault();
       const target = event.target as typeof event.target & {
@@ -86,27 +103,19 @@ class Home extends React.Component<Props, State> {
       };
 
       api.Rooms.createRoom(target.roomName.value).then((res) => {
-        if (res.success === api.SuccessState.ERROR) return;
-        if (res.success === api.SuccessState.FAIL) {
+        if (res.success === api.SuccessState.ERROR) {
+          window.electron.ipcRenderer.invokeFunction('show-message-box', {
+            title: 'Error',
+            message:
+              'Unable to create room. Something went wrong with the server.',
+          });
+        } else if (res.success === api.SuccessState.FAIL) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message: 'Unable to create room. Room with name may already exist',
           });
         } else {
-          api.User.getRooms().then((roomRes) => {
-            if (
-              roomRes.success === api.SuccessState.ERROR ||
-              roomRes.success === api.SuccessState.FAIL
-            ) {
-              window.electron.ipcRenderer.invokeFunction('show-message-box', {
-                title: 'Error',
-                message: 'Unable to get room data at this time.',
-              });
-            } else {
-              if (roomRes.data === undefined) throw Error('Unreachable');
-              this.setState({ rooms: roomRes.data });
-            }
-          });
+          this.updateRoomList();
         }
       });
     };
@@ -115,8 +124,9 @@ class Home extends React.Component<Props, State> {
     return (
       <div className="min-h-screen flex">
         <div className="flex-1 p-8">
+          {/* Header */}
           <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Rooms</h1>
+            <h1 className="text-3xl font-bold">Home</h1>
             <div className="flex items-center">
               <Popover>
                 <PopoverTrigger asChild>
@@ -164,19 +174,52 @@ class Home extends React.Component<Props, State> {
             </div>
           </header>
 
-          {/* Grid of Rooms */}
+          {/* Grid of Current Rooms */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {this.state.rooms.map((room) => (
+            {this.state.currentRooms.map((room) => (
               <RoomCard
                 key={room.roomName}
                 roomData={room}
                 navigate={this.props.navigate}
+                updateRoomList={this.updateRoomList}
               />
             ))}
             {/* TODO: remove once room managment is finished */}
             <RoomCard
-              roomData={{ roomName: 'Test', roomOwner: 'Dev', roomID: '1' }}
+              roomData={{
+                roomName: 'TEST',
+                roomOwner: 'DEV',
+                roomID: '1',
+                isMember: true,
+              }}
               navigate={this.props.navigate}
+              updateRoomList={this.updateRoomList}
+            />
+          </div>
+
+          {/* Grid of Invited Rooms */}
+          <h1 className="mt-4 text-3xl font-bold">Invites</h1>
+          <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {this.state.invitedRooms.map((room) => (
+              <RoomCard
+                key={room.roomName}
+                roomData={room}
+                navigate={this.props.navigate}
+                updateRoomList={this.updateRoomList}
+                isInvite
+              />
+            ))}
+            {/* TODO: remove once room managment is finished */}
+            <RoomCard
+              roomData={{
+                roomName: 'TEST INVITE',
+                roomOwner: 'DEV',
+                roomID: '1',
+                isMember: false,
+              }}
+              navigate={this.props.navigate}
+              updateRoomList={this.updateRoomList}
+              isInvite
             />
           </div>
         </div>

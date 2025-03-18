@@ -14,6 +14,7 @@ export interface RoomData {
   roomOwner?: string;
   roomID?: string;
   isMember?: boolean;
+  isInvited?: boolean; // Only really needed for admins to distinguish
 }
 
 export interface UserRoomData {

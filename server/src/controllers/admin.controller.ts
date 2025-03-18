@@ -2,11 +2,20 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
+import User from "src/models/users";
 //import * as service from "../services/admin.service";
 
 export const getRooms = async (req: Request, res: Response) => {
   const rooms = await roomService.listAllRooms();
   const roomsData: Types.RoomData[] = [];
+
+  const user: User = (req as any).user;
+  const roomsOwned = await userService.getUserRooms(user, true, true);
+  const roomsPartof = await userService.getUserRooms(user, false, true);
+  const roomsInvited = await userService.getUserRooms(user, false, false);
+  const userRooms = roomsOwned
+    .concat(roomsPartof.concat(roomsInvited))
+    .map((data) => data.roomID);
 
   if (!rooms.length) {
     res.sendStatus(204);
@@ -17,7 +26,17 @@ export const getRooms = async (req: Request, res: Response) => {
     const roomName = rooms[i].roomName;
     const roomOwner = rooms[i].roomOwner;
     const roomID = rooms[i].roomID;
-    const temp: Types.RoomData = { roomName, roomOwner, roomID };
+    const isMember = userRooms.includes(rooms[i].roomID);
+    const isInvited = roomsInvited
+      .map((data) => data.roomID)
+      .includes(rooms[i].roomID);
+    const temp: Types.RoomData = {
+      roomName,
+      roomOwner,
+      roomID,
+      isMember,
+      isInvited,
+    };
     roomsData[i] = temp;
   }
 

@@ -29,7 +29,7 @@ export function createRoom(roomName: string): Promise<{
         const body = await res.json();
 
         // Validate
-        if (!Validation.isRoomDataFull(body))
+        if (!Validation.isRoomDataNoInviteStatus(body))
           return { success: SuccessState.ERROR };
 
         return {

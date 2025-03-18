@@ -28,23 +28,41 @@ export function isInviteDataFull(inviteData: any): inviteData is {
   );
 }
 
-
 export function isRoomDataMinimum(roomData: any): roomData is {
   roomName: string;
 } {
   return !!roomData && typeof roomData.roomName === "string";
 }
 
-export function isRoomDataFull(roomData: any): roomData is {
+export function isRoomDataNoInviteStatus(roomData: any): roomData is {
   roomName: string;
   roomOwner: string;
   roomID: string;
+  isMember: boolean;
 } {
   return (
     !!roomData &&
     typeof roomData.roomName === "string" &&
     typeof roomData.roomOwner === "string" &&
-    typeof roomData.roomID === "string"
+    typeof roomData.roomID === "string" &&
+    typeof roomData.isMember === "boolean"
+  );
+}
+
+export function isRoomDataFull(roomData: any): roomData is {
+  roomName: string;
+  roomOwner: string;
+  roomID: string;
+  isMember: boolean;
+  isInvited: boolean;
+} {
+  return (
+    !!roomData &&
+    typeof roomData.roomName === "string" &&
+    typeof roomData.roomOwner === "string" &&
+    typeof roomData.roomID === "string" &&
+    typeof roomData.isMember === "boolean" &&
+    typeof roomData.isInvited === "boolean"
   );
 }
 
@@ -60,4 +78,3 @@ export function isUserRoomData(userRoomData: any): userRoomData is {
     isRoomPermissions(userRoomData.userPermissions)
   );
 }
-

@@ -129,7 +129,7 @@ export function getRooms(): Promise<{
         if (!(Object.prototype.toString.call(body) === '[object Array]'))
           return { success: SuccessState.ERROR };
         for (let i = 0; i < body.length; i += 1) {
-          if (!Validation.isRoomDataFull(body[i]))
+          if (!Validation.isRoomDataNoInviteStatus(body[i]))
             return { success: SuccessState.ERROR };
         }
 
