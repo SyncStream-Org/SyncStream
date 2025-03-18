@@ -84,9 +84,8 @@ class Launch extends React.Component<Props, State> {
 
                 if (userData.data === undefined) throw new Error('Unreachable');
                 SessionState.getInstance().currentUser = userData.data;
+                this.props.navigate('/home');
               });
-
-              this.props.navigate('/home');
             }
           });
         }
