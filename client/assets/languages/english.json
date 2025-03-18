@@ -84,7 +84,7 @@
         "password": "Password",
         "displayName": "Display Name",
         "admin": "Is Admin?",
-        "submit": "Sumbit"
+        "submit": "Submit"
       },
       "messageBox": {
         "successTitle": "Success",

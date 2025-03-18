@@ -16,6 +16,10 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+    }
   },
   "exclude": ["test", "release/build", "release/app/dist", ".erb/dll"]
 }
