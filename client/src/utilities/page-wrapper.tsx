@@ -50,6 +50,12 @@ export const asPage = (Component: any) => {
 
         const session = SessionState.getInstance();
         session.updateDarkMode(!session.getDarkMode());
+
+        if (!this.state.darkMode) {
+          document.body.setAttribute('data-theme', 'dark');
+        } else {
+          document.body.removeAttribute('data-theme');
+        }
       };
     }
 
@@ -62,6 +68,10 @@ export const asPage = (Component: any) => {
             isLoadingCache: false,
             darkMode: SessionState.getInstance().getDarkMode(),
           });
+
+          if (SessionState.getInstance().getDarkMode()) {
+            document.body.setAttribute('data-theme', 'dark');
+          }
         });
 
       window.addEventListener('beforeunload', this.handleUnload);
