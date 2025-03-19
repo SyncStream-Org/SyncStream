@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 
 import filesService from "../../services/filesService";
-import { RoomFileAttributes, RoomFileCreationAttributes, RoomFilePermissions } from "room-types";
 import RoomFile from "src/models/roomFiles";
 
 // TODO: discuss documentObject, currently returning RoomFileAttributes instead
@@ -48,7 +47,7 @@ export const getRoomFile = async (req: Request, res: Response) => {
         res.status(404).json({ error: "Not Found: file" });
         return;
     }
-    
+
     const roomFileResponse: Types.FileData = {
         fileId: roomFile.fileID,
         fileName: roomFile.fileName,

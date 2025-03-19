@@ -1,5 +1,16 @@
 import * as FileTypes from '../types/file';
 
+export function isFileDataCreation(fileData: any):
+  fileData is Omit<FileTypes.FileData, 'fileId'> {
+  return (
+    !!fileData &&
+    typeof fileData.fileName === "string" &&
+    typeof fileData.fileExtension === "string" &&
+    typeof fileData.permissions === "object" &&
+    typeof fileData.permissions.canEdit === "boolean"
+  );
+}
+
 export function isFileData(fileData: any): 
   fileData is FileTypes.FileData {
   return (
