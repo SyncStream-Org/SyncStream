@@ -22,12 +22,13 @@ export const getAllRoomFiles = async (req: Request, res: Response) => {
 
 export const createFile = async (req: Request, res: Response) => {
     const { roomID } = req.params;
+
     const fileBody: Types.FileData = req.body;
     if (!Validation.isFileDataCreation(fileBody)) {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }
-    
+
     const roomFile: RoomFile = await filesService.createRoomFile({ roomID, ...fileBody });
     const roomFileResponse: Types.FileData = {
         fileId: roomFile.fileID,
