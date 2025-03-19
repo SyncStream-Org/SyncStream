@@ -72,7 +72,10 @@ export const updateRoomFile = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Bad Request: invalid format" });
         return;
     }
+    
+    await filesService.updateRoomFile(roomFile, updateBody);
 
+    res.sendStatus(204);
 };
 
 export const deleteRoomFile = async (req: Request, res: Response) => {
