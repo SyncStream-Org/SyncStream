@@ -1,4 +1,5 @@
 import RoomFile from '../models/roomFiles';
+import { Types } from 'syncstream-sharedlib';
 
 import { RoomFileCreationAttributes, RoomFilePermissions, RoomFileAttributes } from 'room-types';
 
@@ -32,20 +33,15 @@ class FileService {
     return files;
   }
 
-  public async updateRoomFile(
-    file: RoomFile,
-    newFileName?: string,
-    newFileExtension?: string,
-    newPermissions?: RoomFilePermissions,
-  ): Promise<RoomFile> {
-    if (newFileName) {
-      file.fileName = newFileName;
+  public async updateRoomFile(file: RoomFile, update: Types.FileDataUpdate): Promise<RoomFile> {
+    if (update.fileName) {
+      file.fileName = update.fileName;
     }
-    if (newFileExtension) {
-      file.fileExtension = newFileExtension;
+    if (update.fileExtension) {
+      file.fileExtension = update.fileExtension;
     }
-    if (newPermissions) {
-      file.permissions = newPermissions;
+    if (update.permissions) {
+      file.permissions = update.permissions;
     }
 
     return await file.save();
