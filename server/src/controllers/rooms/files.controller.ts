@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
 
 import filesService from "../../services/filesService";
-import { RoomFileAttributes, RoomFilePermissions } from "room-types";
+import { RoomFileAttributes, RoomFileCreationAttributes, RoomFilePermissions } from "room-types";
 
 // TODO: discuss documentObject, currently returning RoomFileAttributes instead
 
@@ -25,7 +25,7 @@ export const createFile = async (req: Request, res: Response) => {
     const fileName = fileNameBody.msg;
     const fileExtension = ""; // TODO: to be discussed
     const permissions: RoomFilePermissions = { canEdit:true }; // all files default canEdit true
-    const fileData: RoomFileAttributes = { roomID, fileName, fileExtension, permissions };
+    const fileData: RoomFileCreationAttributes = { roomID, fileName, fileExtension, permissions };
     const roomFile: RoomFileAttributes = await filesService.createRoomFile(fileData);
 
     res.json(roomFile); // TODO: see top note

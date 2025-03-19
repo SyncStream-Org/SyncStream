@@ -3,16 +3,13 @@ export interface FilePermissions {
 }
 
 export interface FileData {
-  fileID?: string;
-  roomID: string;
   fileName: string;
   fileExtension: string;
   permissions: FilePermissions;
 }
 
 export interface FileDataUpdate {
-  fileID: string;
-  roomID: string;
+  // One must be set
   fileName?: string;
   fileExtension?: string;
   permissions?: FilePermissions;
