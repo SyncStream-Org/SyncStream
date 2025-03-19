@@ -1,8 +1,8 @@
 import { Model, DataTypes, literal } from 'sequelize';
 import sequelize from '../db';
-import { RoomFileAttributes, RoomFilePermissions } from 'room-types';
+import { RoomFileAttributes, RoomFileCreationAttributes, RoomFilePermissions } from 'room-types';
 
-class RoomFile extends Model<RoomFileAttributes> implements RoomFileAttributes {
+class RoomFile extends Model<RoomFileAttributes, RoomFileCreationAttributes> implements RoomFileAttributes {
   declare fileID: string;
   declare fileName: string;
   declare roomID: string;

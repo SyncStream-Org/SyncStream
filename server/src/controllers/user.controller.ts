@@ -52,9 +52,9 @@ export const update = async (req: Request, res: Response) => {
 
     const user: User = (req as any).user;
 
-    userService.updateUser(user, userUpdateData.password, userUpdateData.displayName, userUpdateData.email);
+    await userService.updateUser(user, userUpdateData);
 
-    res.sendStatus(200)
+    res.sendStatus(200);
 };
 
 export const listRooms = async (req: Request, res: Response) => {
