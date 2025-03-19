@@ -31,11 +31,20 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
 
 export const confirmUserInRoom = async (req: Request, res: Response, next: NextFunction) => {
   const user: User = (req as any).user;
+  
   const { roomID } = req.params;
+  if (!roomID) {
+    res.status(400).json({ error: "Bad Request: roomID is required" });
+    return;
+  }
 
   const room = await roomService.getRoomById(roomID);
   if (!room) {
     res.status(400).json({ error: "Bad Request: room does not exist" });
+    return;
+  }
+  if (room.roomOwner === user.username) {
+    next();
     return;
   }
   

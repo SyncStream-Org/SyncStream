@@ -1,11 +1,11 @@
 import { Router } from "express";
 import * as controller from "../../controllers/rooms/files.controller";
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 // TODO: any future permissions decisions to be implemented in middleware
 
-router.put("/", controller.getAllRoomFiles);
+router.get("/", controller.getAllRoomFiles);
 router.put("/", controller.createFile);
 
 router.get("/:fileName", controller.getRoomFile);
