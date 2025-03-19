@@ -61,9 +61,18 @@ export const getRoomFile = async (req: Request, res: Response) => {
 // TODO: server side events
 export const updateRoomFile = async (req: Request, res: Response) => {
     // TODO: requires further developing as a group on what it means to join room
-    res.status(501).json({ error: "Not yet implemented" });
-    return;
-    const { roomID } = req.params;
+    const { roomID, fileName } = req.params;
+    const roomFile = await filesService.getFileFromRoom(roomID, fileName);
+    if (!roomFile) {
+        res.status(404).json({ error: "Not Found: file" });
+        return;
+    }
+    const updateBody: Types.FileDataUpdate = req.body;
+    if (!Validation.isFileDataUpdate(updateBody)) {
+        res.status(400).json({ error: "Bad Request: invalid format" });
+        return;
+    }
+
 };
 
 export const deleteRoomFile = async (req: Request, res: Response) => {

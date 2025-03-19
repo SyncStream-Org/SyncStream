@@ -4,7 +4,7 @@ import { Types, Validation } from "syncstream-sharedlib"
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
-import { RoomAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
+import { RoomCreationAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
 //import * as service from "../services/rooms.service";
 
 export const createRoom = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export const createRoom = async (req: Request, res: Response) => {
 
     const roomName = roomNameSM.msg;
     const roomOwner = (req as any).user.username;
-    const roomData: RoomAttributes = {roomName, roomOwner};
+    const roomData: RoomCreationAttributes = {roomName, roomOwner};
     const newRoom = await roomService.createRoom(roomData);
 
     const roomID = newRoom.roomID

@@ -31,6 +31,25 @@ class FileService {
     const files = await RoomFile.findAll({ where: { roomID:roomID } });
     return files;
   }
+
+  public async updateRoomFile(
+    file: RoomFile,
+    newFileName?: string,
+    newFileExtension?: string,
+    newPermissions?: RoomFilePermissions,
+  ): Promise<RoomFile> {
+    if (newFileName) {
+      file.fileName = newFileName;
+    }
+    if (newFileExtension) {
+      file.fileExtension = newFileExtension;
+    }
+    if (newPermissions) {
+      file.permissions = newPermissions;
+    }
+
+    return await file.save();
+  }
 }
 
 export default new FileService();
