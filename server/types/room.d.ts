@@ -1,6 +1,6 @@
 declare module 'room-types' {
   export interface RoomAttributes {
-    roomID?: string;
+    roomID: string;
     roomName: string;
     roomOwner: string;
   }
