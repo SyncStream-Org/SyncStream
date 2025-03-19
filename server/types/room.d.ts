@@ -26,7 +26,7 @@ declare module 'room-types' {
   }
 
   export interface RoomFileAttributes {
-    fileID?: string;
+    fileID: string;
     roomID: string;
     fileName: string;
     fileExtension: string;
