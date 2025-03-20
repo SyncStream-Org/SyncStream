@@ -11,6 +11,11 @@ export const getAllRoomFiles = async (req: Request, res: Response) => {
 
     const roomFiles: RoomFile[] = await filesService.listAllFilesForRoom(roomID);
     
+    if (!roomFiles.length) {
+        res.sendStatus(204);
+        return;
+    }
+    
     const roomFilesResponse: Types.FileData[] = roomFiles.map((file) => ({
         fileID: file.fileID,
         fileName: file.fileName,
