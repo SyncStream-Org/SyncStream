@@ -62,7 +62,6 @@ export function createFile(
   data?: Types.FileData;
 }> {
   const headers: Headers = generateDefaultHeaders();
-  headers.append('Content-Type', 'application/json');
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
