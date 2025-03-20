@@ -18,6 +18,6 @@ router.put("/:roomID/users/:username", controller.updateUser)
 
 // imported routers, users required to be part of the room to access
 router.use("/:roomID", confirmUserInRoom);
-router.use("/:roomID/markdown", filesRouter);
+router.use("/:roomID/files", filesRouter);
 
 export default router;
