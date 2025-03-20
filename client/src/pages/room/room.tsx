@@ -3,6 +3,7 @@ import { useParams, NavigateFunction } from 'react-router-dom';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
+import * as api from '../../api';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
