@@ -24,7 +24,7 @@ export const createRoom = async (req: Request, res: Response) => {
 
     // add owner as a member of the room
     const username = roomOwner;
-    let permissions: RoomUserPermissions = { canEdit: true };
+    const permissions: RoomUserPermissions = { canEdit: true };
     const isMember = true;
     const roomUserAttr: RoomUserAttributes = { username, roomID, permissions, isMember };
     try {
