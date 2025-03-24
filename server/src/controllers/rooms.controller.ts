@@ -15,6 +15,13 @@ export const createRoom = async (req: Request, res: Response) => {
     }
 
     const roomName = roomNameSM.msg;
+    // ensure room doesn't exist
+    if (await roomService.getRoomByName(roomName) != null) {
+        res.status(409).json({ error: "Conflict: Room Name Already Exists"});
+        return;
+    }
+
+    // create room
     const roomOwner = (req as any).user.username;
     const roomData: RoomCreationAttributes = {roomName, roomOwner};
     const newRoom = await roomService.createRoom(roomData);

@@ -26,6 +26,11 @@ class RoomService {
   public async getAllRoomUsers(roomID: string): Promise<RoomUser[]> {
     return await RoomUser.findAll({ where:{ roomID:roomID } });
   }
+
+  public async getRoomByName(roomName: string): Promise<Room | null> {
+    const room = await Room.findOne({ where: { roomName: roomName } });
+    return room;
+  }
 }
 
 export default new RoomService();
