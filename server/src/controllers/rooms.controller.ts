@@ -17,7 +17,7 @@ export const createRoom = async (req: Request, res: Response) => {
     const roomName = roomNameSM.msg;
     // ensure room doesn't exist
     if (await roomService.getRoomByName(roomName) != null) {
-        res.status(400).json({ error: "Bad Request: Room Name Already Exists"});
+        res.status(409).json({ error: "Conflict: Room Name Already Exists"});
         return;
     }
 
