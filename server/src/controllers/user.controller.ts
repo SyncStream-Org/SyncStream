@@ -107,17 +107,19 @@ export const getRoomDetails = async (req: Request, res: Response) => {
 export const removeRoomFromUser = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
     const { roomID } = req.params;
-
-    try {
-        const roomUserObj = await userService.getRoomUser(roomID, user.username);
-        if (!roomUserObj) {
-            res.status(403).json({ error:"Forbidden: User not part of Room" });
-            return;
-        }
-        await userService.removeRoomUser(roomUserObj);
-    } catch(error) {
+        
+    const roomCheck = roomService.getRoomById(roomID);
+    if (!roomCheck) {
         res.status(404).json({ error:"Not Found: Room" })
-    } 
+        return;
+    }
+
+    const roomUserObj = await userService.getRoomUser(roomID, user.username);
+    if (!roomUserObj) {
+        res.status(403).json({ error:"Forbidden: User not part of Room" });
+        return;
+    }
+    await userService.removeRoomUser(roomUserObj);
 
     res.sendStatus(200);
 };
@@ -126,20 +128,23 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
     const { roomID } = req.params;
 
-    try {
-        const roomUserObj = await userService.getRoomUser(roomID, user.username);
-        if (!roomUserObj) {
-            res.status(403).json({ error:"Forbidden: User not part of Room" });
-            return;
-        }
-        const newPermissions = undefined
-        const isMember = true
-        await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
-    } catch(error) {
+        
+    const roomCheck = roomService.getRoomById(roomID);
+    if (!roomCheck) {
         res.status(404).json({ error:"Not Found: Room" })
-    } 
+        return;
+    }
 
-    res.sendStatus(200)
+    const roomUserObj = await userService.getRoomUser(roomID, user.username);
+    if (!roomUserObj) {
+        res.status(403).json({ error:"Forbidden: User not part of Room" });
+        return;
+    }
+    const newPermissions = undefined;
+    const isMember = true;
+    await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
+
+    res.sendStatus(200);
 };
 
 // currently seemingly have the same behavior, will discuss as a group

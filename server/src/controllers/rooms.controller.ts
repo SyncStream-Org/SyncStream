@@ -108,6 +108,14 @@ export const inviteUser = async (req: Request, res: Response) => {
     }
 
     const username = inviteData.username;
+    // ensure user exists
+    const invitedUser = await userService.getUserByUsername(username);
+    if (!invitedUser) {
+        res.status(404).json({ error: "Bad Request: Invited User does not exist" });
+        return;
+    }
+
+    // invite user
     let permissions: RoomUserPermissions;
     if (inviteData.permissions) {
         // TODO: likely to change as discussion on permissions evolves
@@ -135,6 +143,13 @@ export const removeUser = async (req: Request, res: Response) => {
     const requestingRoomUser = await userService.getRoomUser(roomID, user.username);
     if (!requestingRoomUser || !requestingRoomUser.permissions.canEdit) {
         res.status(403).json({ error: "Forbidden: Permissions Denied" });
+        return;
+    }
+
+    // ensure user exists
+    const removedUser = await userService.getUserByUsername(username);
+    if (!removedUser) {
+        res.status(404).json({ error: "Bad Request: User does not exist" });
         return;
     }
 
@@ -166,16 +181,24 @@ export const updateUser = async (req: Request, res: Response) => {
         return;
     }
 
+    // ensure user exists
+    const updatingUser = await userService.getUserByUsername(username);
+    if (!updatingUser) {
+        res.status(404).json({ error: "Bad Request: User does not exist" });
+        return;
+    }
+
     // update specified user
     const roomUser = await userService.getRoomUser(roomID, username);
     if (!roomUser) {
         res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
     }
-
-    // TODO: to be changed as we discuss room permissions
-    res.status(501).json({ error: "Not yet implemented" });
+    
+    // TODO: propogate room permissions
+    res.sendStatus(501);
     return;
+    //await userService.updateRoomUser(roomUser, roomPermissions);
 
     res.sendStatus(200);
 };
