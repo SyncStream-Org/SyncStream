@@ -22,6 +22,18 @@ export const createRoom = async (req: Request, res: Response) => {
     const roomID = newRoom.roomID
     const roomDataResponse: Types.RoomData = {roomName, roomOwner, roomID};
 
+    // add owner as a member of the room
+    const username = roomOwner;
+    let permissions: RoomUserPermissions = { canEdit: true };
+    const isMember = true;
+    const roomUserAttr: RoomUserAttributes = { username, roomID, permissions, isMember };
+    try {
+        await userService.createRoomUser(roomID, roomUserAttr);
+    } catch(error) {
+        res.status(500).json({ error: "Unkown Server Error has Occurred" }); // shouldn't happen, this was user/member exists in invite member, leaving in for consistency
+        return;
+    }
+
     res.json(roomDataResponse);
 };
 
