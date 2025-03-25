@@ -1,20 +1,6 @@
-import * as React from 'react';
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from 'lucide-react';
-
 import { MediaNav } from '@/pages/room/sidebar/media-nav';
-import { NavProjects } from '@/pages/room/sidebar/nav-projects';
-import { NavUser } from '@/pages/room/sidebar/nav-user';
+import { ManageNav } from '@/pages/room/sidebar/manage-nav';
+import { UserNav } from '@/pages/room/sidebar/nav-user';
 import { RoomHeader } from '@/pages/room/sidebar/room-header';
 import {
   Sidebar,
@@ -60,6 +46,7 @@ export function AppSidebar({
         <RoomHeader roomName={roomName} />
       </SidebarHeader>
       <SidebarContent>
+        <ManageNav />
         <MediaNav
           media={media}
           activeDoc={activeDoc}
@@ -71,11 +58,10 @@ export function AppSidebar({
           updateMedia={updateMedia}
           deleteMedia={deleteMedia}
         />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
-      {/* <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter> */}
+      <SidebarFooter>
+        <NavUser username={username} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
