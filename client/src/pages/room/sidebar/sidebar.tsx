@@ -74,11 +74,11 @@ export function RoomSidebar({
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <a>
+              <a className="flex items-center justify-center md:justify-start">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
                   {roomName.charAt(0).toUpperCase()}
                 </div>
-                <span className="font-medium">{roomName}</span>
+                <span className="font-medium hidden md:block">{roomName}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

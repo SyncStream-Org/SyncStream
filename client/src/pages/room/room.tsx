@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { Types } from 'syncstream-sharedlib';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { RoomSidebar } from './sidebar/sidebar';
-import { Types } from 'syncstream-sharedlib';
+import { AppSidebar } from './sidebar/app-sidebar';
 // import * as api from '../../api/routes/files';
 // import { SuccessState } from '@/api';
 
@@ -18,12 +19,42 @@ interface Props {
 function RoomPage(props: Props) {
   const roomID = useParams<{ roomID: string }>().roomID!;
   const [media, setMedia] = useState<Types.FileData[]>([
-    { fileId: '1', fileName: 'Document 1', fileExtension: 'doc', permissions: { canEdit: true } },
-    { fileId: '2', fileName: 'Document 2', fileExtension: 'doc', permissions: { canEdit: false } },
-    { fileId: '3', fileName: 'Stream 1', fileExtension: 'stream', permissions: { canEdit: true } },
-    { fileId: '4', fileName: 'Stream 2', fileExtension: 'stream', permissions: { canEdit: false } },
-    { fileId: '5', fileName: 'Voice Channel 1', fileExtension: 'voice', permissions: { canEdit: true } },
-    { fileId: '6', fileName: 'Voice Channel 2', fileExtension: 'voice', permissions: { canEdit: false } },
+    {
+      fileId: '1',
+      fileName: 'Document 1',
+      fileExtension: 'doc',
+      permissions: { canEdit: true },
+    },
+    {
+      fileId: '2',
+      fileName: 'Document 2',
+      fileExtension: 'doc',
+      permissions: { canEdit: false },
+    },
+    {
+      fileId: '3',
+      fileName: 'Stream 1',
+      fileExtension: 'stream',
+      permissions: { canEdit: true },
+    },
+    {
+      fileId: '4',
+      fileName: 'Stream 2',
+      fileExtension: 'stream',
+      permissions: { canEdit: false },
+    },
+    {
+      fileId: '5',
+      fileName: 'Voice Channel 1',
+      fileExtension: 'voice',
+      permissions: { canEdit: true },
+    },
+    {
+      fileId: '6',
+      fileName: 'Voice Channel 2',
+      fileExtension: 'voice',
+      permissions: { canEdit: false },
+    },
   ]);
   const [activeDoc, setActiveDoc] = useState<string | null>(null);
   const [activeStream, setActiveStream] = useState<string | null>(null);
@@ -50,7 +81,7 @@ function RoomPage(props: Props) {
     <div className="flex h-screen">
       {/* Sidebar */}
       <SidebarProvider>
-        <RoomSidebar
+        <AppSidebar
           roomName="Room Name"
           username={SessionState.getInstance().currentUser.username}
           media={media}
@@ -72,7 +103,7 @@ function RoomPage(props: Props) {
             className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
             style={{ minHeight: '500px' }}
           >
-            {activeDoc !== null && 
+            {activeDoc !== null && (
               <DocEditor
                 docName={activeDoc === null ? '' : activeDoc}
                 username={SessionState.getInstance().currentUser.username}
@@ -80,7 +111,7 @@ function RoomPage(props: Props) {
                 roomID={roomID}
                 serverURL={SessionState.getInstance().serverURL}
               />
-            }
+            )}
           </div>
         </main>
       </SidebarProvider>
