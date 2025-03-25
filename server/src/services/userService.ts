@@ -1,6 +1,7 @@
 import User from "../models/users";
 import Room from "../models/rooms";
 import RoomUser from "../models/roomUsers";
+import { Types } from "syncstream-sharedlib";
 
 import { RoomUserAttributes, RoomUserPermissions } from "room-types";
 import { UserAttributes } from "user-types";
@@ -43,25 +44,19 @@ class UserService {
     await user.destroy();
   }
 
-  public async updateUser(
-    user: User,
-    newPassword?: string,
-    newDisplayName?: string,
-    newEmail?: string,
-  ): Promise<User> {
+  public async updateUser(user: User, update: Types.UserUpdateData): Promise<User> {
     if ((await this.getUserByUsername(user.username)) == null) {
       throw new Error("updateUser: User not found");
     }
 
-    if (newPassword) {
-      const hashedPassword = await auth.hashPassword(newPassword);
-      user.password = hashedPassword;
+    if (update.password) {
+      user.password = await auth.hashPassword(update.password);
     }
-    if (newDisplayName) {
-      user.displayName = newDisplayName;
+    if (update.displayName) {
+      user.displayName = update.displayName;
     }
-    if (newEmail) {
-      user.email = newEmail;
+    if (update.email) {
+      user.email = update.email;
     }
 
     return await user.save();

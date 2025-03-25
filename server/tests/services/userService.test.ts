@@ -3,6 +3,7 @@ import * as auth from '../../src/utils/auth';
 import User from '../../src/models/users';
 import Room from '../../src/models/rooms';
 import RoomUser from '../../src/models/roomUsers';
+import { Types } from 'syncstream-sharedlib';
 
 jest.mock('../../src/models/users');
 jest.mock('../../src/models/rooms');
@@ -11,12 +12,20 @@ jest.mock('../../src/utils/auth');
 
 describe('UserService', () => {
   let mockUser: User;
+  let mockUpdate: Types.UserUpdateData;
 
   beforeEach(() => {
     mockUser = {
       username: 'testuser',
       password: 'password123',
     } as User;
+
+    mockUpdate = {
+      password: undefined,
+      displayName: undefined,
+      email: undefined,
+    } as Types.UserUpdateData;
+
     jest.restoreAllMocks();
   });
 
@@ -24,10 +33,12 @@ describe('UserService', () => {
     { roomID: 'mockID-1' }, 
     { roomID: 'mockID-2' }
   ] as Room[];
+
   const mockRoomUsers = [
     { roomID: 'mockID-3', username: 'testuser1' }, 
     { roomID: 'mockID-4', username: 'testuser2' }
   ] as RoomUser[];
+
   const mockRoomsJoined = [
     { roomID: 'mockID-3' }, 
     { roomID: 'mockID-4' }
@@ -121,56 +132,56 @@ describe('UserService', () => {
   it('updateUser - should update user password individually', async () => {
     mockUser.save = jest.fn();
 
-    const newPassword = 'newpassword';
+    mockUpdate.password = 'newpassword';
     const mockHashedPassword = 'hashednewpassword';
 
     jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(mockUser as unknown as User);
     jest.spyOn(auth, 'hashPassword').mockResolvedValue(mockHashedPassword);
 
-    await UserService.updateUser(mockUser as unknown as User, newPassword);
+    await UserService.updateUser(mockUser as unknown as User, mockUpdate);
 
-    expect(auth.hashPassword).toHaveBeenCalledWith(newPassword);
+    expect(auth.hashPassword).toHaveBeenCalledWith(mockUpdate.password);
     expect(mockUser.password).toBe(mockHashedPassword);
     expect(mockUser.save).toHaveBeenCalled();
   });
 
   it('updateUser - should update user display name individually', async () => {
     mockUser.save = jest.fn();
-    const newDisplayName = 'New Display Name';
+    mockUpdate.displayName = 'New Display Name';
 
     jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(mockUser as unknown as User);
 
-    await UserService.updateUser(mockUser as unknown as User, undefined, newDisplayName);
+    await UserService.updateUser(mockUser as unknown as User, mockUpdate);
 
-    expect(mockUser.displayName).toBe(newDisplayName);
+    expect(mockUser.displayName).toBe(mockUpdate.displayName);
     expect(mockUser.save).toHaveBeenCalled();
   });
 
   it('updateUser - should update both password and display name', async () => {
     mockUser.save = jest.fn();
 
-    const newPassword = 'newpassword';
-    const newDisplayName = 'New Display Name';
+    mockUpdate.password = 'newpassword';
+    mockUpdate.displayName = 'New Display Name';
     const mockHashedPassword = 'hashednewpassword';
 
     jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(mockUser as unknown as User);
     jest.spyOn(auth, 'hashPassword').mockResolvedValue(mockHashedPassword);
 
-    await UserService.updateUser(mockUser as unknown as User, newPassword, newDisplayName);
+    await UserService.updateUser(mockUser as unknown as User, mockUpdate);
 
-    expect(auth.hashPassword).toHaveBeenCalledWith(newPassword);
+    expect(auth.hashPassword).toHaveBeenCalledWith(mockUpdate.password);
     expect(mockUser.password).toBe(mockHashedPassword);
-    expect(mockUser.displayName).toBe(newDisplayName);
+    expect(mockUser.displayName).toBe(mockUpdate.displayName);
     expect(mockUser.save).toHaveBeenCalled();
   });
 
   it('updateUser - should throw an error if user not found', async () => {
     mockUser.username = 'nonexistentuser';
-    const newPassword = 'newpassword';
-    const newDisplayName = 'New Display Name';
+    mockUpdate.password = 'newpassword';
+    mockUpdate.displayName = 'New Display Name';
 
     jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(null);
-    const result = UserService.updateUser(mockUser as unknown as User, newPassword, newDisplayName);
+    const result = UserService.updateUser(mockUser as unknown as User, mockUpdate);
 
     await expect(result).rejects.toThrow('User not found');
     expect(UserService.getUserByUsername).toHaveBeenCalledWith(mockUser.username);

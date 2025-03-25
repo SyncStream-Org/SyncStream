@@ -505,12 +505,15 @@ function SidebarMenuButton({
   asChild?: boolean
   isActive?: boolean
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
-} & VariantProps<typeof sidebarMenuButtonVariants>) {
+} & VariantProps<typeof sidebarMenuButtonVariants>,
+  ref: React.ForwardedRef<HTMLButtonElement>
+) {
   const Comp = asChild ? Slot : "button"
   const { isMobile, state } = useSidebar()
 
   const button = (
     <Comp
+      ref={ref}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -542,6 +545,10 @@ function SidebarMenuButton({
     </Tooltip>
   )
 }
+// Forward ref using React.forwardRef after function definition
+const ForwardedSidebarMenuButton = React.forwardRef(SidebarMenuButton);
+ForwardedSidebarMenuButton.displayName = "SidebarMenuButton";
+//Export
 
 function SidebarMenuAction({
   className,
@@ -710,7 +717,7 @@ export {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuButton,
+  ForwardedSidebarMenuButton as SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,

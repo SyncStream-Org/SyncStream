@@ -1,4 +1,3 @@
-import { mock } from 'node:test';
 import Room from '../../src/models/rooms';
 import RoomService from '../../src/services/roomService';
 
