@@ -15,12 +15,12 @@ interface RoomSidebarProps {
   roomName: string;
   username: string;
   media: Types.FileData[];
-  activeDoc: string | null;
-  activeStream: string | null;
-  activeVoice: string | null;
-  setActiveDoc: (docID: string) => void;
-  setActiveStream: (streamID: string) => void;
-  setActiveVoice: (voiceID: string) => void;
+  activeDoc: Types.FileData | null;
+  activeStream: Types.FileData | null;
+  activeVoice: Types.FileData | null;
+  setActiveDoc: (doc: Types.FileData) => void;
+  setActiveStream: (stream: Types.FileData) => void;
+  setActiveVoice: (voice: Types.FileData) => void;
   updateMedia: (mediaID: string) => void;
   deleteMedia: (mediaID: string) => void;
   goToHome: () => void;

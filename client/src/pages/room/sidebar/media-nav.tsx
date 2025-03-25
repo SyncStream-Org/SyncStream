@@ -26,19 +26,19 @@ import { FileItem } from './file-item';
 interface MediaCategory {
   title: string;
   icon: any;
-  activeItem: string | null;
-  setActive: (id: string) => void;
+  activeItem: Types.FileData | null;
+  setActive: (item: Types.FileData) => void;
   items: Types.FileData[];
 }
 
 interface MediaNavProps {
   media: Types.FileData[];
-  activeDoc: string | null;
-  activeStream: string | null;
-  activeVoice: string | null;
-  setActiveDoc: (docID: string) => void;
-  setActiveStream: (streamID: string) => void;
-  setActiveVoice: (voiceID: string) => void;
+  activeDoc: Types.FileData | null;
+  activeStream: Types.FileData | null;
+  activeVoice: Types.FileData | null;
+  setActiveDoc: (doc: Types.FileData) => void;
+  setActiveStream: (stream: Types.FileData) => void;
+  setActiveVoice: (voice: Types.FileData) => void;
   updateMedia: (mediaID: string) => void;
   deleteMedia: (mediaID: string) => void;
 }
@@ -153,8 +153,10 @@ export function MediaNav({
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             asChild
-                            isActive={subItem.fileId! === item.activeItem}
-                            onClick={() => item.setActive(subItem.fileId!)}
+                            isActive={
+                              subItem.fileId! === item.activeItem?.fileId!
+                            }
+                            onClick={() => item.setActive(subItem)}
                           >
                             <span>{subItem.fileName}</span>
                           </SidebarMenuSubButton>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
+import { RoomHeader } from './room-header';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -53,9 +54,9 @@ function RoomPage(props: Props) {
       permissions: { canEdit: false },
     },
   ]);
-  const [activeDoc, setActiveDoc] = useState<string | null>(null);
-  const [activeStream, setActiveStream] = useState<string | null>(null);
-  const [activeVoice, setActiveVoice] = useState<string | null>(null);
+  const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
+  const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
   const [sessionSaved, setSessionSaved] = useState(false);
 
   useEffect(() => {
@@ -100,16 +101,17 @@ function RoomPage(props: Props) {
           setRoomSettings={() => {}}
         />
         {/* Main Content */}
-        <main className="flex-1 p-4 flex flex-col">
-          {/* Text Editor */}
-          <SidebarTrigger />
-          <div
-            className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
-            style={{ minHeight: '500px' }}
-          >
+        {/* Text Editor */}
+        <SidebarInset className="bg-white dark:bg-gray-800">
+          <RoomHeader
+            roomHome={activeDoc === null && activeStream === null}
+            activeDoc={activeDoc}
+            activeStream={activeStream}
+          />
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 rounded shadow overflow-hidden">
             {activeDoc !== null && (
               <DocEditor
-                docName={activeDoc === null ? '' : activeDoc}
+                activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
                 sessionToken=""
                 roomID={roomID}
@@ -117,7 +119,7 @@ function RoomPage(props: Props) {
               />
             )}
           </div>
-        </main>
+        </SidebarInset>
       </SidebarProvider>
     </div>
   );

@@ -3,9 +3,9 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import Placeholder from '@tiptap/extension-placeholder';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
+import { Types } from 'syncstream-sharedlib';
 import { Toolbar } from './toolbar';
 import './editor.css';
 
@@ -36,8 +36,7 @@ interface User {
 interface EditorProps {
   username: string;
   sessionToken: string;
-  // eslint-disable-next-line react/require-default-props
-  docName?: string;
+  activeDoc: Types.FileData | null;
   roomID: string;
   serverURL: string;
 }
@@ -45,7 +44,7 @@ interface EditorProps {
 export default function DocumentEditor({
   username,
   sessionToken,
-  docName,
+  activeDoc,
   roomID,
   serverURL,
 }: EditorProps) {
@@ -60,7 +59,7 @@ export default function DocumentEditor({
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    if (!docName) {
+    if (!activeDoc) {
       return () => {};
     }
     const webSocketPrefix = serverURL.includes('https') ? 'wss' : 'ws';
@@ -69,7 +68,11 @@ export default function DocumentEditor({
     const doc = new Y.Doc();
     setYdoc(doc);
 
-    const websocketProvider = new WebsocketProvider(wsURL, docName, doc);
+    const websocketProvider = new WebsocketProvider(
+      wsURL,
+      activeDoc.fileId!,
+      doc,
+    );
 
     websocketProvider.on('status', (event: { status: string }) => {
       setStatus(event.status);
@@ -98,7 +101,7 @@ export default function DocumentEditor({
       websocketProvider.disconnect();
       doc.destroy();
     };
-  }, [username, roomID, docName, userColor, serverURL]);
+  }, [username, roomID, activeDoc, userColor, serverURL]);
 
   const editor = useEditor(
     {
@@ -140,10 +143,10 @@ export default function DocumentEditor({
   // TODO: localize
 
   return (
-    <div className="editor-container w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 overflow-hidden">
+    <div className="editor-container w-full mx-auto bg-white dark:bg-gray-800 overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">{docName}</h2>
+          <h2 className="text-xl font-bold">{activeDoc?.fileName}</h2>
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 rounded-full"
