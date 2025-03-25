@@ -17,11 +17,17 @@ interface Props {
 
 function RoomPage(props: Props) {
   const roomID = useParams<{ roomID: string }>().roomID!;
-  const [docs, setDocs] = useState<Types.FileData[]>([
-    { fileId: '1', fileName: 'Document 1', fileExtension: 'txt', permissions: { canEdit: true } },
-    { fileId: '2', fileName: 'Document 2', fileExtension: 'md', permissions: { canEdit: false } },
+  const [media, setMedia] = useState<Types.FileData[]>([
+    { fileId: '1', fileName: 'Document 1', fileExtension: 'doc', permissions: { canEdit: true } },
+    { fileId: '2', fileName: 'Document 2', fileExtension: 'doc', permissions: { canEdit: false } },
+    { fileId: '3', fileName: 'Stream 1', fileExtension: 'stream', permissions: { canEdit: true } },
+    { fileId: '4', fileName: 'Stream 2', fileExtension: 'stream', permissions: { canEdit: false } },
+    { fileId: '5', fileName: 'Voice Channel 1', fileExtension: 'voice', permissions: { canEdit: true } },
+    { fileId: '6', fileName: 'Voice Channel 2', fileExtension: 'voice', permissions: { canEdit: false } },
   ]);
-  const [docName, setDocName] = useState<string | null>(null);
+  const [activeDoc, setActiveDoc] = useState<string | null>(null);
+  const [activeStream, setActiveStream] = useState<string | null>(null);
+  const [activeVoice, setActiveVoice] = useState<string | null>(null);
   const [sessionSaved, setSessionSaved] = useState(false);
 
   useEffect(() => {
@@ -45,15 +51,18 @@ function RoomPage(props: Props) {
       {/* Sidebar */}
       <SidebarProvider>
         <RoomSidebar
+          roomName="Room Name"
           username={SessionState.getInstance().currentUser.username}
-          docs={docs}
-          activeDoc={docName}
-          setActiveDoc={(docID: string) => {
-            setDocName(docID);
-          }}
-          updateDoc={(docID: string) => {}}
-          deleteDoc={(docID: string) => {}}
-          refreshDoc={() => {}}
+          media={media}
+          activeDoc={activeDoc}
+          setActiveDoc={setActiveDoc}
+          activeStream={activeStream}
+          setActiveStream={setActiveStream}
+          activeVoice={activeVoice}
+          setActiveVoice={setActiveVoice}
+          updateMedia={(mediaID: string) => {}}
+          deleteMedia={(mediaID: string) => {}}
+          refreshMedia={() => {}}
         />
         {/* Main Content */}
         <main className="flex-1 p-4 flex flex-col">
@@ -63,9 +72,9 @@ function RoomPage(props: Props) {
             className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
             style={{ minHeight: '500px' }}
           >
-            {docName !== null && 
+            {activeDoc !== null && 
               <DocEditor
-                docName={docName === null ? '' : docName}
+                docName={activeDoc === null ? '' : activeDoc}
                 username={SessionState.getInstance().currentUser.username}
                 sessionToken=""
                 roomID={roomID}
