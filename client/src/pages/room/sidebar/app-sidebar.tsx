@@ -23,7 +23,10 @@ interface RoomSidebarProps {
   setActiveVoice: (voiceID: string) => void;
   updateMedia: (mediaID: string) => void;
   deleteMedia: (mediaID: string) => void;
-  refreshMedia: () => void;
+  goToHome: () => void;
+  goToSettings: () => void;
+  setRoomHome: () => void;
+  setRoomSettings: () => void;
 }
 
 export function AppSidebar({
@@ -38,7 +41,10 @@ export function AppSidebar({
   setActiveVoice,
   updateMedia,
   deleteMedia,
-  refreshMedia,
+  goToHome,
+  goToSettings,
+  setRoomHome,
+  setRoomSettings,
 }: RoomSidebarProps) {
   return (
     <Sidebar collapsible="icon">
@@ -46,7 +52,10 @@ export function AppSidebar({
         <RoomHeader roomName={roomName} />
       </SidebarHeader>
       <SidebarContent>
-        <ManageNav />
+        <ManageNav
+          setRoomHome={setRoomHome}
+          setRoomSettings={setRoomSettings}
+        />
         <MediaNav
           media={media}
           activeDoc={activeDoc}
@@ -60,7 +69,11 @@ export function AppSidebar({
         />
       </SidebarContent>
       <SidebarFooter>
-        <UserNav username={username} />
+        <UserNav 
+          username={username}
+          goToHome={goToHome}
+          goToSettings={goToSettings}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

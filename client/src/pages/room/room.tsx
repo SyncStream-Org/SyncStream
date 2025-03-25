@@ -5,10 +5,7 @@ import { Types } from 'syncstream-sharedlib';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
-import { RoomSidebar } from './sidebar/sidebar';
 import { AppSidebar } from './sidebar/app-sidebar';
-// import * as api from '../../api/routes/files';
-// import { SuccessState } from '@/api';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -93,7 +90,14 @@ function RoomPage(props: Props) {
           setActiveVoice={setActiveVoice}
           updateMedia={(mediaID: string) => {}}
           deleteMedia={(mediaID: string) => {}}
-          refreshMedia={() => {}}
+          goToHome={() => {
+            props.navigate('/home');
+          }}
+          goToSettings={() => {
+            props.navigate('/settings');
+          }}
+          setRoomHome={() => {}}
+          setRoomSettings={() => {}}
         />
         {/* Main Content */}
         <main className="flex-1 p-4 flex flex-col">

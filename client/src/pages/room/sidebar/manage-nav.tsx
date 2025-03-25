@@ -8,13 +8,22 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 
-export function ManageNav() {
+interface ManageNavProps {
+  setRoomHome: () => void;
+  setRoomSettings: () => void;
+}
+
+export function ManageNav({ setRoomHome, setRoomSettings }: ManageNavProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Room Homepage">
+          <SidebarMenuButton
+            asChild
+            tooltip="Room Homepage"
+            onClick={setRoomHome}
+          >
             <a>
               <Home />
               <span>Home</span>
@@ -22,7 +31,11 @@ export function ManageNav() {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild tooltip="Room Settings">
+          <SidebarMenuButton
+            asChild
+            tooltip="Room Settings"
+            onClick={setRoomSettings}
+          >
             <a>
               <Settings />
               <span>Settings</span>

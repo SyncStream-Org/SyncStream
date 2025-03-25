@@ -16,7 +16,13 @@ import {
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-export function UserNav({ username }: { username: string }) {
+interface UserNavProps {
+  username: string;
+  goToHome: () => void;
+  goToSettings: () => void;
+}
+
+export function UserNav({ username, goToHome, goToSettings }: UserNavProps) {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -56,14 +62,14 @@ export function UserNav({ username }: { username: string }) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={goToSettings}>
               <Settings />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={goToHome}>
               <LogOut />
-              Log out
+              Leave Room
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
