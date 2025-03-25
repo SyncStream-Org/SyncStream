@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -12,11 +13,11 @@ export function RoomHeader({ roomName }: { roomName: string }) {
           size="lg"
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
         >
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg shrink-0 mx-auto lg:mx-0">
-            <span className="font-medium text-lg">
-              {roomName[0].toUpperCase()}
-            </span>
-          </div>
+          <Avatar className="h-8 w-8 rounded-lg bg-blue-500">
+            <AvatarFallback className="rounded-lg bg-blue-500 text-white">
+              {roomName[0]}
+            </AvatarFallback>
+          </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-medium">{roomName}</span>
           </div>

@@ -1,6 +1,6 @@
 import { MediaNav } from '@/pages/room/sidebar/media-nav';
 import { ManageNav } from '@/pages/room/sidebar/manage-nav';
-import { UserNav } from '@/pages/room/sidebar/nav-user';
+import { UserNav } from '@/pages/room/sidebar/user-nav';
 import { RoomHeader } from '@/pages/room/sidebar/room-header';
 import {
   Sidebar,
@@ -60,7 +60,7 @@ export function AppSidebar({
         />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser username={username} />
+        <UserNav username={username} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
