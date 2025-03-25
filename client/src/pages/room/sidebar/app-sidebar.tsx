@@ -69,7 +69,7 @@ export function AppSidebar({
         />
       </SidebarContent>
       <SidebarFooter>
-        <UserNav 
+        <UserNav
           username={username}
           goToHome={goToHome}
           goToSettings={goToSettings}
