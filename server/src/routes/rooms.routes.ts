@@ -17,7 +17,7 @@ router.delete("/:roomID/users/:username", controller.removeUser)
 router.put("/:roomID/users/:username", controller.updateUser)
 
 // imported routers, users required to be part of the room to access
-router.use(confirmUserInRoom);
-router.use("/:roomID/markdown", filesRouter);
+router.use("/:roomID", confirmUserInRoom);
+router.use("/:roomID/files", filesRouter);
 
 export default router;

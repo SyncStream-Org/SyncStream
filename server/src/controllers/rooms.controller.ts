@@ -4,34 +4,44 @@ import { Types, Validation } from "syncstream-sharedlib";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
-import {
-  RoomAttributes,
-  RoomUserAttributes,
-  RoomUserPermissions,
-} from "room-types";
+import { RoomCreationAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
 //import * as service from "../services/rooms.service";
 
 export const createRoom = async (req: Request, res: Response) => {
-  const roomNameSM: Types.StringMessage = req.body;
-  if (!Validation.isStringMessage(roomNameSM)) {
-    res.status(400).json({ error: "Bad Request: invalid format" });
-    return;
-  }
+    const roomNameSM: Types.StringMessage = req.body;
+    if (!Validation.isStringMessage(roomNameSM)) {
+        res.status(400).json({ error: "Bad Request: invalid format" });
+        return;
+    }
 
-  const roomName = roomNameSM.msg;
-  const roomOwner = (req as any).user.username;
-  const roomData: RoomAttributes = { roomName, roomOwner };
-  const newRoom = await roomService.createRoom(roomData);
+    const roomName = roomNameSM.msg;
+    // ensure room doesn't exist
+    if (await roomService.getRoomByName(roomName) != null) {
+        res.status(409).json({ error: "Conflict: Room Name Already Exists"});
+        return;
+    }
 
-  const roomID = newRoom.roomID;
-  const roomDataResponse: Types.RoomData = {
-    roomName,
-    roomOwner,
-    roomID,
-    isMember: true,
-  };
+    // create room
+    const roomOwner = (req as any).user.username;
+    const roomData: RoomCreationAttributes = {roomName, roomOwner};
+    const newRoom = await roomService.createRoom(roomData);
 
-  res.json(roomDataResponse);
+    const roomID = newRoom.roomID
+    const roomDataResponse: Types.RoomData = {roomName, roomOwner, roomID};
+
+    // add owner as a member of the room
+    const username = roomOwner;
+    const permissions: RoomUserPermissions = { canEdit: true };
+    const isMember = true;
+    const roomUserAttr: RoomUserAttributes = { username, roomID, permissions, isMember };
+    try {
+        await userService.createRoomUser(roomID, roomUserAttr);
+    } catch(error) {
+        res.status(500).json({ error: "Unkown Server Error has Occurred" }); // shouldn't happen, this was user/member exists in invite member, leaving in for consistency
+        return;
+    }
+
+    res.json(roomDataResponse);
 };
 
 export const joinRoom = async (req: Request, res: Response) => {

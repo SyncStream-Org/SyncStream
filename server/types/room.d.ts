@@ -1,6 +1,6 @@
 declare module 'room-types' {
   export interface RoomAttributes {
-    roomID?: string;
+    roomID: string;
     roomName: string;
     roomOwner: string;
   }
@@ -26,7 +26,7 @@ declare module 'room-types' {
   }
 
   export interface RoomFileAttributes {
-    fileID?: string;
+    fileID: string;
     roomID: string;
     fileName: string;
     fileExtension: string;
