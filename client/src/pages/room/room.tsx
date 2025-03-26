@@ -7,6 +7,7 @@ import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
+import { RoomHome } from './room-home/room-home';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -118,6 +119,9 @@ function RoomPage(props: Props) {
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
+            {/* {activeDoc === null && activeStream === null && (
+              <RoomHome media={media} />
+            )} */}
           </div>
         </SidebarInset>
       </SidebarProvider>
