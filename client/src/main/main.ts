@@ -52,12 +52,19 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
-function UpsertKeyValue(obj, keyToChange, value) {
+function UpsertKeyValue(
+  obj: Record<string, string> | Record<string, string[]> | undefined,
+  keyToChange: string,
+  value: string[],
+) {
+  if (obj === undefined) return;
+
   const keyToChangeLower = keyToChange.toLowerCase();
   for (const key of Object.keys(obj)) {
     if (key.toLowerCase() === keyToChangeLower) {
       // Reassign old key
       obj[key] = value;
+
       // Done
       return;
     }
@@ -85,7 +92,7 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      webSecurity: false,
+      // webSecurity: false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -95,12 +102,18 @@ const createWindow = async () => {
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     (details, callback) => {
       const { requestHeaders } = details;
-      UpsertKeyValue(requestHeaders, 'Origin', '*');
-      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Mode', 'no-cors');
-      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Site', 'none');
-      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Dest', 'document');
+      UpsertKeyValue(requestHeaders, 'Access-Control-Allow-Origin', ['*']);
+      callback({ requestHeaders });
+    },
+  );
+
+  mainWindow.webContents.session.webRequest.onHeadersReceived(
+    (details, callback) => {
+      const { responseHeaders } = details;
+      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Origin', ['*']);
+      UpsertKeyValue(responseHeaders, 'Access-Control-Allow-Headers', ['*']);
       callback({
-        requestHeaders,
+        responseHeaders,
       });
     },
   );
