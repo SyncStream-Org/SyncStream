@@ -52,6 +52,20 @@ const installExtensions = async () => {
     .catch(console.log);
 };
 
+function UpsertKeyValue(obj, keyToChange, value) {
+  const keyToChangeLower = keyToChange.toLowerCase();
+  for (const key of Object.keys(obj)) {
+    if (key.toLowerCase() === keyToChangeLower) {
+      // Reassign old key
+      obj[key] = value;
+      // Done
+      return;
+    }
+  }
+  // Insert at end instead
+  obj[keyToChange] = value;
+}
+
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -77,6 +91,19 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
+  mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+    (details, callback) => {
+      const { requestHeaders } = details;
+      UpsertKeyValue(requestHeaders, 'Origin', '*');
+      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Mode', 'no-cors');
+      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Site', 'none');
+      UpsertKeyValue(requestHeaders, 'Sec-Fetch-Dest', 'document');
+      callback({
+        requestHeaders,
+      });
+    },
+  );
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
