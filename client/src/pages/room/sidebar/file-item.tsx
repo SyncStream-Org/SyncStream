@@ -5,6 +5,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
+import React from 'react';
 
 interface FileItemProps {
   children: React.ReactNode;

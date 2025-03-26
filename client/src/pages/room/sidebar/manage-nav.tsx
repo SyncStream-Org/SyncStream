@@ -24,6 +24,7 @@ export function ManageNav({ setRoomHome, setRoomSettings }: ManageNavProps) {
             tooltip="Room Homepage"
             onClick={setRoomHome}
           >
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a>
               <Home />
               <span>Home</span>
@@ -36,6 +37,7 @@ export function ManageNav({ setRoomHome, setRoomSettings }: ManageNavProps) {
             tooltip="Room Settings"
             onClick={setRoomSettings}
           >
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a>
               <Settings />
               <span>Settings</span>

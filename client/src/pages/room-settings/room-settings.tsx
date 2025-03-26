@@ -28,7 +28,7 @@ class RoomSettings extends React.Component<Props, State> {
     const localize = Localize.getInstance().localize();
 
     // ---- RENDER BLOCK ----
-    return <div className="min-h-screen flex"></div>;
+    return <div className="min-h-screen flex" />;
   }
 }
 
