@@ -150,7 +150,7 @@ export function RoomHome({ media }: RoomHomeProps) {
         </div>
 
         <Select
-          value={mediaTypeFilter || ''}
+          value={mediaTypeFilter!}
           onValueChange={(value) => setMediaTypeFilter(value || null)}
         >
           <SelectTrigger className="w-[180px]">
@@ -158,7 +158,7 @@ export function RoomHome({ media }: RoomHomeProps) {
           </SelectTrigger>
           <SelectContent>
             {mediaTypeOptions.map((option) => (
-              <SelectItem key={option.label} value={option.value || ''}>
+              <SelectItem key={option.label} value={option.value!}>
                 {option.label}
               </SelectItem>
             ))}

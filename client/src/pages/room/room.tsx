@@ -119,9 +119,9 @@ function RoomPage(props: Props) {
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
-            {/* {activeDoc === null && activeStream === null && (
+            {activeDoc === null && activeStream === null && (
               <RoomHome media={media} />
-            )} */}
+            )}
           </div>
         </SidebarInset>
       </SidebarProvider>
