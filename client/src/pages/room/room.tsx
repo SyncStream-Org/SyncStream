@@ -103,7 +103,7 @@ function RoomPage(props: Props) {
         />
         {/* Main Content */}
         {/* Text Editor */}
-        <SidebarInset className="bg-white dark:bg-gray-800">
+        <SidebarInset>
           <RoomHeader
             roomHome={activeDoc === null && activeStream === null}
             activeDoc={activeDoc}
