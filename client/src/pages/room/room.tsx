@@ -21,23 +21,6 @@ function RoomPage(props: Props) {
     'Project.pdf',
   ]);
   const [docName, setDocName] = useState<string | null>(null);
-  const [sessionSaved, setSessionSaved] = useState(false);
-
-  useEffect(() => {
-    const handleUnload = (event: BeforeUnloadEvent) => {
-      if (!sessionSaved) {
-        event.preventDefault();
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            setSessionSaved(true);
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved]);
 
   return (
     <div className="flex h-screen">
