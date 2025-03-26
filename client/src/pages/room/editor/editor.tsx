@@ -143,7 +143,7 @@ export default function DocumentEditor({
   // TODO: localize
 
   return (
-    <div className="editor-container w-full mx-auto bg-white dark:bg-gray-800 overflow-hidden">
+    <div className="editor-container w-full mx-auto overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{activeDoc?.fileName}</h2>

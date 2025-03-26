@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { useEffect, useState } from 'react';
-import { FileItem } from './file-item';
+import { FileItem } from '../file-item';
 
 interface MediaCategory {
   title: string;

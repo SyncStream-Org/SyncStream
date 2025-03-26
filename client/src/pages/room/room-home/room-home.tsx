@@ -2,14 +2,7 @@ import { useState } from 'react';
 import { Types } from 'syncstream-sharedlib';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { FileText, Monitor, Mic, Plus, Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -27,7 +20,7 @@ import {
   SelectItem,
   Select,
 } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import { DocCard } from './doc-card';
 
 interface RoomHomeProps {
   media: Types.FileData[];
@@ -36,7 +29,6 @@ interface RoomHomeProps {
 export function RoomHome({ media }: RoomHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<string | null>(null);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   // Filter media by fileExtension (which can only be 'doc' for documents) and search query
   const filteredMedia = media.filter((item) => {
@@ -129,7 +121,6 @@ export function RoomHome({ media }: RoomHomeProps) {
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setIsCreateDialogOpen(false)}
               >
                 Cancel
               </Button>
@@ -166,46 +157,16 @@ export function RoomHome({ media }: RoomHomeProps) {
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         {filteredMedia.length > 0 ? (
           filteredMedia.map((item) => (
-            <Card key={item.fileId} className="overflow-hidden">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center">
-                    {item.fileExtension === 'doc' ? (
-                      <FileText className="h-5 w-5 mr-2 text-blue-500" />
-                    ) : item.fileExtension === 'stream' ? (
-                      <Monitor className="h-5 w-5 mr-2 text-purple-500" />
-                    ) : (
-                      <Mic className="h-5 w-5 mr-2 text-green-500" />
-                    )}
-                    <CardTitle className="text-base">{item.fileName}</CardTitle>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pb-2 pt-0">
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  <Badge variant="outline">
-                    {item.fileExtension === 'doc'
-                      ? 'Document'
-                      : item.fileExtension === 'stream'
-                        ? 'Stream'
-                        : 'Voice'}
-                  </Badge>
-                </div>
-              </CardContent>
-              <CardFooter className="pt-0 flex justify-between">
-                <Badge
-                  variant={item.permissions?.canEdit ? 'default' : 'secondary'}
-                >
-                  {item.permissions?.canEdit ? 'Can Edit' : 'Read Only'}
-                </Badge>
-                <Button variant="ghost" size="sm">
-                  Open
-                </Button>
-              </CardFooter>
-            </Card>
+            <DocCard
+              key={item.fileId}
+              item={item}
+              setActiveDoc={() => {}}
+              setActiveStream={() => {}}
+              setActiveVoice={() => {}}
+            />
           ))
         ) : (
           <div className="col-span-full text-center py-10 text-gray-500">

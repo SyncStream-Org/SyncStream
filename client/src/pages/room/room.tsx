@@ -8,6 +8,7 @@ import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
+import { Separator } from '@/components/ui/separator';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -109,6 +110,7 @@ function RoomPage(props: Props) {
             activeDoc={activeDoc}
             activeStream={activeStream}
           />
+          <Separator className="mt-4" />
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 rounded shadow overflow-hidden">
             {activeDoc !== null && (
               <DocEditor
