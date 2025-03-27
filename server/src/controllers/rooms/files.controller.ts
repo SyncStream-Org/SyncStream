@@ -36,7 +36,7 @@ export const createFile = async (req: Request, res: Response) => {
 
     const roomFile: RoomFile = await filesService.createRoomFile({ roomID, ...fileBody });
     const roomFileResponse: Types.FileData = {
-        fileId: roomFile.fileID,
+        fileID: roomFile.fileID,
         fileName: roomFile.fileName,
         fileExtension: roomFile.fileExtension,
         permissions: roomFile.permissions,
@@ -55,7 +55,7 @@ export const getRoomFile = async (req: Request, res: Response) => {
     }
 
     const roomFileResponse: Types.FileData = {
-        fileId: roomFile.fileID,
+        fileID: roomFile.fileID,
         fileName: roomFile.fileName,
         fileExtension: roomFile.fileExtension,
         permissions: roomFile.permissions,

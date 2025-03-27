@@ -79,24 +79,6 @@ export function MediaNav({
 
   // Update active items when props change
   useEffect(() => {
-    setMediaItems((prev) => ({
-      ...prev,
-      docs: {
-        ...prev.docs,
-        activeItem: activeDoc,
-      },
-      streams: {
-        ...prev.streams,
-        activeItem: activeStream,
-      },
-      voiceChannels: {
-        ...prev.voiceChannels,
-        activeItem: activeVoice,
-      },
-    }));
-  }, [activeDoc, activeStream, activeVoice]);
-
-  useEffect(() => {
     const docsItems: Types.FileData[] = [];
     const streamsItems: Types.FileData[] = [];
     const voiceItems: Types.FileData[] = [];
@@ -111,23 +93,30 @@ export function MediaNav({
         voiceItems.push(item);
       }
     });
-
+    
     setMediaItems((prev) => ({
       ...prev,
       docs: {
         ...prev.docs,
+        activeItem: activeDoc,
         items: docsItems,
       },
       streams: {
         ...prev.streams,
+        activeItem: activeStream,
         items: streamsItems,
       },
       voiceChannels: {
         ...prev.voiceChannels,
+        activeItem: activeVoice,
         items: voiceItems,
       },
     }));
-  }, [media]);
+  }, [media, activeDoc, activeStream, activeVoice]);
+
+  useEffect(() => {
+    console.log('MediaItems state updated:', mediaItems);
+  }, [mediaItems]);
 
   return (
     <SidebarGroup>
@@ -147,12 +136,12 @@ export function MediaNav({
                 <SidebarMenuSub>
                   {item.items?.length > 0 ? (
                     item.items.map((subItem) => (
-                      <FileItem key={subItem.fileId} roomId={roomId} mediaObject={subItem}>
+                      <FileItem key={subItem.fileID} roomID={roomId} mediaObject={subItem}>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             asChild
                             isActive={
-                              subItem.fileId! === item.activeItem?.fileId!
+                              subItem.fileID! === item.activeItem?.fileID!
                             }
                             onClick={() => item.setActive(subItem)}
                           >

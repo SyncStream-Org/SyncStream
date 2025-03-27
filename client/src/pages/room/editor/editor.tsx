@@ -70,7 +70,7 @@ export default function DocumentEditor({
 
     const websocketProvider = new WebsocketProvider(
       wsURL,
-      activeDoc.fileId!,
+      activeDoc.fileID!,
       doc,
     );
 
