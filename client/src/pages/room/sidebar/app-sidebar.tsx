@@ -12,7 +12,7 @@ import {
 import { Types } from 'syncstream-sharedlib';
 
 interface RoomSidebarProps {
-  roomName: string;
+  room: Types.RoomData | null;
   username: string;
   media: Types.FileData[];
   activeDoc: Types.FileData | null;
@@ -21,8 +21,6 @@ interface RoomSidebarProps {
   setActiveDoc: (doc: Types.FileData) => void;
   setActiveStream: (stream: Types.FileData) => void;
   setActiveVoice: (voice: Types.FileData) => void;
-  updateMedia: (mediaID: string) => void;
-  deleteMedia: (mediaID: string) => void;
   goToHome: () => void;
   goToSettings: () => void;
   setRoomHome: () => void;
@@ -30,7 +28,7 @@ interface RoomSidebarProps {
 }
 
 export function AppSidebar({
-  roomName,
+  room,
   username,
   media,
   activeDoc,
@@ -39,17 +37,15 @@ export function AppSidebar({
   setActiveDoc,
   setActiveStream,
   setActiveVoice,
-  updateMedia,
-  deleteMedia,
   goToHome,
   goToSettings,
   setRoomHome,
   setRoomSettings,
 }: RoomSidebarProps) {
-  return (
+  return room ? (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <RoomHeader roomName={roomName} />
+        <RoomHeader roomName={room.roomName} />
       </SidebarHeader>
       <SidebarContent>
         <ManageNav
@@ -58,14 +54,13 @@ export function AppSidebar({
         />
         <MediaNav
           media={media}
+          roomId={room.roomID!}
           activeDoc={activeDoc}
           activeStream={activeStream}
           activeVoice={activeVoice}
           setActiveDoc={setActiveDoc}
           setActiveStream={setActiveStream}
           setActiveVoice={setActiveVoice}
-          updateMedia={updateMedia}
-          deleteMedia={deleteMedia}
         />
       </SidebarContent>
       <SidebarFooter>
@@ -77,5 +72,5 @@ export function AppSidebar({
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  );
+  ) : null;
 }

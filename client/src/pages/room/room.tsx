@@ -9,6 +9,7 @@ import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import { Separator } from '@/components/ui/separator';
+import * as api from '../../api';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -18,50 +19,23 @@ interface Props {
 
 function RoomPage(props: Props) {
   const roomID = useParams<{ roomID: string }>().roomID!;
-  const [media, setMedia] = useState<Types.FileData[]>([
-    {
-      fileId: '1',
-      fileName: 'Document 1',
-      fileExtension: 'doc',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '2',
-      fileName: 'Document 2',
-      fileExtension: 'doc',
-      permissions: { canEdit: false },
-    },
-    {
-      fileId: '3',
-      fileName: 'Stream 1',
-      fileExtension: 'stream',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '4',
-      fileName: 'Stream 2',
-      fileExtension: 'stream',
-      permissions: { canEdit: false },
-    },
-    {
-      fileId: '5',
-      fileName: 'Voice Channel 1',
-      fileExtension: 'voice',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '6',
-      fileName: 'Voice Channel 2',
-      fileExtension: 'voice',
-      permissions: { canEdit: false },
-    },
-  ]);
+  const [media, setMedia] = useState<Types.FileData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
   const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
   const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
   const [sessionSaved, setSessionSaved] = useState(false);
+  const [room, setRoom] = useState<Types.RoomData | null>(null);
 
   useEffect(() => {
+    // TODO: Fetch room data from the server
+    setRoom({roomName: 'Room Name', roomID: roomID});
+    api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        setMedia(data!);
+      } else {
+        console.error('Error fetching files:', data);
+      }
+    });
     const handleUnload = (event: BeforeUnloadEvent) => {
       if (!sessionSaved) {
         event.preventDefault();
@@ -82,7 +56,7 @@ function RoomPage(props: Props) {
       {/* Sidebar */}
       <SidebarProvider>
         <AppSidebar
-          roomName="Room Name"
+          room={room!}
           username={SessionState.getInstance().currentUser.username}
           media={media}
           activeDoc={activeDoc}
@@ -91,8 +65,6 @@ function RoomPage(props: Props) {
           setActiveStream={setActiveStream}
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
-          updateMedia={(mediaID: string) => {}}
-          deleteMedia={(mediaID: string) => {}}
           goToHome={() => {
             props.navigate('/home');
           }}

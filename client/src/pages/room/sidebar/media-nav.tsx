@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { useEffect, useState } from 'react';
-import { FileItem } from '../file-item';
+import { FileItem } from '../file-item/file-item';
 
 interface MediaCategory {
   title: string;
@@ -33,26 +33,24 @@ interface MediaCategory {
 
 interface MediaNavProps {
   media: Types.FileData[];
+  roomId: string;
   activeDoc: Types.FileData | null;
   activeStream: Types.FileData | null;
   activeVoice: Types.FileData | null;
   setActiveDoc: (doc: Types.FileData) => void;
   setActiveStream: (stream: Types.FileData) => void;
   setActiveVoice: (voice: Types.FileData) => void;
-  updateMedia: (mediaID: string) => void;
-  deleteMedia: (mediaID: string) => void;
 }
 
 export function MediaNav({
   media,
+  roomId,
   activeDoc,
   activeStream,
   activeVoice,
   setActiveDoc,
   setActiveStream,
   setActiveVoice,
-  updateMedia,
-  deleteMedia,
 }: MediaNavProps) {
   // Define mediaItems as state inside the component
   const [mediaItems, setMediaItems] = useState<Record<string, MediaCategory>>({
@@ -149,7 +147,7 @@ export function MediaNav({
                 <SidebarMenuSub>
                   {item.items?.length > 0 ? (
                     item.items.map((subItem) => (
-                      <FileItem key={subItem.fileId}>
+                      <FileItem key={subItem.fileId} roomId={roomId} mediaObject={subItem}>
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             asChild

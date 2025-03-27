@@ -1,7 +1,7 @@
 import { FileText, Monitor, Mic } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Types } from 'syncstream-sharedlib';
-import { FileItem } from '../file-item';
+import { FileItem } from '../file-item/file-item';
 
 interface DocCardProps {
   roomID: string;
@@ -23,7 +23,7 @@ export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActive
   };
 
   return (
-    <FileItem>
+    <FileItem roomID={roomID} mediaObject={item}>
       <Card 
         key={item.fileId} 
         className="overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors h-full"
