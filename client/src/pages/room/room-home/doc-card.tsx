@@ -11,7 +11,13 @@ interface DocCardProps {
   setActiveVoice: (voice: Types.FileData | null) => void;
 }
 
-export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActiveVoice }: DocCardProps) {
+export function DocCard({
+  roomID,
+  item,
+  setActiveDoc,
+  setActiveStream,
+  setActiveVoice,
+}: DocCardProps) {
   const handleCardClick = () => {
     if (item.fileExtension === 'doc') {
       setActiveDoc(item);
@@ -24,8 +30,8 @@ export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActive
 
   return (
     <FileItem roomID={roomID} mediaObject={item}>
-      <Card 
-        key={item.fileID} 
+      <Card
+        key={item.fileID}
         className="overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors h-full"
         onClick={handleCardClick}
       >
@@ -37,7 +43,9 @@ export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActive
           ) : (
             <Mic className="h-10 w-10 mb-2 text-green-500" />
           )}
-          <span className="text-sm font-medium text-center">{item.fileName}</span>
+          <span className="text-sm font-medium text-center">
+            {item.fileName}
+          </span>
         </CardContent>
       </Card>
     </FileItem>

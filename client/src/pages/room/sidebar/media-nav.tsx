@@ -93,7 +93,7 @@ export function MediaNav({
         voiceItems.push(item);
       }
     });
-    
+
     setMediaItems((prev) => ({
       ...prev,
       docs: {
@@ -114,10 +114,6 @@ export function MediaNav({
     }));
   }, [media, activeDoc, activeStream, activeVoice]);
 
-  useEffect(() => {
-    console.log('MediaItems state updated:', mediaItems);
-  }, [mediaItems]);
-
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Media</SidebarGroupLabel>
@@ -136,7 +132,11 @@ export function MediaNav({
                 <SidebarMenuSub>
                   {item.items?.length > 0 ? (
                     item.items.map((subItem) => (
-                      <FileItem key={subItem.fileID} roomID={roomId} mediaObject={subItem}>
+                      <FileItem
+                        key={subItem.fileID}
+                        roomID={roomId}
+                        mediaObject={subItem}
+                      >
                         <SidebarMenuSubItem>
                           <SidebarMenuSubButton
                             asChild

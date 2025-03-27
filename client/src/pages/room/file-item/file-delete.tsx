@@ -16,7 +16,6 @@ interface FileUpdateProps {
 }
 
 export function FileDelete({ roomID, mediaObject, setOpen }: FileUpdateProps) {
-  const [fileName, setFileName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
@@ -28,7 +27,6 @@ export function FileDelete({ roomID, mediaObject, setOpen }: FileUpdateProps) {
         console.error('Error deleting file');
       }
       setIsLoading(false);
-      setFileName('');
       setOpen(false);
     });
   };

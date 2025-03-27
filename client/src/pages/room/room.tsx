@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
@@ -26,7 +26,7 @@ function RoomPage(props: Props) {
   const [sessionSaved, setSessionSaved] = useState(false);
   const [room, setRoom] = useState<Types.RoomData | null>(null);
 
-  const handleRoomFetch = useCallback(() => {
+  const handleRoomFetch = () => {
     api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
@@ -34,7 +34,7 @@ function RoomPage(props: Props) {
         console.error('Error fetching files:', data);
       }
     });
-  });
+  };
 
   const handleHomeClick = () => {
     // clear active stream and active doc
@@ -43,9 +43,12 @@ function RoomPage(props: Props) {
   };
 
   useEffect(() => {
-    // TODO: Fetch room data from the server
     setRoom({ roomName: 'Room Name', roomID });
     handleRoomFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const handleUnload = (event: BeforeUnloadEvent) => {
       if (!sessionSaved) {
         event.preventDefault();
@@ -59,7 +62,7 @@ function RoomPage(props: Props) {
     };
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved, roomID, handleRoomFetch]);
+  }, [sessionSaved]);
 
   return (
     <div className="flex h-screen">

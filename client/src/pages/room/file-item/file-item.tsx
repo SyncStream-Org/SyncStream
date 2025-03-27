@@ -7,9 +7,9 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { Types } from 'syncstream-sharedlib';
 import { FileUpdate } from './file-update';
 import { FileDelete } from './file-delete';
-import { Types } from 'syncstream-sharedlib';
 
 interface FileItemProps {
   roomID: string;
@@ -26,7 +26,9 @@ export function FileItem({ roomID, mediaObject, children }: FileItemProps) {
       <ContextMenu>
         <ContextMenuTrigger>{children}</ContextMenuTrigger>
         <ContextMenuContent className="w-64 bg-white dark:bg-gray-900">
-          <ContextMenuItem inset onClick={() => setOpenUpdate(true)}>Rename</ContextMenuItem>
+          <ContextMenuItem inset onClick={() => setOpenUpdate(true)}>
+            Rename
+          </ContextMenuItem>
           <ContextMenuItem inset>Duplicate</ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem inset>Export as PDF</ContextMenuItem>
