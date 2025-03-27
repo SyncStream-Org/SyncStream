@@ -7,15 +7,27 @@ interface RoomHomeProps {
   media: Types.FileData[];
   roomID: string;
   refresh: () => void;
+  setActiveDoc: (doc: Types.FileData | null) => void;
+  setActiveStream: (stream: Types.FileData | null) => void;
+  setActiveVoice: (voice: Types.FileData | null) => void;
 }
 
-export function RoomHome({ media, roomID, refresh }: RoomHomeProps) {
+export function RoomHome({
+  media,
+  roomID,
+  refresh,
+  setActiveDoc,
+  setActiveStream,
+  setActiveVoice,
+}: RoomHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('type');
 
   const filteredMedia = media.filter((item) => {
-    const matchesType = mediaTypeFilter.length === 0 || mediaTypeFilter.includes(item.fileExtension);
+    const matchesType =
+      mediaTypeFilter.length === 0 ||
+      mediaTypeFilter.includes(item.fileExtension);
 
     const matchesSearch = item.fileName
       .toLowerCase()
@@ -27,7 +39,8 @@ export function RoomHome({ media, roomID, refresh }: RoomHomeProps) {
   const filteredAndSortedMedia = filteredMedia.sort((a, b) => {
     if (sortOption === 'type') {
       return a.fileExtension.localeCompare(b.fileExtension);
-    } else if (sortOption === 'name') {
+    }
+    if (sortOption === 'name') {
       return a.fileName.localeCompare(b.fileName);
     }
     return 0;
@@ -46,11 +59,11 @@ export function RoomHome({ media, roomID, refresh }: RoomHomeProps) {
         {filteredAndSortedMedia.length > 0 ? (
           filteredAndSortedMedia.map((item) => (
             <DocCard
-              key={item.fileId}
+              key={item.fileID}
               item={item}
-              setActiveDoc={() => {}}
-              setActiveStream={() => {}}
-              setActiveVoice={() => {}}
+              setActiveDoc={setActiveDoc}
+              setActiveStream={setActiveStream}
+              setActiveVoice={setActiveVoice}
               roomID={roomID}
             />
           ))

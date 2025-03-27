@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
+import { Separator } from '@/components/ui/separator';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
-import { Separator } from '@/components/ui/separator';
 import * as api from '../../api';
 
 interface Props {
@@ -26,7 +26,7 @@ function RoomPage(props: Props) {
   const [sessionSaved, setSessionSaved] = useState(false);
   const [room, setRoom] = useState<Types.RoomData | null>(null);
 
-  const handleRoomFetch = () => {
+  const handleRoomFetch = useCallback(() => {
     api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
@@ -34,11 +34,17 @@ function RoomPage(props: Props) {
         console.error('Error fetching files:', data);
       }
     });
-  }
+  });
+
+  const handleHomeClick = () => {
+    // clear active stream and active doc
+    setActiveStream(null);
+    setActiveDoc(null);
+  };
 
   useEffect(() => {
     // TODO: Fetch room data from the server
-    setRoom({roomName: 'Room Name', roomID: roomID});
+    setRoom({ roomName: 'Room Name', roomID });
     handleRoomFetch();
     const handleUnload = (event: BeforeUnloadEvent) => {
       if (!sessionSaved) {
@@ -53,7 +59,7 @@ function RoomPage(props: Props) {
     };
     window.addEventListener('beforeunload', handleUnload);
     return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved]);
+  }, [sessionSaved, roomID, handleRoomFetch]);
 
   return (
     <div className="flex h-screen">
@@ -75,7 +81,7 @@ function RoomPage(props: Props) {
           goToSettings={() => {
             props.navigate('/settings');
           }}
-          setRoomHome={() => {}}
+          setRoomHome={handleHomeClick}
           setRoomSettings={() => {}}
         />
         {/* Main Content */}
@@ -98,7 +104,14 @@ function RoomPage(props: Props) {
               />
             )}
             {activeDoc === null && activeStream === null && (
-              <RoomHome media={media} roomID={roomID} refresh={handleRoomFetch} />
+              <RoomHome
+                media={media}
+                roomID={roomID}
+                refresh={handleRoomFetch}
+                setActiveDoc={setActiveDoc}
+                setActiveStream={setActiveStream}
+                setActiveVoice={setActiveVoice}
+              />
             )}
           </div>
         </SidebarInset>

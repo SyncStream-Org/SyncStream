@@ -25,7 +25,7 @@ export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActive
   return (
     <FileItem roomID={roomID} mediaObject={item}>
       <Card 
-        key={item.fileId} 
+        key={item.fileID} 
         className="overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors h-full"
         onClick={handleCardClick}
       >
