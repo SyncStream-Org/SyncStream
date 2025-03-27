@@ -110,8 +110,8 @@ function RoomPage(props: Props) {
             activeDoc={activeDoc}
             activeStream={activeStream}
           />
-          <Separator className="mt-4" />
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 rounded shadow overflow-hidden">
+          <Separator />
+          <div className="flex flex-1 flex-col pt-0 overflow-hidden">
             {activeDoc !== null && (
               <DocEditor
                 activeDoc={activeDoc}
@@ -122,7 +122,7 @@ function RoomPage(props: Props) {
               />
             )}
             {activeDoc === null && activeStream === null && (
-              <RoomHome media={media} />
+              <RoomHome media={media} roomID={roomID} />
             )}
           </div>
         </SidebarInset>

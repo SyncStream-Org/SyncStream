@@ -4,13 +4,14 @@ import { Types } from 'syncstream-sharedlib';
 import { FileItem } from '../file-item';
 
 interface DocCardProps {
+  roomID: string;
   item: Types.FileData;
   setActiveDoc: (doc: Types.FileData | null) => void;
   setActiveStream: (stream: Types.FileData | null) => void;
   setActiveVoice: (voice: Types.FileData | null) => void;
 }
 
-export function DocCard({ item, setActiveDoc, setActiveStream, setActiveVoice }: DocCardProps) {
+export function DocCard({ roomID, item, setActiveDoc, setActiveStream, setActiveVoice }: DocCardProps) {
   const handleCardClick = () => {
     if (item.fileExtension === 'doc') {
       setActiveDoc(item);
