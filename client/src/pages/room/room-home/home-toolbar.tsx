@@ -28,6 +28,7 @@ export function HomeToolbar({
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('newest');
+  const [open, setOpen] = useState(false);
 
   const filterOptions = [
     { value: 'doc', label: 'Document' },
@@ -69,7 +70,7 @@ export function HomeToolbar({
             placeholder="Search..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="pl-8"
+            className="pl-8 focus-visible:ring-0"
           />
         </div>
 
@@ -77,7 +78,7 @@ export function HomeToolbar({
           <DropdownMenuTrigger>
             <Button
               variant="outline"
-              size="sm"
+              size="default"
               className="flex items-center gap-1"
             >
               <Filter className="h-4 w-4" />
@@ -102,7 +103,7 @@ export function HomeToolbar({
           <DropdownMenuTrigger>
             <Button
               variant="outline"
-              size="sm"
+              size="default"
               className="flex items-center gap-1"
             >
               <SortDesc className="h-4 w-4" />
@@ -123,14 +124,14 @@ export function HomeToolbar({
         </DropdownMenu>
       </div>
 
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger>
-          <Button size="sm" className="ml-2" variant="outline">
+          <Button size="default" className="ml-2" variant="outline">
             <Plus className="h-4 w-4 mr-1" />
             Create
           </Button>
         </DialogTrigger>
-        <FileCreate roomID={roomID} />
+        <FileCreate roomID={roomID} setOpen={setOpen} />
       </Dialog>
     </div>
   );

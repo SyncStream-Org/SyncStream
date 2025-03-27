@@ -17,7 +17,12 @@ import {
 } from '@/components/ui/select';
 import * as api from '../../../api';
 
-export function FileCreate({ roomID }: { roomID: string }) {
+interface FileCreateProps {
+  roomID: string;
+  setOpen: (open: boolean) => void;
+}
+
+export function FileCreate({ roomID, setOpen }: FileCreateProps) {
   const [fileName, setFileName] = useState('');
   const [fileType, setFileType] = useState('doc');
   const [isLoading, setIsLoading] = useState(false);
@@ -32,20 +37,15 @@ export function FileCreate({ roomID }: { roomID: string }) {
       permissions: {
         canEdit: true,
       },
-    })
-      .then(({ success, data }) => {
-        if (!success) {
-          console.error('Error creating file:', data);
-        }
-      })
-      .catch((error) => {
-        console.error('Error creating file:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setFileName('');
-        setFileType('doc');
-      });
+    }).then(({ success, data }) => {
+      if (success !== api.SuccessState.SUCCESS) {
+        console.error('Error creating file:', data);
+      }
+      setIsLoading(false);
+      setFileName('');
+      setFileType('doc');
+      setOpen(false);
+    });
   };
 
   return (
@@ -83,7 +83,7 @@ export function FileCreate({ roomID }: { roomID: string }) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="doc">Document</SelectItem>
-                  <SelectItem value="stream">Live Stream</SelectItem>
+                  <SelectItem value="stream">Stream</SelectItem>
                   <SelectItem value="voice">Voice Channel</SelectItem>
                 </SelectContent>
               </Select>
