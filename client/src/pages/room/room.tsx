@@ -26,9 +26,7 @@ function RoomPage(props: Props) {
   const [sessionSaved, setSessionSaved] = useState(false);
   const [room, setRoom] = useState<Types.RoomData | null>(null);
 
-  useEffect(() => {
-    // TODO: Fetch room data from the server
-    setRoom({roomName: 'Room Name', roomID: roomID});
+  const handleRoomFetch = () => {
     api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
@@ -36,6 +34,12 @@ function RoomPage(props: Props) {
         console.error('Error fetching files:', data);
       }
     });
+  }
+
+  useEffect(() => {
+    // TODO: Fetch room data from the server
+    setRoom({roomName: 'Room Name', roomID: roomID});
+    handleRoomFetch();
     const handleUnload = (event: BeforeUnloadEvent) => {
       if (!sessionSaved) {
         event.preventDefault();
@@ -94,7 +98,7 @@ function RoomPage(props: Props) {
               />
             )}
             {activeDoc === null && activeStream === null && (
-              <RoomHome media={media} roomID={roomID} />
+              <RoomHome media={media} roomID={roomID} refresh={handleRoomFetch} />
             )}
           </div>
         </SidebarInset>

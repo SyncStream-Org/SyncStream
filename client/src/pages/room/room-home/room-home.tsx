@@ -6,9 +6,10 @@ import { HomeToolbar } from './home-toolbar';
 interface RoomHomeProps {
   media: Types.FileData[];
   roomID: string;
+  refresh: () => void;
 }
 
-export function RoomHome({ media, roomID }: RoomHomeProps) {
+export function RoomHome({ media, roomID, refresh }: RoomHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('type');
@@ -39,6 +40,7 @@ export function RoomHome({ media, roomID }: RoomHomeProps) {
         onFilterChange={setMediaTypeFilter}
         onSortChange={setSortOption}
         roomID={roomID}
+        refresh={refresh}
       />
       <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 p-4">
         {filteredAndSortedMedia.length > 0 ? (

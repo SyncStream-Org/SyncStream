@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import { Search, Filter, SortDesc, Plus } from 'lucide-react';
+import { Search, Filter, SortDesc, Plus, RefreshCcw } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,6 +17,7 @@ interface HomeToolbarProps {
   onSearch: (term: string) => void;
   onFilterChange: (filters: string[]) => void;
   onSortChange: (sortOption: string) => void;
+  refresh: () => void;
 }
 
 export function HomeToolbar({
@@ -24,6 +25,7 @@ export function HomeToolbar({
   onSearch,
   onFilterChange,
   onSortChange,
+  refresh,
 }: HomeToolbarProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
@@ -122,6 +124,15 @@ export function HomeToolbar({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          variant="outline"
+          size="default"
+          className="flex items-center gap-1"
+          onClick={refresh}
+        >
+          <RefreshCcw className="h-4 w-4" />
+        </Button>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
