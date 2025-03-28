@@ -15,12 +15,31 @@ export const createRoom = async (req: Request, res: Response) => {
     }
 
     const roomName = roomNameSM.msg;
+    // ensure room doesn't exist
+    if (await roomService.getRoomByName(roomName) != null) {
+        res.status(409).json({ error: "Conflict: Room Name Already Exists"});
+        return;
+    }
+
+    // create room
     const roomOwner = (req as any).user.username;
     const roomData: RoomCreationAttributes = {roomName, roomOwner};
     const newRoom = await roomService.createRoom(roomData);
 
     const roomID = newRoom.roomID
     const roomDataResponse: Types.RoomData = {roomName, roomOwner, roomID};
+
+    // add owner as a member of the room
+    const username = roomOwner;
+    const permissions: RoomUserPermissions = { canEdit: true };
+    const isMember = true;
+    const roomUserAttr: RoomUserAttributes = { username, roomID, permissions, isMember };
+    try {
+        await userService.createRoomUser(roomID, roomUserAttr);
+    } catch(error) {
+        res.status(500).json({ error: "Unkown Server Error has Occurred" }); // shouldn't happen, this was user/member exists in invite member, leaving in for consistency
+        return;
+    }
 
     res.json(roomDataResponse);
 };
