@@ -20,3 +20,9 @@ export interface UserRoomData {
   roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
   userPermissions: RoomPermissions;
 }
+
+// one or both
+export interface RoomUpdateData {
+  newRoomName?: string;
+  newOwnerID?: string;
+}

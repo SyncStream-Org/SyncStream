@@ -43,16 +43,14 @@ export const confirmUserInRoom = async (req: Request, res: Response, next: NextF
     res.status(404).json({ error: "Bad Request: room does not exist" });
     return;
   }
-  if (room.roomOwner === user.username) {
-    next();
-    return;
-  }
-  
+  (req as any).room= room;
+
   const roomUser = await userService.getRoomUser(roomID, user.username);
   if (!roomUser) {
     res.status(404).json({ error: "Bad Request: user does not exist in room" });
     return;
   }
+  (req as any).roomUser = roomUser;
 
   next();
 }

@@ -31,6 +31,16 @@ class RoomService {
     const room = await Room.findOne({ where: { roomName: roomName } });
     return room;
   }
+
+  public async updateRoomOwner(room: Room, userID: string): Promise<Room> {
+    room.roomOwner = userID;
+    return await room.save()
+  }
+
+  public async updateRoomName(room: Room, roomName: string): Promise<Room> {
+    room.roomName = roomName;
+    return await room.save()
+  }
 }
 
 export default new RoomService();
