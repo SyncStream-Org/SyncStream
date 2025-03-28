@@ -10,6 +10,7 @@ const router = Router();
 router.put("/", controller.createRoom)
 
 router.get("/:roomID", controller.joinRoom)
+router.put("/:roomID", controller.updateRoom)
 router.delete("/:roomID", controller.deleteRoom)
 router.get("/:roomID/users", controller.listUsers)
 router.put("/:roomID/users", controller.inviteUser)
