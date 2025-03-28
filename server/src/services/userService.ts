@@ -92,7 +92,7 @@ class UserService {
         (room: RoomUser) => room.roomID,
       );
       const joinedRooms = await Room.findAll({
-        where: { roomID: { in: joinedRoomIDs } },
+        where: { roomID: { joinedRoomIDs } },
       });
       if (joinedRooms) {
         rooms.push(...joinedRooms);
