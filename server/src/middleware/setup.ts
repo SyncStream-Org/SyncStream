@@ -40,7 +40,7 @@ export const confirmUserInRoom = async (req: Request, res: Response, next: NextF
 
   const room = await roomService.getRoomById(roomID);
   if (!room) {
-    res.status(400).json({ error: "Bad Request: room does not exist" });
+    res.status(404).json({ error: "Bad Request: room does not exist" });
     return;
   }
   if (room.roomOwner === user.username) {
@@ -50,7 +50,7 @@ export const confirmUserInRoom = async (req: Request, res: Response, next: NextF
   
   const roomUser = await userService.getRoomUser(roomID, user.username);
   if (!roomUser) {
-    res.status(400).json({ error: "Bad Request: user does not exist in room" });
+    res.status(404).json({ error: "Bad Request: user does not exist in room" });
     return;
   }
 

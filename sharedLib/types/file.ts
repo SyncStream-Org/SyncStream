@@ -3,7 +3,7 @@ export interface FilePermissions {
 }
 
 export interface FileData {
-  fileId?: string; // optional for creation, not for server responses
+  fileID?: string; // optional for creation, not for server responses
   fileName: string;
   fileExtension: string;
   permissions: FilePermissions;

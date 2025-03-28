@@ -15,6 +15,7 @@ export function isFileData(fileData: any):
   fileData is FileTypes.FileData {
   return (
     !!fileData &&
+    typeof fileData.fileID === "string" &&
     typeof fileData.fileName === "string" &&
     typeof fileData.fileExtension === "string" &&
     typeof fileData.permissions === "object" &&

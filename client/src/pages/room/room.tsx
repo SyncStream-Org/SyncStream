@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
+import { Separator } from '@/components/ui/separator';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
+import { RoomHeader } from './room-header';
+import { RoomHome } from './room-home/room-home';
+import * as api from '../../api';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -17,48 +21,34 @@ interface Props {
 
 function RoomPage(props: Props) {
   const roomID = useParams<{ roomID: string }>().roomID!;
-  const [media, setMedia] = useState<Types.FileData[]>([
-    {
-      fileId: '1',
-      fileName: 'Document 1',
-      fileExtension: 'doc',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '2',
-      fileName: 'Document 2',
-      fileExtension: 'doc',
-      permissions: { canEdit: false },
-    },
-    {
-      fileId: '3',
-      fileName: 'Stream 1',
-      fileExtension: 'stream',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '4',
-      fileName: 'Stream 2',
-      fileExtension: 'stream',
-      permissions: { canEdit: false },
-    },
-    {
-      fileId: '5',
-      fileName: 'Voice Channel 1',
-      fileExtension: 'voice',
-      permissions: { canEdit: true },
-    },
-    {
-      fileId: '6',
-      fileName: 'Voice Channel 2',
-      fileExtension: 'voice',
-      permissions: { canEdit: false },
-    },
-  ]);
-  const [activeDoc, setActiveDoc] = useState<string | null>(null);
-  const [activeStream, setActiveStream] = useState<string | null>(null);
-  const [activeVoice, setActiveVoice] = useState<string | null>(null);
+  const [media, setMedia] = useState<Types.FileData[]>([]);
+  const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
+  const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
   const [sessionSaved, setSessionSaved] = useState(false);
+  const [room, setRoom] = useState<Types.RoomData | null>(null);
+
+  const handleRoomFetch = () => {
+    api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        setMedia(data!);
+      } else {
+        console.error('Error fetching files:', data);
+      }
+    });
+  };
+
+  const handleHomeClick = () => {
+    // clear active stream and active doc
+    setActiveStream(null);
+    setActiveDoc(null);
+  };
+
+  useEffect(() => {
+    setRoom({ roomName: 'Room Name', roomID });
+    handleRoomFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleUnload = (event: BeforeUnloadEvent) => {
@@ -81,7 +71,7 @@ function RoomPage(props: Props) {
       {/* Sidebar */}
       <SidebarProvider>
         <AppSidebar
-          roomName="Room Name"
+          room={room!}
           username={SessionState.getInstance().currentUser.username}
           media={media}
           activeDoc={activeDoc}
@@ -90,36 +80,46 @@ function RoomPage(props: Props) {
           setActiveStream={setActiveStream}
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
-          updateMedia={(mediaID: string) => {}}
-          deleteMedia={(mediaID: string) => {}}
           goToHome={() => {
             props.navigate('/home');
           }}
           goToSettings={() => {
             props.navigate('/settings');
           }}
-          setRoomHome={() => {}}
+          setRoomHome={handleHomeClick}
           setRoomSettings={() => {}}
         />
         {/* Main Content */}
-        <main className="flex-1 p-4 flex flex-col">
-          {/* Text Editor */}
-          <SidebarTrigger />
-          <div
-            className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
-            style={{ minHeight: '500px' }}
-          >
+        {/* Text Editor */}
+        <SidebarInset>
+          <RoomHeader
+            roomHome={activeDoc === null && activeStream === null}
+            activeDoc={activeDoc}
+            activeStream={activeStream}
+          />
+          <Separator />
+          <div className="flex flex-1 flex-col pt-0 overflow-hidden">
             {activeDoc !== null && (
               <DocEditor
-                docName={activeDoc === null ? '' : activeDoc}
+                activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
                 sessionToken=""
                 roomID={roomID}
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
+            {activeDoc === null && activeStream === null && (
+              <RoomHome
+                media={media}
+                roomID={roomID}
+                refresh={handleRoomFetch}
+                setActiveDoc={setActiveDoc}
+                setActiveStream={setActiveStream}
+                setActiveVoice={setActiveVoice}
+              />
+            )}
           </div>
-        </main>
+        </SidebarInset>
       </SidebarProvider>
     </div>
   );
