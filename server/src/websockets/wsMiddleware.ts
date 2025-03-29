@@ -3,6 +3,7 @@ import { WebSocket } from 'ws';
 import { verifyToken } from '../utils/auth';
 import userService from '../services/userService';
 import PresenceState from '../utils/state';
+import { Validation } from 'syncstream-sharedlib';
 
 export async function wsAuth(ws: WebSocket, req: Request, next: () => void) {
   const token = req.query.token as string;
@@ -29,7 +30,28 @@ export async function wsAuth(ws: WebSocket, req: Request, next: () => void) {
 }
 
 export function wsPresence(ws: WebSocket, req: Request, next: () => void) {
-  // split the route to get the media type
-  console.log(req.url);
+  const username = (req as any).user.username;
+  const mediaType = req.url.split('/')[3];
+
+  if (!Validation.isMediaType(mediaType)) {
+    ws.close(1008, `Invalid media type: ${mediaType}`);
+    return;
+  }
+
+  if (PresenceState.getUserEntry(username)?.roomID !== req.params.roomID) {
+    ws.close(1008, `Not currenty in room: ${req.params.roomID}`);
+    return;
+  }
+
+  try {
+    PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);
+  } catch {
+    ws.close(1008, `Media already set for ${mediaType}`);
+    return;
+  }
+
+  ws.on('close', () => {
+    PresenceState.clearUserMedia(username, mediaType);
+  });
   next();
 }

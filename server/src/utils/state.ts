@@ -1,11 +1,11 @@
+import { Types } from 'syncstream-sharedlib';
+
 interface UserState {
   roomID: string;
   docID?: string;
   streamID?: string;
   voiceID?: string;
 }
-
-type MediaType = 'doc' | 'stream' | 'voice';
 
 class PresenceState {
   private globalPresence: Map<string, UserState>;
@@ -14,27 +14,30 @@ class PresenceState {
     this.globalPresence = new Map<string, UserState>();
   }
 
-  public addUserEntry(userID: string, roomID: string): void {
-    this.globalPresence.set(userID, { roomID });
+  public addUserEntry(username: string, roomID: string): void {
+    this.globalPresence.set(username, { roomID });
   }
 
-  public getUserEntry(userID: string): UserState | undefined {
-    return this.globalPresence.get(userID);
+  public getUserEntry(username: string): UserState | undefined {
+    return this.globalPresence.get(username);
   }
 
-  public removeUserEntry(userID: string): void {
-    this.globalPresence.delete(userID);
+  public removeUserEntry(username: string): void {
+    this.globalPresence.delete(username);
   }
 
-  public setUserMedia(userID: string, mediaType: MediaType, id: string): void {
-    const userState = this.globalPresence.get(userID);
+  public setUserMedia(username: string, mediaType: Types.MediaType, id: string): void {
+    const userState = this.globalPresence.get(username);
     if (userState) {
+      if (userState[`${mediaType}ID`]) {
+        throw new Error('Media already set');
+      }
       userState[`${mediaType}ID`] = id;
     }
   }
 
-  public clearUserMedia(userID: string, mediaType: MediaType): void {
-    const userState = this.globalPresence.get(userID);
+  public clearUserMedia(username: string, mediaType: Types.MediaType): void {
+    const userState = this.globalPresence.get(username);
     if (userState) {
       delete userState[`${mediaType}ID`];
     }
