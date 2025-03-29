@@ -1,7 +1,7 @@
-import express, { Application, Request, Response } from 'express';
+import express from 'express';
 import expressWs from 'express-ws';
 import sequelize from './db';
-import routerWs from './websockets/socketHandler';
+import routerWs from './websockets/routes';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';

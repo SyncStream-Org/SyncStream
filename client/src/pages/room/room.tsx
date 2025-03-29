@@ -27,7 +27,7 @@ function RoomPage(props: Props) {
   const [room, setRoom] = useState<Types.RoomData | null>(null);
 
   const handleRoomFetch = () => {
-    api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
+    api.Files.getAllRoomFiles(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
       } else {
@@ -42,11 +42,24 @@ function RoomPage(props: Props) {
     setActiveDoc(null);
   };
 
+  // TODO: Update when merged with home page
   useEffect(() => {
-    setRoom({ roomName: 'Room Name', roomID });
-    handleRoomFetch();
+    api.Rooms.createRoom('Room Name').then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        console.log('Room created:', data);
+        setRoom({ roomName: 'Room Name', roomID: data?.roomID });
+      } else {
+        console.error('Error creating room:', roomID);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (room) {
+      handleRoomFetch();
+    }
+  }, [room]);
 
   useEffect(() => {
     const handleUnload = (event: BeforeUnloadEvent) => {
@@ -101,15 +114,15 @@ function RoomPage(props: Props) {
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
-                sessionToken=""
-                roomID={roomID}
+                sessionToken={SessionState.getInstance().sessionToken}
+                roomID={room?.roomID!}
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
             {activeDoc === null && activeStream === null && (
               <RoomHome
                 media={media}
-                roomID={roomID}
+                roomID={room?.roomID!}
                 refresh={handleRoomFetch}
                 setActiveDoc={setActiveDoc}
                 setActiveStream={setActiveStream}

@@ -1,16 +1,12 @@
-import { Router, Request, Application } from 'express';
+import { Request } from 'express';
 import { WebSocket } from 'ws';
-import expressWs from 'express-ws';
 import * as Y from 'yjs';
 // @ts-expect-error - no types available
-import { setupWSConnection, docs, setPersistence, setContentInitializor } from '../../node_modules/y-websocket/bin/utils.cjs';
+import { setupWSConnection, docs, setPersistence, setContentInitializor } from '../../../node_modules/y-websocket/bin/utils.cjs';
 import fs from 'fs';
-import path, { resolve } from 'path';
+import path from 'path';
 
 const ROOT_DIR = process.env.USER_FILES;
-
-const routerWs = Router();
-expressWs(routerWs as unknown as Application);
 
 const persistence = {
   bindState: (docName: string, ydoc: Y.Doc) => {
@@ -43,8 +39,8 @@ const initContent = (ydoc: Y.Doc, docName: string) => {
   }
 };
 
-routerWs.ws('/rooms/:roomID/doc/:docName', (ws: WebSocket, req: Request) => {
-  const docName = req.params.roomID.toString() + '-' + req.params.docName;
+export default function wsDoc (ws: WebSocket, req: Request) {
+  const docName = req.params.roomID.toString() + '-' + req.params.docID;
 
   if (!docs.has(docName)) {
     setContentInitializor((ydoc: Y.Doc) => initContent(ydoc, docName));
@@ -55,6 +51,4 @@ routerWs.ws('/rooms/:roomID/doc/:docName', (ws: WebSocket, req: Request) => {
   ws.on('close', () => {
     console.log('WebSocket connection closed on /doc');
   });
-});
-
-export default routerWs;
+}

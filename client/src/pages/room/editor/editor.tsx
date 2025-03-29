@@ -72,10 +72,20 @@ export default function DocumentEditor({
       wsURL,
       activeDoc.fileID!,
       doc,
+      {
+        params: { token: sessionToken },
+      },
     );
 
     websocketProvider.on('status', (event: { status: string }) => {
       setStatus(event.status);
+    });
+
+    websocketProvider.on('connection-close', (CloseEvent) => {
+      console.log('Connection closed:', CloseEvent);
+      if (CloseEvent?.code === 1008) {
+        websocketProvider.shouldConnect = false;
+      }
     });
 
     websocketProvider.awareness.on('update', () => {
@@ -101,7 +111,7 @@ export default function DocumentEditor({
       websocketProvider.disconnect();
       doc.destroy();
     };
-  }, [username, roomID, activeDoc, userColor, serverURL]);
+  }, [username, roomID, activeDoc, userColor, serverURL, sessionToken]);
 
   const editor = useEditor(
     {
