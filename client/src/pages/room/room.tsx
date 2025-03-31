@@ -41,19 +41,6 @@ function RoomPage(props: Props) {
     setActiveDoc(null);
   };
 
-  // TODO: Update when merged with home page
-  // useEffect(() => {
-  //   api.Rooms.createRoom('Room Name').then(({ success, data }) => {
-  //     if (success === api.SuccessState.SUCCESS) {
-  //       console.log('Room created:', data);
-  //       setRoom({ roomName: 'Room Name', roomID: data?.roomID });
-  //     } else {
-  //       console.error('Error creating room:', roomID);
-  //     }
-  //   });
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   useEffect(() => {
     if (room) {
       handleRoomFetch();
@@ -62,9 +49,9 @@ function RoomPage(props: Props) {
 
   useEffect(() => {
     const handleUnload = (event: BeforeUnloadEvent) => {
-      api.User.leaveRoomPresence();
       if (!sessionSaved) {
         event.preventDefault();
+        api.User.leaveRoomPresence();
         SessionState.getInstance()
           .saveCache()
           .then(() => {
@@ -92,9 +79,11 @@ function RoomPage(props: Props) {
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
           goToHome={() => {
+            api.User.leaveRoomPresence();
             props.navigate('/home');
           }}
           goToSettings={() => {
+            api.User.leaveRoomPresence();
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}

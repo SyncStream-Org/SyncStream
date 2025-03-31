@@ -155,14 +155,15 @@ export const declineRoomInvite = async (req: Request, res: Response) => {
 export const joinRoom = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
     const { roomID } = req.params;
-
     // check if room exists, and if the user is part of it
     try {
         if (await userService.getRoomUser(roomID, user.username) === null) {
             res.status(403).json({ error: "Forbidden: User not part of Room" });
+            return;
         }
     } catch {
         res.status(404).json({ error: "Not Found: Room doesn't exist" });
+        return;
     }
 
     // check if user is already in a room
@@ -177,7 +178,6 @@ export const joinRoom = async (req: Request, res: Response) => {
 
 export const leaveRoom = (req: Request, res: Response) => {
     const user: User = (req as any).user;
-
     if (PresenceState.getUserEntry(user.username) === undefined) {
         res.status(404).json({ error: "Not Found: User not in any room" });
         return;
