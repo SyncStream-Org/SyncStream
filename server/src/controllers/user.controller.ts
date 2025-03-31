@@ -5,7 +5,7 @@ import * as Auth from "../utils/auth"
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
-//import * as service from "../services/user.service";
+import PresenceState from "../utils/state";
 
 export const authenticate = async (req: Request, res: Response) => {
     const userData: Types.UserData = req.body;
@@ -150,4 +150,39 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
 // currently seemingly have the same behavior, will discuss as a group
 export const declineRoomInvite = async (req: Request, res: Response) => {
     await removeRoomFromUser(req, res);
+};
+
+export const joinRoom = async (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+    const { roomID } = req.params;
+
+    // check if room exists, and if the user is part of it
+    try {
+        if (await userService.getRoomUser(roomID, user.username) === null) {
+            res.status(403).json({ error: "Forbidden: User not part of Room" });
+        }
+    } catch {
+        res.status(404).json({ error: "Not Found: Room doesn't exist" });
+    }
+
+    // check if user is already in a room
+    if (PresenceState.getUserEntry(user.username) !== undefined) {
+        res.status(409).json({ error: "Conflict: User already in a room" });
+        return;
+    }
+
+    PresenceState.addUserEntry(user.username, roomID);
+    res.sendStatus(200);
+};
+
+export const leaveRoom = (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+
+    if (PresenceState.getUserEntry(user.username) === undefined) {
+        res.status(404).json({ error: "Not Found: User not in any room" });
+        return;
+    }
+
+    PresenceState.removeUserEntry(user.username);
+    res.sendStatus(200);
 };
