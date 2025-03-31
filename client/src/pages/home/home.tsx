@@ -30,37 +30,40 @@ class Home extends React.Component<Props, State> {
     };
 
     // Grab all rooms available to user (or all rooms if admin)
-    if (SessionState.getInstance().currentUser.admin) {
-      api.Admin.getAllRooms().then((res) => {
-        if (
-          res.success === api.SuccessState.ERROR ||
-          res.success === api.SuccessState.FAIL
-        ) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
-          });
-        } else {
-          if (res.data === undefined) throw Error('Unreachable');
-          this.setState({ rooms: res.data });
-        }
-      });
-    } else {
-      api.User.getRooms().then((res) => {
-        if (
-          res.success === api.SuccessState.ERROR ||
-          res.success === api.SuccessState.FAIL
-        ) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
-          });
-        } else {
-          if (res.data === undefined) throw Error('Unreachable');
-          this.setState({ rooms: res.data });
-        }
-      });
-    }
+    // TODO: Don't create room on startup when room creation merged
+    api.Rooms.createRoom('Initial Room').then(({ success, data }) => {
+      if (SessionState.getInstance().currentUser.admin) {
+        api.Admin.getAllRooms().then((res) => {
+          if (
+            res.success === api.SuccessState.ERROR ||
+            res.success === api.SuccessState.FAIL
+          ) {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: 'Error',
+              message: 'Unable to get room data at this time.',
+            });
+          } else {
+            if (res.data === undefined) throw Error('Unreachable');
+            this.setState({ rooms: res.data });
+          }
+        });
+      } else {
+        api.User.getRooms().then((res) => {
+          if (
+            res.success === api.SuccessState.ERROR ||
+            res.success === api.SuccessState.FAIL
+          ) {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: 'Error',
+              message: 'Unable to get room data at this time.',
+            });
+          } else {
+            if (res.data === undefined) throw Error('Unreachable');
+            this.setState({ rooms: res.data });
+          }
+        });
+      }
+    });
   }
 
   render() {
@@ -125,11 +128,6 @@ class Home extends React.Component<Props, State> {
             {this.state.rooms.map((room) => (
               <RoomCard roomData={room} navigate={this.props.navigate} />
             ))}
-            {/* TODO: remove once room managment is finished */}
-            <RoomCard
-              roomData={{ roomName: 'Test', roomOwner: 'Dev', roomID: '1' }}
-              navigate={this.props.navigate}
-            />
           </div>
         </div>
       </div>
