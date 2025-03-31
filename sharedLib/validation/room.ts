@@ -1,6 +1,6 @@
 // Room type validation
 
-import { InviteData, RoomPermissions } from "../types";
+import { InviteData, RoomPermissions, RoomUpdateData } from "../types";
 
 export function isRoomPermissions(roomPermissions: any): boolean {
   return (
@@ -61,3 +61,10 @@ export function isUserRoomData(userRoomData: any): userRoomData is {
   );
 }
 
+export function isRoomUpdateData(roomUpdateData: any): roomUpdateData is RoomUpdateData {
+  return !!roomUpdateData && 
+    (
+      typeof roomUpdateData.newRoomName === "string" ||
+      typeof roomUpdateData.newOwnerID === "string"
+    );
+}

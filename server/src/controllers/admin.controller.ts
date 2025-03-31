@@ -52,12 +52,12 @@ export const createUser = async (req: Request, res: Response) => {
     return;
   }
 
-  try {
-    const newUser = await userService.createUser(userData);
-  } catch (error) {
-    res.status(409).json({ error: "Conflict: User Exists" });
+  const user = await userService.getUserByUsername(userData.username);
+  if (user) {
+    res.status(409).json({ error: "Conflict: User already exists" });
     return;
   }
+  const newUser = await userService.createUser(userData);
 
   res.sendStatus(200);
 };

@@ -4,7 +4,9 @@ import { Types, Validation } from "syncstream-sharedlib"
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
+import RoomUser from "../models/roomUsers";
 import { RoomCreationAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
+import Room from "../models/rooms";
 //import * as service from "../services/rooms.service";
 
 export const createRoom = async (req: Request, res: Response) => {
@@ -43,6 +45,43 @@ export const createRoom = async (req: Request, res: Response) => {
 
     res.json(roomDataResponse);
 };
+
+export const updateRoom = async (req: Request, res: Response) => {
+    const roomUser: RoomUser = (req as any).roomUser;
+    const room: Room = (req as any).room;
+
+    if (!roomUser.permissions.canEdit) {
+        res.status(403).json({ error: "Permissions: User is not allowed to edit state of room" });
+        return;
+    }
+
+    const roomUpdateData: Types.RoomUpdateData = req.body;
+    if (!Validation.isRoomUpdateData(roomUpdateData)) {
+        res.status(400).json({ error: "Bad Request: invalid format" });
+        return;
+    }
+
+    if (roomUpdateData.newOwnerID) {
+        // ensure user exists, and is part of room
+        const newOwnerUser = await userService.getUserByUsername(roomUpdateData.newOwnerID);
+        if (!newOwnerUser) { 
+            res.status(404).json({ error: "Not Found: New owner username does not exist" });
+            return;
+        }
+        const newOwnerRoomUser = await userService.getRoomUser(room.roomID, roomUpdateData.newOwnerID);
+        if (!roomUser) {
+            res.status(404).json({ error: "Bad Request: new owner user does not exist in room" });
+            return;
+        }
+
+        await roomService.updateRoomOwner(room, roomUpdateData.newOwnerID);
+    }
+    if (roomUpdateData.newRoomName) {
+        await roomService.updateRoomName(room, roomUpdateData.newRoomName);
+    }
+
+    res.sendStatus(204);
+}
 
 export const joinRoom = async (req: Request, res: Response) => {
     // TODO: requires further developing as a group on what it means to join room
@@ -108,6 +147,14 @@ export const inviteUser = async (req: Request, res: Response) => {
     }
 
     const username = inviteData.username;
+    // ensure user exists
+    const invitedUser = await userService.getUserByUsername(username);
+    if (!invitedUser) {
+        res.status(404).json({ error: "Bad Request: Invited User does not exist" });
+        return;
+    }
+
+    // invite user
     let permissions: RoomUserPermissions;
     if (inviteData.permissions) {
         // TODO: likely to change as discussion on permissions evolves
@@ -135,6 +182,13 @@ export const removeUser = async (req: Request, res: Response) => {
     const requestingRoomUser = await userService.getRoomUser(roomID, user.username);
     if (!requestingRoomUser || !requestingRoomUser.permissions.canEdit) {
         res.status(403).json({ error: "Forbidden: Permissions Denied" });
+        return;
+    }
+
+    // ensure user exists
+    const removedUser = await userService.getUserByUsername(username);
+    if (!removedUser) {
+        res.status(404).json({ error: "Bad Request: User does not exist" });
         return;
     }
 
@@ -166,16 +220,24 @@ export const updateUser = async (req: Request, res: Response) => {
         return;
     }
 
+    // ensure user exists
+    const updatingUser = await userService.getUserByUsername(username);
+    if (!updatingUser) {
+        res.status(404).json({ error: "Bad Request: User does not exist" });
+        return;
+    }
+
     // update specified user
     const roomUser = await userService.getRoomUser(roomID, username);
     if (!roomUser) {
         res.status(404).json({ error: "Not Found: User not part of Room" });
         return;
     }
-
-    // TODO: to be changed as we discuss room permissions
-    res.status(501).json({ error: "Not yet implemented" });
+    
+    // TODO: propogate room permissions
+    res.sendStatus(501);
     return;
+    //await userService.updateRoomUser(roomUser, roomPermissions);
 
     res.sendStatus(200);
 };
