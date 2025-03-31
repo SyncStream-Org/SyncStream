@@ -62,6 +62,7 @@ function RoomPage(props: Props) {
 
   useEffect(() => {
     const handleUnload = (event: BeforeUnloadEvent) => {
+      api.User.leaveRoomPresence();
       if (!sessionSaved) {
         event.preventDefault();
         SessionState.getInstance()
