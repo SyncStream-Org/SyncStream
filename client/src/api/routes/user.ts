@@ -321,3 +321,77 @@ export function declineInviteToRoom(roomId: string): Promise<SuccessState> {
       return SuccessState.ERROR;
     });
 }
+
+export function joinRoomPresence(roomID: string): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(
+    generateRoute(`user/rooms/${roomID}/presence`),
+    {
+      method: 'PUT',
+      headers,
+    },
+  );
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
+
+      if (res.status === 403) {
+        console.error(
+          'Joining room presence failed: User is not part of the room.',
+        );
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error('Joining room presence failed: Room does not exist.');
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError(
+        'user/rooms/{roomID}/presence PUT API Call Failed',
+        res,
+      );
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
+}
+
+export function leaveRoomPresence(): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(
+    generateRoute('user/rooms/presence'),
+    {
+      method: 'DELETE',
+      headers,
+    },
+  );
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
+      
+      if (res.status === 404) {
+        console.error('Leaving room presence failed: User was not in any room.');
+        return SuccessState.FAIL;
+      }
+
+      // Handle cases where user is not in any room
+      printUnexpectedError(
+        'user/rooms/presence DELETE API Call Failed',
+        res,
+      );
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
+    });
+}
