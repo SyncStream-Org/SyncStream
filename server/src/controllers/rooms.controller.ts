@@ -7,7 +7,7 @@ import User from "../models/users";
 import RoomUser from "../models/roomUsers";
 import { RoomCreationAttributes, RoomUserAttributes, RoomUserPermissions } from "room-types";
 import Room from "../models/rooms";
-//import * as service from "../services/rooms.service";
+import PresenceState from "../utils/state";
 
 export const createRoom = async (req: Request, res: Response) => {
     const roomNameSM: Types.StringMessage = req.body;
@@ -84,11 +84,26 @@ export const updateRoom = async (req: Request, res: Response) => {
 }
 
 export const joinRoom = async (req: Request, res: Response) => {
-    // TODO: requires further developing as a group on what it means to join room
-    res.status(501).json({ error: "Not yet implemented" });
-    return;
     const user: User = (req as any).user;
     const { roomID } = req.params;
+
+    // check if room exists, and if the user is part of it
+    try {
+        if (await userService.getRoomUser(roomID, user.username) === null) {
+            res.status(404).json({ error: "Not Found: User not part of Room" });
+        }
+    } catch {
+        res.status(404).json({ error: "Not Found: Room doesn't exist" });
+    }
+
+    // check if user is already in a room
+    if (PresenceState.getUserEntry(user.username) !== undefined) {
+        res.status(409).json({ error: "Conflict: User already in a room" });
+        return;
+    }
+
+    PresenceState.addUserEntry(user.username, roomID);
+    res.sendStatus(200);
 };
 
 export const deleteRoom = async (req: Request, res: Response) => {
