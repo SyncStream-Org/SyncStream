@@ -43,12 +43,12 @@ export function wsPresence(ws: WebSocket, req: Request, next: () => void) {
     return;
   }
 
-  try {
-    PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);
-  } catch {
+  if (PresenceState.getUserMedia(username, mediaType)) {
     ws.close(1008, `Media already set for ${mediaType}`);
     return;
   }
+  
+  PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);
 
   ws.on('close', () => {
     PresenceState.clearUserMedia(username, mediaType);

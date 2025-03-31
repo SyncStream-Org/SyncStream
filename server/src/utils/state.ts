@@ -29,13 +29,17 @@ class PresenceState {
   public setUserMedia(username: string, mediaType: Types.MediaType, id: string): void {
     const userState = this.globalPresence.get(username);
     if (userState) {
-      if (userState[`${mediaType}ID`]) {
-        throw new Error('Media already set');
-      }
       userState[`${mediaType}ID`] = id;
     }
   }
 
+  public getUserMedia(username: string, mediaType: Types.MediaType): string | null {
+    const userState = this.globalPresence.get(username);
+    if (userState) {
+      return userState[`${mediaType}ID`] || null;
+    }
+    return null;
+  }
   public clearUserMedia(username: string, mediaType: Types.MediaType): void {
     const userState = this.globalPresence.get(username);
     if (userState) {
