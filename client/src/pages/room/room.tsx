@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, NavigateFunction } from 'react-router-dom';
+import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
@@ -18,13 +18,12 @@ interface Props {
 }
 
 function RoomPage(props: Props) {
-  const roomID = useParams<{ roomID: string }>().roomID!;
+  const room = useLocation().state?.room as Types.RoomData | undefined;
   const [media, setMedia] = useState<Types.FileData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
   const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
   const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
   const [sessionSaved, setSessionSaved] = useState(false);
-  const [room, setRoom] = useState<Types.RoomData | null>(null);
 
   const handleRoomFetch = () => {
     api.Files.getAllRoomFiles(room?.roomID!).then(({ success, data }) => {
@@ -43,17 +42,17 @@ function RoomPage(props: Props) {
   };
 
   // TODO: Update when merged with home page
-  useEffect(() => {
-    api.Rooms.createRoom('Room Name').then(({ success, data }) => {
-      if (success === api.SuccessState.SUCCESS) {
-        console.log('Room created:', data);
-        setRoom({ roomName: 'Room Name', roomID: data?.roomID });
-      } else {
-        console.error('Error creating room:', roomID);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   api.Rooms.createRoom('Room Name').then(({ success, data }) => {
+  //     if (success === api.SuccessState.SUCCESS) {
+  //       console.log('Room created:', data);
+  //       setRoom({ roomName: 'Room Name', roomID: data?.roomID });
+  //     } else {
+  //       console.error('Error creating room:', roomID);
+  //     }
+  //   });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   useEffect(() => {
     if (room) {

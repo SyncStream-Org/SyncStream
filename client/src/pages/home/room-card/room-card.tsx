@@ -34,7 +34,9 @@ export default class RoomCard extends React.Component<Props, State> {
               message: 'Unable to join room at this time.',
             });
           } else {
-            this.props.navigate(`/room/${this.props.roomData.roomID}`);
+            this.props.navigate(`/room`, {
+              state: { room: this.props.roomData },
+            });
           }
         },
       );
