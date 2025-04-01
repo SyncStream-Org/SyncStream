@@ -6,6 +6,7 @@ import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
 import PresenceState from "../utils/state";
+import Broadcaster from "../utils/broadcaster";
 
 export const authenticate = async (req: Request, res: Response) => {
     const userData: Types.UserData = req.body;
@@ -155,6 +156,7 @@ export const declineRoomInvite = async (req: Request, res: Response) => {
 export const joinRoom = async (req: Request, res: Response) => {
     const user: User = (req as any).user;
     const { roomID } = req.params;
+
     // check if room exists, and if the user is part of it
     try {
         if (await userService.getRoomUser(roomID, user.username) === null) {
@@ -186,3 +188,35 @@ export const leaveRoom = (req: Request, res: Response) => {
     PresenceState.removeUserEntry(user.username);
     res.sendStatus(200);
 };
+
+// user entering Server-Side Event Broadcasting for their room
+// separate from joinRoom to for keep-alive headers
+export const enterRoomBroadcast = async (req: Request, res: Response) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const user: User = (req as any).user;
+    const { roomID } = req.params;
+    
+    // Ensure user presence in room
+    const presence = PresenceState.getUserEntry(user.username);
+    if (presence == undefined) {
+        res.status(404).write(JSON.stringify({ error: "Not Found: User not in any room" }));
+        return res.end();
+    }
+    if (presence.roomID !== roomID) {
+        res.status(400).write(JSON.stringify({ error: "Bad Request: RoomID does not match current active room" }));
+        return res.end();
+    }
+    
+    // set connection and send message
+    Broadcaster.addUserResponse(roomID, res);
+    res.write(JSON.stringify({ message: "Connected to Broadcast" }));
+
+    req.on("close", () => {
+        //remove from room->user map
+        Broadcaster.removeUserResponse(roomID, res);
+        res.end();
+    });
+}
