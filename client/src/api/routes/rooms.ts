@@ -29,6 +29,7 @@ export function createRoom(roomName: string): Promise<{
         const body = await res.json();
 
         // Validate
+        console.log(body);
         if (!Validation.isRoomDataNoInviteStatus(body))
           return { success: SuccessState.ERROR };
 
@@ -82,6 +83,41 @@ export function joinRoom(roomId: string): Promise<{
     .catch((error) => {
       console.error(`Fetch Encountered an Error:\n${error}`);
       return { success: SuccessState.ERROR };
+    });
+}
+
+export function updateRoom(
+  roomId: string,
+  updateData: Types.RoomUpdateData,
+): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute(`rooms/${roomId}`), {
+    method: 'DELETE',
+    headers,
+  });
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
+
+      if (res.status === 403) {
+        console.error('Room delete request failed: User does not own room.');
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error('Room delete request failed: Room does not exist.');
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError('rooms/{roomId} DELETE API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
     });
 }
 

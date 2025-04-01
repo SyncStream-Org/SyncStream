@@ -77,8 +77,9 @@ export default class RoomCard extends React.Component<Props, State> {
         className="dark:bg-gray-800 p-6 rounded-lg shadow-md"
         onClick={() => {
           if (
-            !this.props.isInvite &&
-            !SessionState.getInstance().currentUser.admin
+            !this.props.isInvite ||
+            (this.props.isInvite &&
+              SessionState.getInstance().currentUser.admin)
           ) {
             this.props.navigate(`/room/${this.props.roomData.roomID}`);
           }
