@@ -59,11 +59,9 @@ class Home extends React.Component<Props, State> {
         } else {
           if (res.data === undefined) throw Error('Unreachable');
 
-          const current = res.data.filter((roomData) => !roomData.isInvited);
-          const invited = res.data.filter((roomData) => roomData.isInvited);
           this.setState({
-            currentRooms: current,
-            invitedRooms: invited,
+            currentRooms: res.data,
+            invitedRooms: [],
           });
         }
       });
@@ -184,44 +182,25 @@ class Home extends React.Component<Props, State> {
                 updateRoomList={this.updateRoomList}
               />
             ))}
-            {/* TODO: remove once room managment is finished */}
-            <RoomCard
-              roomData={{
-                roomName: 'TEST',
-                roomOwner: 'DEV',
-                roomID: '1',
-                isMember: true,
-              }}
-              navigate={this.props.navigate}
-              updateRoomList={this.updateRoomList}
-            />
           </div>
 
           {/* Grid of Invited Rooms */}
-          <h1 className="mt-4 text-3xl font-bold">Invites</h1>
-          <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {this.state.invitedRooms.map((room) => (
-              <RoomCard
-                key={room.roomName}
-                roomData={room}
-                navigate={this.props.navigate}
-                updateRoomList={this.updateRoomList}
-                isInvite
-              />
-            ))}
-            {/* TODO: remove once room managment is finished */}
-            <RoomCard
-              roomData={{
-                roomName: 'TEST INVITE',
-                roomOwner: 'DEV',
-                roomID: '1',
-                isMember: false,
-              }}
-              navigate={this.props.navigate}
-              updateRoomList={this.updateRoomList}
-              isInvite
-            />
-          </div>
+          {this.state.invitedRooms.length !== 0 && (
+            <>
+              <h1 className="mt-4 text-3xl font-bold">Invites</h1>
+              <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {this.state.invitedRooms.map((room) => (
+                  <RoomCard
+                    key={room.roomName}
+                    roomData={room}
+                    navigate={this.props.navigate}
+                    updateRoomList={this.updateRoomList}
+                    isInvite
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     );

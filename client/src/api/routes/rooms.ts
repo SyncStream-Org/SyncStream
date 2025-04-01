@@ -93,8 +93,9 @@ export function updateRoom(
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(generateRoute(`rooms/${roomId}`), {
-    method: 'DELETE',
+    method: 'PUT',
     headers,
+    body: JSON.stringify(updateData),
   });
 
   return fetch(request)
@@ -102,16 +103,16 @@ export function updateRoom(
       if (res.ok) return SuccessState.SUCCESS;
 
       if (res.status === 403) {
-        console.error('Room delete request failed: User does not own room.');
+        console.error('Room update request failed: User does not own room.');
         return SuccessState.FAIL;
       }
 
       if (res.status === 404) {
-        console.error('Room delete request failed: Room does not exist.');
+        console.error('Room update request failed: Room does not exist.');
         return SuccessState.FAIL;
       }
 
-      printUnexpectedError('rooms/{roomId} DELETE API Call Failed', res);
+      printUnexpectedError('rooms/{roomId} PUT API Call Failed', res);
       return SuccessState.ERROR;
     })
     .catch((error) => {

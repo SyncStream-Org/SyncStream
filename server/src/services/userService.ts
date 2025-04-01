@@ -44,7 +44,10 @@ class UserService {
     await user.destroy();
   }
 
-  public async updateUser(user: User, update: Types.UserUpdateData): Promise<User> {
+  public async updateUser(
+    user: User,
+    update: Types.UserUpdateData,
+  ): Promise<User> {
     if ((await this.getUserByUsername(user.username)) == null) {
       throw new Error("updateUser: User not found");
     }
@@ -92,7 +95,7 @@ class UserService {
         (room: RoomUser) => room.roomID,
       );
       const joinedRooms = await Room.findAll({
-        where: { roomID: { joinedRoomIDs } },
+        where: { roomID: joinedRoomIDs },
       });
       if (joinedRooms) {
         rooms.push(...joinedRooms);

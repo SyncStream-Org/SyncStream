@@ -47,7 +47,7 @@ export function isRoomDataNoUserData(roomData: any): roomData is {
     );
 }
 
-export function isRoomDataNoInviteStatus(roomData: any): roomData is {
+export function isRoomDataFull(roomData: any): roomData is {
     roomName: string;
     roomOwner: string;
     roomID: string;
@@ -59,23 +59,6 @@ export function isRoomDataNoInviteStatus(roomData: any): roomData is {
         typeof roomData.roomOwner === "string" &&
         typeof roomData.roomID === "string" &&
         typeof roomData.isMember === "boolean"
-    );
-}
-
-export function isRoomDataFull(roomData: any): roomData is {
-    roomName: string;
-    roomOwner: string;
-    roomID: string;
-    isMember: boolean;
-    isInvited: boolean;
-} {
-    return (
-        !!roomData &&
-        typeof roomData.roomName === "string" &&
-        typeof roomData.roomOwner === "string" &&
-        typeof roomData.roomID === "string" &&
-        typeof roomData.isMember === "boolean" &&
-        typeof roomData.isInvited === "boolean"
     );
 }
 

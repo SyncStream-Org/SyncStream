@@ -88,9 +88,7 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile
-      ? setOpenMobile((__open) => !__open)
-      : setOpen((__open) => !__open);
+    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
@@ -309,7 +307,7 @@ function SidebarInset({ className, ...props }: React.ComponentProps<'main'>) {
     <main
       data-slot="sidebar-inset"
       className={cn(
-        'bg-white relative flex w-full flex-1 flex-col dark:bg-neutral-950',
+        'bg-white relative flex w-full flex-1 flex-col dark:bg-gray-900',
         'md:peer-data-[variant=inset]:m-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow-sm md:peer-data-[variant=inset]:peer-data-[state=collapsed]:ml-2',
         className,
       )}
@@ -534,7 +532,6 @@ function SidebarMenuButton(
   }
 
   if (typeof tooltip === 'string') {
-    // eslint-disable-next-line no-param-reassign
     tooltip = {
       children: tooltip,
     };

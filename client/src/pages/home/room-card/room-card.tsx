@@ -27,7 +27,6 @@ export default class RoomCard extends React.Component<Props, State> {
     this.state = {};
   }
 
-  // TODO: Make card display if you are part of a room officially or not if the user is admin
   render() {
     const acceptInvite = (event: React.SyntheticEvent) => {
       if (this.props.roomData.roomID === undefined) throw Error('Unreachable');
@@ -93,13 +92,6 @@ export default class RoomCard extends React.Component<Props, State> {
             <p className="text-gray-600 dark:text-gray-300">
               Owner: {this.props.roomData.roomOwner}
             </p>
-            {SessionState.getInstance().currentUser.admin &&
-              !this.props.isInvite && (
-                <p className="text-gray-600 dark:text-gray-300">
-                  Are you a member?:{' '}
-                  {this.props.roomData.isMember ? 'Yes' : 'No'}
-                </p>
-              )}
           </div>
           {this.props.isInvite && (
             <>

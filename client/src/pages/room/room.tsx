@@ -80,7 +80,7 @@ function RoomPage(props: Props) {
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}
-          setRoomSettings={() => {}}
+          setRoomSettings={handleSettingsClick}
         />
         {/* Main Content */}
         {/* Text Editor */}
@@ -92,7 +92,7 @@ function RoomPage(props: Props) {
           />
           <Separator />
           <div className="flex flex-1 flex-col pt-0 overflow-hidden">
-            {activeDoc !== null && (
+            {activeDoc !== null && settingsOpen !== true && (
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
@@ -113,16 +113,7 @@ function RoomPage(props: Props) {
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && (
-              <RoomSettings
-                media={media}
-                roomID={roomID}
-                refresh={handleRoomFetch}
-                setActiveDoc={setActiveDoc}
-                setActiveStream={setActiveStream}
-                setActiveVoice={setActiveVoice}
-              />
-            )}
+            {settingsOpen === true && <RoomSettings roomID={roomID} />}
           </div>
         </SidebarInset>
       </SidebarProvider>
