@@ -29,6 +29,7 @@ interface Props {
 interface State {
   currentRooms: Types.RoomData[];
   invitedRooms: Types.RoomData[];
+  updateRoomList: () => void;
 }
 
 // TODO: localize
@@ -39,54 +40,53 @@ class Home extends React.Component<Props, State> {
     this.state = {
       currentRooms: [],
       invitedRooms: [],
+      updateRoomList: () => {
+        if (SessionState.getInstance().currentUser.admin) {
+          api.Admin.getAllRooms().then((res) => {
+            if (
+              res.success === api.SuccessState.ERROR ||
+              res.success === api.SuccessState.FAIL
+            ) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Unable to get room data at this time.',
+              });
+            } else {
+              if (res.data === undefined) throw Error('Unreachable');
+
+              this.setState({
+                currentRooms: res.data,
+                invitedRooms: [],
+              });
+            }
+          });
+        } else {
+          api.User.getRooms().then((res) => {
+            if (
+              res.success === api.SuccessState.ERROR ||
+              res.success === api.SuccessState.FAIL
+            ) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Unable to get room data at this time.',
+              });
+            } else {
+              if (res.data === undefined) throw Error('Unreachable');
+
+              const current = res.data.filter((roomData) => roomData.isMember);
+              const invited = res.data.filter((roomData) => !roomData.isMember);
+              this.setState({
+                currentRooms: current,
+                invitedRooms: invited,
+              });
+            }
+          });
+        }
+      },
     };
 
     // Grab all rooms available to user (or all rooms if admin)
-    this.updateRoomList();
-  }
-
-  updateRoomList() {
-    if (SessionState.getInstance().currentUser.admin) {
-      api.Admin.getAllRooms().then((res) => {
-        if (
-          res.success === api.SuccessState.ERROR ||
-          res.success === api.SuccessState.FAIL
-        ) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
-          });
-        } else {
-          if (res.data === undefined) throw Error('Unreachable');
-
-          this.setState({
-            currentRooms: res.data,
-            invitedRooms: [],
-          });
-        }
-      });
-    } else {
-      api.User.getRooms().then((res) => {
-        if (
-          res.success === api.SuccessState.ERROR ||
-          res.success === api.SuccessState.FAIL
-        ) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
-          });
-        } else {
-          if (res.data === undefined) throw Error('Unreachable');
-
-          const current = res.data.filter((roomData) => roomData.isMember);
-          const invited = res.data.filter((roomData) => !roomData.isMember);
-          this.setState({
-            currentRooms: current,
-            invitedRooms: invited,
-          });
-        }
-      });
-    }
+    this.state.updateRoomList();
   }
 
   render() {
@@ -113,7 +113,7 @@ class Home extends React.Component<Props, State> {
             message: 'Unable to create room. Room with name may already exist',
           });
         } else {
-          this.updateRoomList();
+          this.state.updateRoomList();
         }
       });
     };
@@ -179,7 +179,7 @@ class Home extends React.Component<Props, State> {
                 key={room.roomName}
                 roomData={room}
                 navigate={this.props.navigate}
-                updateRoomList={this.updateRoomList}
+                updateRoomList={this.state.updateRoomList}
               />
             ))}
           </div>
@@ -194,7 +194,7 @@ class Home extends React.Component<Props, State> {
                     key={room.roomName}
                     roomData={room}
                     navigate={this.props.navigate}
-                    updateRoomList={this.updateRoomList}
+                    updateRoomList={this.state.updateRoomList}
                     isInvite
                   />
                 ))}
