@@ -14,10 +14,15 @@ export interface RoomData {
   roomOwner?: string;
   roomID?: string;
   isMember?: boolean;
-  isInvited?: boolean; // Only really needed for admins to distinguish
 }
 
 export interface UserRoomData {
   roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
   userPermissions: RoomPermissions;
+}
+
+// one or both
+export interface RoomUpdateData {
+  newRoomName?: string;
+  newOwnerID?: string;
 }

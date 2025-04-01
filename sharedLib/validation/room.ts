@@ -1,6 +1,6 @@
 // Room type validation
 
-import { InviteData, RoomPermissions } from "../types";
+import { InviteData, RoomPermissions, RoomUpdateData } from "../types";
 
 export function isRoomPermissions(roomPermissions: any): boolean {
   return (
@@ -28,41 +28,23 @@ export function isInviteDataFull(inviteData: any): inviteData is {
   );
 }
 
+
 export function isRoomDataMinimum(roomData: any): roomData is {
   roomName: string;
 } {
   return !!roomData && typeof roomData.roomName === "string";
 }
 
-export function isRoomDataNoInviteStatus(roomData: any): roomData is {
-  roomName: string;
-  roomOwner: string;
-  roomID: string;
-  isMember: boolean;
-} {
-  return (
-    !!roomData &&
-    typeof roomData.roomName === "string" &&
-    typeof roomData.roomOwner === "string" &&
-    typeof roomData.roomID === "string" &&
-    typeof roomData.isMember === "boolean"
-  );
-}
-
 export function isRoomDataFull(roomData: any): roomData is {
   roomName: string;
   roomOwner: string;
   roomID: string;
-  isMember: boolean;
-  isInvited: boolean;
 } {
   return (
     !!roomData &&
     typeof roomData.roomName === "string" &&
     typeof roomData.roomOwner === "string" &&
-    typeof roomData.roomID === "string" &&
-    typeof roomData.isMember === "boolean" &&
-    typeof roomData.isInvited === "boolean"
+    typeof roomData.roomID === "string"
   );
 }
 
@@ -77,4 +59,12 @@ export function isUserRoomData(userRoomData: any): userRoomData is {
     isRoomDataMinimum(userRoomData.roomData) &&
     isRoomPermissions(userRoomData.userPermissions)
   );
+}
+
+export function isRoomUpdateData(roomUpdateData: any): roomUpdateData is RoomUpdateData {
+  return !!roomUpdateData && 
+    (
+      typeof roomUpdateData.newRoomName === "string" ||
+      typeof roomUpdateData.newOwnerID === "string"
+    );
 }
