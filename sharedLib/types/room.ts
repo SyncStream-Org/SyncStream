@@ -26,3 +26,8 @@ export interface RoomUpdateData {
   newRoomName?: string;
   newOwnerID?: string;
 }
+
+export interface BroadcastUpdate {
+  endpoint: string;
+  update: any; // TODO: as we discuss
+}
