@@ -27,7 +27,7 @@ export function useSSE(
             const data = JSON.parse(event.data);
             switch (data.endpoint) {
               case 'media':
-                onMediaUpdate(data.type, data.update);
+                onMediaUpdate(data.type, data.data);
                 break;
               default:
                 console.warn(`Unknown endpoint: ${data.endpoint}`);

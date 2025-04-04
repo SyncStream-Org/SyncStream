@@ -33,8 +33,6 @@ export type UpdateType = 'create' | 'update' | 'delete';
 
 export interface BroadcastUpdate {
   endpoint: 'room' | 'media' | 'user'; // lets the client know what is being updated
-  update: {
-    type: UpdateType;    
-    data: FileData | UserRoomData | RoomUpdateData;
-  }
+  type: UpdateType;    
+  data: FileData | UserRoomData | RoomUpdateData;
 }

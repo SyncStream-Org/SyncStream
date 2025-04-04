@@ -214,13 +214,9 @@ export const enterRoomBroadcast = (req: Request, res: Response) => {
     
     // set connection and send message
     Broadcaster.addUserResponse(roomID, res);
-    console.log(`User ${user.username} connected to room ${roomID}`);
-
-    res.write('data:' + JSON.stringify({ message: "Connected to Broadcast" }) + "\n\n");
 
     req.on("close", () => {
         //remove from room->user map
-        console.log("Client closed connection");
         Broadcaster.removeUserResponse(roomID, res);
         res.end();
     });
