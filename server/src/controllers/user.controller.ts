@@ -191,7 +191,7 @@ export const leaveRoom = (req: Request, res: Response) => {
 
 // user entering Server-Side Event Broadcasting for their room
 // separate from joinRoom to for keep-alive headers
-export const enterRoomBroadcast = async (req: Request, res: Response) => {
+export const enterRoomBroadcast = (req: Request, res: Response) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -203,20 +203,25 @@ export const enterRoomBroadcast = async (req: Request, res: Response) => {
     const presence = PresenceState.getUserEntry(user.username);
     if (presence == undefined) {
         res.status(404).write(JSON.stringify({ error: "Not Found: User not in any room" }));
-        return res.end();
+        res.end();
+        return;
     }
     if (presence.roomID !== roomID) {
         res.status(400).write(JSON.stringify({ error: "Bad Request: RoomID does not match current active room" }));
-        return res.end();
+        res.end();
+        return;
     }
     
     // set connection and send message
     Broadcaster.addUserResponse(roomID, res);
-    res.write(JSON.stringify({ message: "Connected to Broadcast" }));
+    console.log(`User ${user.username} connected to room ${roomID}`);
+
+    res.write('data:' + JSON.stringify({ message: "Connected to Broadcast" }) + "\n\n");
 
     req.on("close", () => {
         //remove from room->user map
+        console.log("Client closed connection");
         Broadcaster.removeUserResponse(roomID, res);
         res.end();
     });
-}
+};

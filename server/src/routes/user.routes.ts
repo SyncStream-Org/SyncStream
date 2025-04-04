@@ -18,5 +18,6 @@ router.get("/rooms/:roomID", controller.getRoomDetails);
 router.delete("/rooms/:roomID", controller.removeRoomFromUser);
 router.put("/rooms/:roomID/invitation", controller.acceptRoomInvite);
 router.delete("/rooms/:roomID/invitation", controller.declineRoomInvite);
+router.get("/rooms/:roomID/broadcast", controller.enterRoomBroadcast);
 
 export default router;

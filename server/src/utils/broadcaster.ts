@@ -43,7 +43,7 @@ class Broadcaster {
     }
 
     for (const res of userResList) {
-      res.write(JSON.stringify(update));
+      res.write(`data: ${JSON.stringify(update)}\n\n`);
     }
   }
 }
