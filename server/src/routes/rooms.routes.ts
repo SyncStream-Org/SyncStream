@@ -20,6 +20,7 @@ router.put("/:roomID/users/:username", ErrorCatcher(controller.updateUser))
 
 // imported routers, users required to be part of the room to access
 router.use("/:roomID", ErrorCatcher(confirmUserInRoom));
+
 router.use("/:roomID/files", filesRouter);
 
 export default router;

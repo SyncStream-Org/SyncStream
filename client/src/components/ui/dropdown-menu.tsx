@@ -63,7 +63,9 @@ function DropdownMenuItem({
   variant = 'default',
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
+  // eslint-disable-next-line react/require-default-props
   inset?: boolean;
+  // eslint-disable-next-line react/require-default-props
   variant?: 'default' | 'destructive';
 }) {
   return (
@@ -146,6 +148,7 @@ function DropdownMenuLabel({
   inset,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
+  // eslint-disable-next-line react/require-default-props
   inset?: boolean;
 }) {
   return (

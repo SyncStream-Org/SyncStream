@@ -10,10 +10,13 @@ import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
+import RoomSettings from './room-settings/room-settings';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  doneLoading: () => void;
   navigate: NavigateFunction;
 }
 
@@ -22,8 +25,8 @@ function RoomPage(props: Props) {
   const [media, setMedia] = useState<Types.FileData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
   const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
-  const [sessionSaved, setSessionSaved] = useState(false);
   const [room, setRoom] = useState<Types.RoomData | null>(null);
 
   const handleRoomFetch = () => {
@@ -40,6 +43,14 @@ function RoomPage(props: Props) {
     // clear active stream and active doc
     setActiveStream(null);
     setActiveDoc(null);
+    setSettingsOpen(false);
+  };
+
+  const handleSettingsClick = () => {
+    // clear active stream and active doc
+    setActiveStream(null);
+    setActiveDoc(null);
+    setSettingsOpen(true);
   };
 
   useEffect(() => {
@@ -47,22 +58,6 @@ function RoomPage(props: Props) {
     handleRoomFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const handleUnload = (event: BeforeUnloadEvent) => {
-      if (!sessionSaved) {
-        event.preventDefault();
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            setSessionSaved(true);
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved]);
 
   return (
     <div className="flex h-screen">
@@ -85,7 +80,7 @@ function RoomPage(props: Props) {
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}
-          setRoomSettings={() => {}}
+          setRoomSettings={handleSettingsClick}
         />
         {/* Main Content */}
         {/* Text Editor */}
@@ -97,7 +92,7 @@ function RoomPage(props: Props) {
           />
           <Separator />
           <div className="flex flex-1 flex-col pt-0 overflow-hidden">
-            {activeDoc !== null && (
+            {activeDoc !== null && settingsOpen !== true && (
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
@@ -106,16 +101,19 @@ function RoomPage(props: Props) {
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
-            {activeDoc === null && activeStream === null && (
-              <RoomHome
-                media={media}
-                roomID={roomID}
-                refresh={handleRoomFetch}
-                setActiveDoc={setActiveDoc}
-                setActiveStream={setActiveStream}
-                setActiveVoice={setActiveVoice}
-              />
-            )}
+            {activeDoc === null &&
+              activeStream === null &&
+              settingsOpen === false && (
+                <RoomHome
+                  media={media}
+                  roomID={roomID}
+                  refresh={handleRoomFetch}
+                  setActiveDoc={setActiveDoc}
+                  setActiveStream={setActiveStream}
+                  setActiveVoice={setActiveVoice}
+                />
+              )}
+            {settingsOpen === true && <RoomSettings roomID={roomID} />}
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -123,4 +121,4 @@ function RoomPage(props: Props) {
   );
 }
 
-export default asPage(RoomPage);
+export default asPage(RoomPage, false);

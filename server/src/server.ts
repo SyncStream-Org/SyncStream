@@ -5,7 +5,9 @@ import routerWs from './websockets/socketHandler';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
+
 import { ErrorHandler } from './middleware/errorCatcher';
+import cors from 'cors';
 
 const port: number = 3000;
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
@@ -16,6 +18,7 @@ const USER_FILES = process.env.USER_FILES;
 // Create an Express application
 const app = expressWs(express()).app;
 
+app.use(cors());
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(routerWs);
 app.use(routes);

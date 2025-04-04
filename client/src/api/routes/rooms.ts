@@ -29,7 +29,7 @@ export function createRoom(roomName: string): Promise<{
         const body = await res.json();
 
         // Validate
-        if (!Validation.isRoomDataFull(body))
+        if (!Validation.isRoomDataNoUserData(body))
           return { success: SuccessState.ERROR };
 
         return {
@@ -82,6 +82,42 @@ export function joinRoom(roomId: string): Promise<{
     .catch((error) => {
       console.error(`Fetch Encountered an Error:\n${error}`);
       return { success: SuccessState.ERROR };
+    });
+}
+
+export function updateRoom(
+  roomId: string,
+  updateData: Types.RoomUpdateData,
+): Promise<SuccessState> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(generateRoute(`rooms/${roomId}`), {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(updateData),
+  });
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.ok) return SuccessState.SUCCESS;
+
+      if (res.status === 403) {
+        console.error('Room update request failed: User does not own room.');
+        return SuccessState.FAIL;
+      }
+
+      if (res.status === 404) {
+        console.error('Room update request failed: Room does not exist.');
+        return SuccessState.FAIL;
+      }
+
+      printUnexpectedError('rooms/{roomId} PUT API Call Failed', res);
+      return SuccessState.ERROR;
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return SuccessState.ERROR;
     });
 }
 
