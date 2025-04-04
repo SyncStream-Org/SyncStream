@@ -15,6 +15,8 @@ interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
   // eslint-disable-next-line react/no-unused-prop-types
+  doneLoading: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
   navigate: NavigateFunction;
 }
 
@@ -69,7 +71,7 @@ class Settings extends React.Component<Props, State> {
             text={localize.settingsPage.backButtonText}
             className="mx-4 mb-4"
             onClick={() => {
-              this.props.navigate('/home');
+              this.props.navigate(-1);
             }}
           />
         </div>
@@ -106,4 +108,4 @@ class Settings extends React.Component<Props, State> {
 }
 
 // Add wrapper for navigation function
-export default asPage(Settings);
+export default asPage(Settings, false);
