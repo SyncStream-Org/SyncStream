@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
@@ -9,6 +9,7 @@ import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
+import { useSSE } from '@/api/routes/useSse';
 import * as api from '../../api';
 
 interface Props {
@@ -41,10 +42,27 @@ function RoomPage(props: Props) {
     setActiveDoc(null);
   };
 
+  const onMediaUpdate = useCallback((type: Types.UpdateType, update: Types.FileData) => {
+    setMedia((prevMedia) => {
+      switch (type) {
+        case 'update':
+          return prevMedia.map((file) =>
+            file.fileID === update.fileID ? update : file,
+          );
+        case 'delete':
+          return prevMedia.filter((file) => file.fileID !== update.fileID);
+        case 'create':
+          return [...prevMedia, update];
+        default:
+          return prevMedia;
+      }
+    });
+  }, []);
+
+  useSSE(room?.roomID!, SessionState.getInstance().sessionToken, onMediaUpdate);
+
   useEffect(() => {
-    if (room) {
-      handleRoomFetch();
-    }
+    handleRoomFetch();
   }, [room]);
 
   useEffect(() => {

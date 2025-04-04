@@ -32,8 +32,10 @@ class Home extends React.Component<Props, State> {
     // Grab all rooms available to user (or all rooms if admin)
     // TODO: Don't create room on startup when room creation merged
     api.Rooms.createRoom('Initial Room').then(({ success, data }) => {
+      console.log('success', success, data);
       if (SessionState.getInstance().currentUser.admin) {
         api.Admin.getAllRooms().then((res) => {
+          console.log('res', res);
           if (
             res.success === api.SuccessState.ERROR ||
             res.success === api.SuccessState.FAIL
