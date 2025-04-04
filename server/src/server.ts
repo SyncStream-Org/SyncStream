@@ -5,6 +5,8 @@ import routerWs from './websockets/socketHandler';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
+
+import { ErrorHandler } from './middleware/errorCatcher';
 import cors from 'cors';
 
 const port: number = 3000;
@@ -20,6 +22,8 @@ app.use(cors());
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(routerWs);
 app.use(routes);
+
+app.use(ErrorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);  

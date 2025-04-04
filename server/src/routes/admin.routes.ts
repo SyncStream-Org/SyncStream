@@ -2,14 +2,15 @@ import { Router } from "express";
 import * as controller from "../controllers/admin.controller";
 
 import { adminMiddleware } from "../middleware/admin";
+import { ErrorCatcher } from "../middleware/errorCatcher";
 
 const router = Router();
 
-router.use(adminMiddleware)
+router.use(ErrorCatcher(adminMiddleware));
 
-router.put("/user/", controller.createUser);
-router.get("/users/", controller.listUsers);
-router.delete("/user/:username", controller.deleteUser);
-router.get("/rooms/", controller.getRooms)
+router.put("/user/", ErrorCatcher(controller.createUser));
+router.get("/users/", ErrorCatcher(controller.listUsers));
+router.delete("/user/:username", ErrorCatcher(controller.deleteUser));
+router.get("/rooms/", ErrorCatcher(controller.getRooms))
 
 export default router;
