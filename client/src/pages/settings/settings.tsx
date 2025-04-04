@@ -71,7 +71,7 @@ class Settings extends React.Component<Props, State> {
             text={localize.settingsPage.backButtonText}
             className="mx-4 mb-4"
             onClick={() => {
-              this.props.navigate('/home');
+              this.props.navigate(-1);
             }}
           />
         </div>
