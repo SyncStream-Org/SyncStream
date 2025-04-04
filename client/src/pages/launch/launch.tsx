@@ -12,6 +12,8 @@ import Localize from '../../utilities/localize';
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  doneLoading: () => void;
   navigate: NavigateFunction;
 }
 
@@ -82,9 +84,8 @@ class Launch extends React.Component<Props, State> {
 
                 if (userData.data === undefined) throw new Error('Unreachable');
                 SessionState.getInstance().currentUser = userData.data;
+                this.props.navigate('/home');
               });
-
-              this.props.navigate('/home');
             }
           });
         }
@@ -150,4 +151,4 @@ class Launch extends React.Component<Props, State> {
 }
 
 // Add wrapper for navigation function
-export default asPage(Launch);
+export default asPage(Launch, false);

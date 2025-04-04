@@ -1,6 +1,8 @@
 import User from "../models/users";
 import Room from "../models/rooms";
 import RoomUser from "../models/roomUsers";
+import { Types } from "syncstream-sharedlib";
+import { Op } from "sequelize";
 
 import { RoomUserAttributes, RoomUserPermissions } from "room-types";
 import { UserAttributes } from "user-types";
@@ -45,28 +47,26 @@ class UserService {
 
   public async updateUser(
     user: User,
-    newPassword?: string,
-    newDisplayName?: string,
-    newEmail?: string,
+    update: Types.UserUpdateData,
   ): Promise<User> {
     if ((await this.getUserByUsername(user.username)) == null) {
       throw new Error("updateUser: User not found");
     }
 
-    if (newPassword) {
-      const hashedPassword = await auth.hashPassword(newPassword);
-      user.password = hashedPassword;
+    if (update.password) {
+      user.password = await auth.hashPassword(update.password);
     }
-    if (newDisplayName) {
-      user.displayName = newDisplayName;
+    if (update.displayName) {
+      user.displayName = update.displayName;
     }
-    if (newEmail) {
-      user.email = newEmail;
+    if (update.email) {
+      user.email = update.email;
     }
 
     return await user.save();
   }
 
+  // returns a set of rooms for user.username where isOwner is matching for all rooms and isMember flag is matching for all rooms
   public async getUserRooms(
     user: User,
     isOwner?: boolean,
@@ -80,6 +80,14 @@ class UserService {
     isMember = isMember || false;
 
     const rooms: Room[] = [];
+
+    // exists no rooms where user is the owner and is not a member
+    if (isOwner && !isMember) {
+      return rooms; // []
+    }
+
+    // set up owned rooms
+    // return after found
     if (isOwner) {
       const ownedRooms = await Room.findAll({
         where: { roomOwner: user.username },
@@ -87,8 +95,10 @@ class UserService {
       if (ownedRooms) {
         rooms.push(...ownedRooms);
       }
+      return rooms;
     }
 
+    // set up membered? rooms where username is not the owner
     const joinedRoomLinks = await RoomUser.findAll({
       where: { username: user.username, isMember: isMember },
     });
@@ -97,7 +107,10 @@ class UserService {
         (room: RoomUser) => room.roomID,
       );
       const joinedRooms = await Room.findAll({
-        where: { roomID: { in: joinedRoomIDs } },
+        where: { 
+          roomID: joinedRoomIDs,
+          roomOwner: { [Op.ne]: user.username },
+        },
       });
       if (joinedRooms) {
         rooms.push(...joinedRooms);

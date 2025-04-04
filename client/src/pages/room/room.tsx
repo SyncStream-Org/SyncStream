@@ -1,106 +1,124 @@
 import { useState, useEffect } from 'react';
 import { useParams, NavigateFunction } from 'react-router-dom';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { Types } from 'syncstream-sharedlib';
+import { Separator } from '@/components/ui/separator';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
+import { AppSidebar } from './sidebar/app-sidebar';
+import { RoomHeader } from './room-header';
+import { RoomHome } from './room-home/room-home';
+import * as api from '../../api';
+import RoomSettings from './room-settings/room-settings';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
+  // eslint-disable-next-line react/no-unused-prop-types
+  doneLoading: () => void;
   navigate: NavigateFunction;
 }
 
 function RoomPage(props: Props) {
   const roomID = useParams<{ roomID: string }>().roomID!;
-  const [onlineUsers, setOnlineUsers] = useState(['Alice', 'Bob', 'Charlie']);
-  const [files, setFiles] = useState([
-    'Document1.txt',
-    'Notes.md',
-    'Project.pdf',
-  ]);
-  const [docName, setDocName] = useState<string | null>(null);
-  const [sessionSaved, setSessionSaved] = useState(false);
+  const [media, setMedia] = useState<Types.FileData[]>([]);
+  const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
+  const [room, setRoom] = useState<Types.RoomData | null>(null);
+
+  const handleRoomFetch = () => {
+    api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        setMedia(data!);
+      } else {
+        console.error('Error fetching files:', data);
+      }
+    });
+  };
+
+  const handleHomeClick = () => {
+    // clear active stream and active doc
+    setActiveStream(null);
+    setActiveDoc(null);
+    setSettingsOpen(false);
+  };
+
+  const handleSettingsClick = () => {
+    // clear active stream and active doc
+    setActiveStream(null);
+    setActiveDoc(null);
+    setSettingsOpen(true);
+  };
 
   useEffect(() => {
-    const handleUnload = (event: BeforeUnloadEvent) => {
-      if (!sessionSaved) {
-        event.preventDefault();
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            setSessionSaved(true);
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved]);
+    setRoom({ roomName: 'Room Name', roomID });
+    handleRoomFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-100 dark:bg-gray-800 p-4 flex flex-col justify-between">
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Online Users</h2>
-          <ul className="space-y-2">
-            {onlineUsers.map((user) => (
-              <li
-                key={user}
-                className="p-2 bg-white dark:bg-gray-700 rounded shadow flex items-center"
-              >
-                <img
-                  src="https://placehold.co/40x40"
-                  alt="User"
-                  className="rounded-full"
-                />
-                <span className="ml-3">{user}</span>
-              </li>
-            ))}
-          </ul>
-          <h2 className="text-lg font-semibold mt-6 mb-4">Files</h2>
-          <ul className="space-y-2">
-            {files.map((file) => (
-              <li
-                key={file}
-                className={`p-2 rounded shadow cursor-pointer ${
-                  docName === file
-                    ? 'bg-blue-200 dark:bg-gray-600'
-                    : 'bg-white dark:bg-gray-700'
-                }`}
-                onClick={() => setDocName(file)}
-              >
-                {file}
-              </li>
-            ))}
-          </ul>
-        </div>
-        <button
-          onClick={() => props.navigate('/home')}
-          className="mt-4 p-2 bg-red-500 text-white rounded shadow hover:bg-red-600"
-        >
-          Leave Room
-        </button>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 flex flex-col">
+      <SidebarProvider>
+        <AppSidebar
+          room={room!}
+          username={SessionState.getInstance().currentUser.username}
+          media={media}
+          activeDoc={activeDoc}
+          setActiveDoc={setActiveDoc}
+          activeStream={activeStream}
+          setActiveStream={setActiveStream}
+          activeVoice={activeVoice}
+          setActiveVoice={setActiveVoice}
+          goToHome={() => {
+            props.navigate('/home');
+          }}
+          goToSettings={() => {
+            props.navigate('/settings');
+          }}
+          setRoomHome={handleHomeClick}
+          setRoomSettings={handleSettingsClick}
+        />
+        {/* Main Content */}
         {/* Text Editor */}
-        <div
-          className="flex-1 bg-white dark:bg-gray-800 rounded shadow p-4 overflow-hidden"
-          style={{ minHeight: '500px' }}
-        >
-          <DocEditor
-            docName={docName === null ? '' : docName}
-            username={SessionState.getInstance().currentUser.username}
-            sessionToken=""
-            roomID={roomID}
-            serverURL={SessionState.getInstance().serverURL}
+        <SidebarInset>
+          <RoomHeader
+            roomHome={activeDoc === null && activeStream === null}
+            activeDoc={activeDoc}
+            activeStream={activeStream}
           />
-        </div>
-      </main>
+          <Separator />
+          <div className="flex flex-1 flex-col pt-0 overflow-hidden">
+            {activeDoc !== null && settingsOpen !== true && (
+              <DocEditor
+                activeDoc={activeDoc}
+                username={SessionState.getInstance().currentUser.username}
+                sessionToken=""
+                roomID={roomID}
+                serverURL={SessionState.getInstance().serverURL}
+              />
+            )}
+            {activeDoc === null &&
+              activeStream === null &&
+              settingsOpen === false && (
+                <RoomHome
+                  media={media}
+                  roomID={roomID}
+                  refresh={handleRoomFetch}
+                  setActiveDoc={setActiveDoc}
+                  setActiveStream={setActiveStream}
+                  setActiveVoice={setActiveVoice}
+                />
+              )}
+            {settingsOpen === true && <RoomSettings roomID={roomID} />}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }
 
-export default asPage(RoomPage);
+export default asPage(RoomPage, false);

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
+import User from "src/models/users";
 //import * as service from "../services/admin.service";
 
 export const getRooms = async (req: Request, res: Response) => {
@@ -52,12 +53,12 @@ export const createUser = async (req: Request, res: Response) => {
     return;
   }
 
-  try {
-    const newUser = await userService.createUser(userData);
-  } catch (error) {
-    res.status(409).json({ error: "Conflict: User Exists" });
+  const user = await userService.getUserByUsername(userData.username);
+  if (user) {
+    res.status(409).json({ error: "Conflict: User already exists" });
     return;
   }
+  const newUser = await userService.createUser(userData);
 
   res.sendStatus(200);
 };
