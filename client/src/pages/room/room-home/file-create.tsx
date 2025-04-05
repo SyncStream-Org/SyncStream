@@ -23,17 +23,17 @@ interface FileCreateProps {
 }
 
 export function FileCreate({ roomID, setOpen }: FileCreateProps) {
-  const [fileName, setFileName] = useState('');
-  const [fileType, setFileType] = useState('doc');
+  const [mediaName, setMediaName] = useState('');
+  const [mediaType, setMediaType] = useState('doc');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    api.Files.createFile(roomID, {
-      fileName,
-      fileExtension: fileType,
+    api.Media.createMedia(roomID, {
+      mediaName,
+      mediaType,
       permissions: {
         canEdit: true,
       },
@@ -42,8 +42,8 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
         console.error('Error creating file:', data);
       }
       setIsLoading(false);
-      setFileName('');
-      setFileType('doc');
+      setMediaName('');
+      setMediaType('doc');
       setOpen(false);
     });
   };
@@ -62,8 +62,8 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
             <Input
               id="name"
               className="col-span-3"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
+              value={mediaName}
+              onChange={(e) => setMediaName(e.target.value)}
               disabled={isLoading}
               required
             />
@@ -74,8 +74,8 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
             </Label>
             <div className="col-span-3">
               <Select
-                value={fileType}
-                onValueChange={setFileType}
+                value={mediaType}
+                onValueChange={setMediaType}
                 disabled={isLoading}
               >
                 <SelectTrigger id="fileType">

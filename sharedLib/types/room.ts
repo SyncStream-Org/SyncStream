@@ -1,4 +1,4 @@
-import { FileData } from './file';
+import { MediaData } from './media';
 
 export interface RoomPermissions {
   admin: boolean; // NOTE: all permissions an owner has, EXCEPT deleting the room
@@ -34,5 +34,5 @@ export type UpdateType = 'create' | 'update' | 'delete';
 export interface BroadcastUpdate {
   endpoint: 'room' | 'media' | 'user'; // lets the client know what is being updated
   type: UpdateType;    
-  data: FileData | UserRoomData | RoomUpdateData;
+  data: MediaData | UserRoomData | RoomUpdateData;
 }

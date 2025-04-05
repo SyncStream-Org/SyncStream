@@ -26,20 +26,20 @@ import { FileItem } from '../file-item/file-item';
 interface MediaCategory {
   title: string;
   icon: any;
-  activeItem: Types.FileData | null;
-  setActive: (item: Types.FileData) => void;
-  items: Types.FileData[];
+  activeItem: Types.MediaData | null;
+  setActive: (item: Types.MediaData) => void;
+  items: Types.MediaData[];
 }
 
 interface MediaNavProps {
-  media: Types.FileData[];
+  media: Types.MediaData[];
   roomId: string;
-  activeDoc: Types.FileData | null;
-  activeStream: Types.FileData | null;
-  activeVoice: Types.FileData | null;
-  setActiveDoc: (doc: Types.FileData) => void;
-  setActiveStream: (stream: Types.FileData) => void;
-  setActiveVoice: (voice: Types.FileData) => void;
+  activeDoc: Types.MediaData | null;
+  activeStream: Types.MediaData | null;
+  activeVoice: Types.MediaData | null;
+  setActiveDoc: (doc: Types.MediaData) => void;
+  setActiveStream: (stream: Types.MediaData) => void;
+  setActiveVoice: (voice: Types.MediaData) => void;
 }
 
 export function MediaNav({
@@ -79,12 +79,12 @@ export function MediaNav({
 
   // Update active items when props change
   useEffect(() => {
-    const docsItems: Types.FileData[] = [];
-    const streamsItems: Types.FileData[] = [];
-    const voiceItems: Types.FileData[] = [];
+    const docsItems: Types.MediaData[] = [];
+    const streamsItems: Types.MediaData[] = [];
+    const voiceItems: Types.MediaData[] = [];
 
     media.forEach((item) => {
-      const itemType = item.fileExtension;
+      const itemType = item.mediaType;
       if (itemType === 'doc') {
         docsItems.push(item);
       } else if (itemType === 'stream') {
@@ -133,7 +133,7 @@ export function MediaNav({
                   {item.items?.length > 0 ? (
                     item.items.map((subItem) => (
                       <FileItem
-                        key={subItem.fileID}
+                        key={subItem.mediaID}
                         roomID={roomId}
                         mediaObject={subItem}
                       >
@@ -141,11 +141,11 @@ export function MediaNav({
                           <SidebarMenuSubButton
                             asChild
                             isActive={
-                              subItem.fileID! === item.activeItem?.fileID!
+                              subItem.mediaID! === item.activeItem?.mediaID!
                             }
                             onClick={() => item.setActive(subItem)}
                           >
-                            <span>{subItem.fileName}</span>
+                            <span>{subItem.mediaName}</span>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
                       </FileItem>

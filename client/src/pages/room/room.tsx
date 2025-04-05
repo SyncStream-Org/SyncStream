@@ -20,13 +20,13 @@ interface Props {
 
 function RoomPage(props: Props) {
   const room = useLocation().state?.room as Types.RoomData | undefined;
-  const [media, setMedia] = useState<Types.FileData[]>([]);
-  const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
-  const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
-  const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
+  const [media, setMedia] = useState<Types.MediaData[]>([]);
+  const [activeDoc, setActiveDoc] = useState<Types.MediaData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.MediaData | null>(null);
+  const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
 
   const handleRoomFetch = () => {
-    api.Files.getAllRoomFiles(room?.roomID!).then(({ success, data }) => {
+    api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
       } else {
@@ -42,15 +42,15 @@ function RoomPage(props: Props) {
   };
 
   const onMediaUpdate = useCallback(
-    (type: Types.UpdateType, update: Types.FileData) => {
+    (type: Types.UpdateType, update: Types.MediaData) => {
       setMedia((prevMedia) => {
         switch (type) {
           case 'update':
             return prevMedia.map((file) =>
-              file.fileID === update.fileID ? update : file,
+              file.mediaID === update.mediaID ? update : file,
             );
           case 'delete':
-            return prevMedia.filter((file) => file.fileID !== update.fileID);
+            return prevMedia.filter((file) => file.mediaID !== update.mediaID);
           case 'create':
             return [...prevMedia, update];
           default:

@@ -40,6 +40,7 @@ class PresenceState {
     }
     return null;
   }
+  
   public clearUserMedia(username: string, mediaType: Types.MediaType): void {
     const userState = this.globalPresence.get(username);
     if (userState) {
