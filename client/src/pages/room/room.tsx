@@ -3,13 +3,13 @@ import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
+import { useSSE } from '@/api/routes/useSse';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
-import { useSSE } from '@/api/routes/useSse';
 import * as api from '../../api';
 
 interface Props {
@@ -24,7 +24,6 @@ function RoomPage(props: Props) {
   const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
   const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
   const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
-  const [sessionSaved, setSessionSaved] = useState(false);
 
   const handleRoomFetch = () => {
     api.Files.getAllRoomFiles(room?.roomID!).then(({ success, data }) => {
@@ -42,45 +41,31 @@ function RoomPage(props: Props) {
     setActiveDoc(null);
   };
 
-  const onMediaUpdate = useCallback((type: Types.UpdateType, update: Types.FileData) => {
-    setMedia((prevMedia) => {
-      switch (type) {
-        case 'update':
-          return prevMedia.map((file) =>
-            file.fileID === update.fileID ? update : file,
-          );
-        case 'delete':
-          return prevMedia.filter((file) => file.fileID !== update.fileID);
-        case 'create':
-          return [...prevMedia, update];
-        default:
-          return prevMedia;
-      }
-    });
-  }, []);
+  const onMediaUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.FileData) => {
+      setMedia((prevMedia) => {
+        switch (type) {
+          case 'update':
+            return prevMedia.map((file) =>
+              file.fileID === update.fileID ? update : file,
+            );
+          case 'delete':
+            return prevMedia.filter((file) => file.fileID !== update.fileID);
+          case 'create':
+            return [...prevMedia, update];
+          default:
+            return prevMedia;
+        }
+      });
+    },
+    [],
+  );
 
   useSSE(room?.roomID!, SessionState.getInstance().sessionToken, onMediaUpdate);
 
   useEffect(() => {
     handleRoomFetch();
   }, [room]);
-
-  useEffect(() => {
-    const handleUnload = (event: BeforeUnloadEvent) => {
-      if (!sessionSaved) {
-        event.preventDefault();
-        api.User.leaveRoomPresence();
-        SessionState.getInstance()
-          .saveCache()
-          .then(() => {
-            setSessionSaved(true);
-            window.electron.ipcRenderer.sendMessage('app-quit');
-          });
-      }
-    };
-    window.addEventListener('beforeunload', handleUnload);
-    return () => window.removeEventListener('beforeunload', handleUnload);
-  }, [sessionSaved]);
 
   return (
     <div className="flex h-screen">
