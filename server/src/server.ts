@@ -5,8 +5,6 @@ import routerWs from './websockets/routes';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
-import roomService from './services/roomService';
-import filesService from './services/filesService';
 import cleanup from './utils/cleanup';
 
 const port: number = 3000;
@@ -36,32 +34,6 @@ sequelize.sync({ force: true }).then(() => {
     admin: true,
   }).then(async () => {
     console.log('Admin user created');
-    // create a room, create a file, then delete the room
-    const room = await roomService.createRoom({
-      roomName: 'Test Room',
-      roomOwner: ADMIN_USERNAME,
-    });
-    console.log('Test room created');
-    const file = await filesService.createRoomFile({
-      roomID: room.roomID,
-      fileName: 'Test File',
-      fileExtension: 'txt',
-      permissions: {
-        canEdit: true,
-      },
-    });
-    console.log('Test file created');
-    // list all files 
-    let files = await filesService.listAllFiles();
-    console.log('All files:', files);
-    // delete the room
-    // await roomService.deleteRoom(room);
-    // console.log('Test room deleted');
-    // // list all files
-    // files = await filesService.listAllFiles();
-    // console.log('All files:', files);
-    // delete the file
-    await filesService.deleteRoomFile(file);
   });
 });
 
