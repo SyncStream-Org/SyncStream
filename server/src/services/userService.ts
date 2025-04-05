@@ -1,6 +1,6 @@
-import User from "../models/users";
-import Room from "../models/rooms";
-import RoomUser from "../models/roomUsers";
+import { User } from "../models";
+import { Room } from "../models";
+import { RoomUser } from "../models";
 import { Types } from "syncstream-sharedlib";
 
 import { RoomUserAttributes, RoomUserPermissions } from "room-types";

@@ -7,13 +7,16 @@ import fs from 'fs';
 import path from 'path';
 
 const ROOT_DIR = process.env.USER_FILES;
+if (ROOT_DIR === undefined) {
+  throw new Error('USER_FILES environment variable is not set');
+}
 
 const persistence = {
   bindState: (docName: string, ydoc: Y.Doc) => {
   },
   writeState: async (docName: string, ydoc: Y.Doc) => {
-    const resolvedPath = path.resolve(ROOT_DIR!, docName);
-    if (!resolvedPath.startsWith(ROOT_DIR!)) {
+    const resolvedPath = path.resolve(ROOT_DIR, docName);
+    if (!resolvedPath.startsWith(ROOT_DIR)) {
       throw new Error('Invalid docName');
     }
     console.log('Writing state for:', docName);
@@ -25,8 +28,8 @@ const persistence = {
 setPersistence(persistence);
 
 const initContent = (ydoc: Y.Doc, docName: string) => {
-  const resolvedPath = path.resolve(ROOT_DIR!, docName);
-  if (!resolvedPath.startsWith(ROOT_DIR!)) {
+  const resolvedPath = path.resolve(ROOT_DIR, docName);
+  if (!resolvedPath.startsWith(ROOT_DIR)) {
     throw new Error('Invalid docName');
   }
   if (fs.existsSync(resolvedPath)) {
@@ -40,7 +43,7 @@ const initContent = (ydoc: Y.Doc, docName: string) => {
 };
 
 export default function wsDoc (ws: WebSocket, req: Request) {
-  const docName = req.params.roomID.toString() + '-' + req.params.docID;
+  const docName = req.params.docID;
 
   if (!docs.has(docName)) {
     setContentInitializor((ydoc: Y.Doc) => initContent(ydoc, docName));
