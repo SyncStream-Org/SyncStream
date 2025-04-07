@@ -207,7 +207,7 @@ describe('UserService', () => {
     const result = await UserService.getUserRooms(mockUser as unknown as User, false, true);
     
     expect(RoomUser.findAll).toHaveBeenCalledWith({ where: { username: mockUser.username, isMember: true } });
-    expect(Room.findAll).toHaveBeenCalledWith({ where: { roomID: { in: mockRoomUsers.map((room) => room.roomID) } } });
+    expect(Room.findAll).toHaveBeenCalledWith({ where: { roomID: mockRoomUsers.map((room) => room.roomID) } });
     expect(result).toEqual(mockRoomsJoined);
   });
 
@@ -221,7 +221,7 @@ describe('UserService', () => {
 
     expect(Room.findAll).toHaveBeenNthCalledWith(1, { where: { roomOwner: mockUser.username } });
     expect(RoomUser.findAll).toHaveBeenCalledWith({ where: { username: mockUser.username, isMember: true } });
-    expect(Room.findAll).toHaveBeenNthCalledWith(2, { where: { roomID: { in: mockRoomUsers.map((room) => room.roomID) } } });
+    expect(Room.findAll).toHaveBeenNthCalledWith(2, { where: { roomID: mockRoomUsers.map((room) => room.roomID) } });
     expect(result).toEqual([...mockRooms, ...mockRoomsJoined]);
   });
 

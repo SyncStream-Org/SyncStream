@@ -1,7 +1,7 @@
-import RoomFile from '../models/roomFiles';
+import { RoomFile } from '../models';
 import { Types } from 'syncstream-sharedlib';
 
-import { RoomFileCreationAttributes, RoomFilePermissions, RoomFileAttributes } from 'room-types';
+import { RoomFileCreationAttributes } from 'room-types';
 
 class FileService {
   public async getFileFromRoom(roomID: string, fileName: string): Promise<RoomFile | null> {

@@ -1,7 +1,7 @@
-import Room from '../models/rooms';
+import { Room } from '../models';
 
 import { RoomCreationAttributes } from 'room-types';
-import RoomUser from '../models/roomUsers';
+import { RoomUser } from '../models';
 
 class RoomService {
   public async getRoomById(roomID: string): Promise<Room | null> {

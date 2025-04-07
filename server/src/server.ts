@@ -5,6 +5,7 @@ import routerWs from './websockets/routes';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
+import cleanup from './utils/cleanup';
 
 import { ErrorHandler } from './middleware/errorCatcher';
 import cors from 'cors';
@@ -37,7 +38,7 @@ sequelize.sync({ force: true }).then(() => {
     email: ADMIN_EMAIL,
     displayName: 'Admin',
     admin: true,
-  }).then(() => {
+  }).then(async () => {
     console.log('Admin user created');
   });
 });
@@ -47,3 +48,5 @@ if (USER_FILES) {
     fs.rmSync(`${USER_FILES}/${file}`);
   }
 }
+
+cleanup();
