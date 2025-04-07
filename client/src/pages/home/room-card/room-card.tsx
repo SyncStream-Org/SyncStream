@@ -28,6 +28,31 @@ export default class RoomCard extends React.Component<Props, State> {
   }
 
   render() {
+    const handleJoinRoom = (event: React.SyntheticEvent) => {
+      if (
+        !this.props.isInvite ||
+        (this.props.isInvite &&
+          SessionState.getInstance().currentUser.admin)
+      ) {
+        api.User.joinRoomPresence(this.props.roomData.roomID!).then(
+          (success: api.SuccessState) => {
+            if (
+              success === api.SuccessState.ERROR ||
+              success === api.SuccessState.FAIL
+            ) {
+              window.electron.ipcRenderer.invokeFunction('show-message-box', {
+                title: 'Error',
+                message: 'Unable to join room at this time.',
+              });
+            } else {
+              this.props.navigate(`/room`, {
+                state: { room: this.props.roomData },
+              });
+            }
+          },
+        );
+      }
+    };
     const acceptInvite = (event: React.SyntheticEvent) => {
       if (this.props.roomData.roomID === undefined) throw Error('Unreachable');
       api.User.acceptInviteToRoom(this.props.roomData.roomID).then((res) => {
@@ -74,15 +99,7 @@ export default class RoomCard extends React.Component<Props, State> {
     return (
       <div
         className="dark:bg-gray-800 p-6 rounded-lg shadow-md"
-        onClick={() => {
-          if (
-            !this.props.isInvite ||
-            (this.props.isInvite &&
-              SessionState.getInstance().currentUser.admin)
-          ) {
-            this.props.navigate(`/room/${this.props.roomData.roomID}`);
-          }
-        }}
+        onClick={handleJoinRoom}
       >
         <div className="flex flex-row">
           <div className="grow">

@@ -43,7 +43,7 @@ export const confirmUserInRoom = async (req: Request, res: Response, next: NextF
     res.status(404).json({ error: "Bad Request: room does not exist" });
     return;
   }
-  (req as any).room= room;
+  (req as any).room = room;
 
   const roomUser = await userService.getRoomUser(roomID, user.username);
   if (!roomUser) {

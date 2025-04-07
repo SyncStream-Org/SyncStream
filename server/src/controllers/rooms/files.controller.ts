@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib"
-
 import filesService from "../../services/filesService";
 import RoomFile from "src/models/roomFiles";
+import Broadcaster from "../../utils/broadcaster";
 
 // TODO: discuss documentObject, currently returning RoomFileAttributes instead
 
@@ -42,6 +42,14 @@ export const createFile = async (req: Request, res: Response) => {
         permissions: roomFile.permissions,
     };
 
+    Broadcaster.pushUpdateToUsers(
+        roomID,
+        {
+            endpoint: 'media',
+            type: 'create', 
+            data: roomFileResponse,
+        }
+    );
     res.json(roomFileResponse); // TODO: see top note
 };
 
@@ -79,7 +87,22 @@ export const updateRoomFile = async (req: Request, res: Response) => {
         return;
     }
     
-    await filesService.updateRoomFile(roomFile, updateBody);
+    const updatedRoomFile: RoomFile = await filesService.updateRoomFile(roomFile, updateBody);
+    const roomFileResponse: Types.FileData = {
+        fileID: updatedRoomFile.fileID,
+        fileName: updatedRoomFile.fileName,
+        fileExtension: updatedRoomFile.fileExtension,
+        permissions: updatedRoomFile.permissions,
+    };
+
+    Broadcaster.pushUpdateToUsers(
+        roomID,
+        {
+            endpoint: 'media',
+            type: 'update', 
+            data: roomFileResponse,
+        }
+    );
 
     res.sendStatus(204);
 };
@@ -95,5 +118,13 @@ export const deleteRoomFile = async (req: Request, res: Response) => {
 
     await filesService.deleteRoomFile(roomFile);
 
+    Broadcaster.pushUpdateToUsers(
+        roomID,
+        {
+            endpoint: 'media',
+            type: 'delete', 
+            data: roomFile,
+        }
+    );
     res.sendStatus(204);    
 };

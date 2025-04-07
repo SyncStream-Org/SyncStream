@@ -11,7 +11,6 @@ import {
   RoomUserPermissions,
 } from "room-types";
 import Room from "../models/rooms";
-//import * as service from "../services/rooms.service";
 
 export const createRoom = async (req: Request, res: Response) => {
   const roomNameSM: Types.StringMessage = req.body;
@@ -102,16 +101,8 @@ export const updateRoom = async (req: Request, res: Response) => {
     await roomService.updateRoomName(room, roomUpdateData.newRoomName);
   }
 
-  res.sendStatus(204);
-};
-
-export const joinRoom = async (req: Request, res: Response) => {
-  // TODO: requires further developing as a group on what it means to join room
-  res.status(501).json({ error: "Not yet implemented" });
-  return;
-  const user: User = (req as any).user;
-  const { roomID } = req.params;
-};
+    res.sendStatus(204);
+}
 
 export const deleteRoom = async (req: Request, res: Response) => {
   const user: User = (req as any).user;

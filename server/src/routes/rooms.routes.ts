@@ -10,7 +10,6 @@ const router = Router();
 
 router.put("/", ErrorCatcher(controller.createRoom))
 
-router.get("/:roomID", ErrorCatcher(controller.joinRoom))
 router.put("/:roomID", ErrorCatcher(controller.updateRoom))
 router.delete("/:roomID", ErrorCatcher(controller.deleteRoom))
 router.get("/:roomID/users", ErrorCatcher(controller.listUsers))

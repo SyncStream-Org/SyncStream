@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, NavigateFunction } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
@@ -9,6 +9,7 @@ import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
+import { useSSE } from '@/api/routes/useSse';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 
@@ -21,16 +22,16 @@ interface Props {
 }
 
 function RoomPage(props: Props) {
-  const roomID = useParams<{ roomID: string }>().roomID!;
+  const room = useLocation().state?.room as Types.RoomData | undefined;
   const [media, setMedia] = useState<Types.FileData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.FileData | null>(null);
   const [activeStream, setActiveStream] = useState<Types.FileData | null>(null);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.FileData | null>(null);
-  const [room, setRoom] = useState<Types.RoomData | null>(null);
+  const [sessionSaved, setSessionSaved] = useState(false);
 
   const handleRoomFetch = () => {
-    api.Files.getAllRoomFiles(roomID).then(({ success, data }) => {
+    api.Files.getAllRoomFiles(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         setMedia(data!);
       } else {
@@ -53,11 +54,45 @@ function RoomPage(props: Props) {
     setSettingsOpen(true);
   };
 
-  useEffect(() => {
-    setRoom({ roomName: 'Room Name', roomID });
-    handleRoomFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onMediaUpdate = useCallback((type: Types.UpdateType, update: Types.FileData) => {
+    setMedia((prevMedia) => {
+      switch (type) {
+        case 'update':
+          return prevMedia.map((file) =>
+            file.fileID === update.fileID ? update : file,
+          );
+        case 'delete':
+          return prevMedia.filter((file) => file.fileID !== update.fileID);
+        case 'create':
+          return [...prevMedia, update];
+        default:
+          return prevMedia;
+      }
+    });
   }, []);
+
+  useSSE(room?.roomID!, SessionState.getInstance().sessionToken, onMediaUpdate);
+
+  useEffect(() => {
+    handleRoomFetch();
+  }, [room]);
+
+  useEffect(() => {
+    const handleUnload = (event: BeforeUnloadEvent) => {
+      if (!sessionSaved) {
+        event.preventDefault();
+        api.User.leaveRoomPresence();
+        SessionState.getInstance()
+          .saveCache()
+          .then(() => {
+            setSessionSaved(true);
+            window.electron.ipcRenderer.sendMessage('app-quit');
+          });
+      }
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
+  }, [sessionSaved]);
 
   return (
     <div className="flex h-screen">
@@ -74,9 +109,11 @@ function RoomPage(props: Props) {
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
           goToHome={() => {
+            api.User.leaveRoomPresence();
             props.navigate('/home');
           }}
           goToSettings={() => {
+            api.User.leaveRoomPresence();
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}
@@ -96,8 +133,8 @@ function RoomPage(props: Props) {
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
-                sessionToken=""
-                roomID={roomID}
+                sessionToken={SessionState.getInstance().sessionToken}
+                roomID={room?.roomID!}
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
@@ -106,14 +143,14 @@ function RoomPage(props: Props) {
               settingsOpen === false && (
                 <RoomHome
                   media={media}
-                  roomID={roomID}
+                  roomID={room?.roomID!}
                   refresh={handleRoomFetch}
                   setActiveDoc={setActiveDoc}
                   setActiveStream={setActiveStream}
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && <RoomSettings roomID={roomID} />}
+            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
           </div>
         </SidebarInset>
       </SidebarProvider>

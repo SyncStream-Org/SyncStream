@@ -5,7 +5,8 @@ import * as Auth from "../utils/auth";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
-//import * as service from "../services/user.service";
+import PresenceState from "../utils/state";
+import Broadcaster from "../utils/broadcaster";
 
 export const authenticate = async (req: Request, res: Response) => {
   const userData: Types.UserData = req.body;
@@ -176,4 +177,73 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
 // currently seemingly have the same behavior, will discuss as a group
 export const declineRoomInvite = async (req: Request, res: Response) => {
   await removeRoomFromUser(req, res);
+};
+
+export const joinRoom = async (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+    const { roomID } = req.params;
+
+    // check if room exists, and if the user is part of it
+    try {
+        if (await userService.getRoomUser(roomID, user.username) === null) {
+            res.status(403).json({ error: "Forbidden: User not part of Room" });
+            return;
+        }
+    } catch {
+        res.status(404).json({ error: "Not Found: Room doesn't exist" });
+        return;
+    }
+
+    // check if user is already in a room
+    if (PresenceState.getUserEntry(user.username) !== undefined) {
+        res.status(409).json({ error: "Conflict: User already in a room" });
+        return;
+    }
+
+    PresenceState.addUserEntry(user.username, roomID);
+    res.sendStatus(200);
+};
+
+export const leaveRoom = async (req: Request, res: Response) => {
+    const user: User = (req as any).user;
+    if (PresenceState.getUserEntry(user.username) === undefined) {
+        res.status(404).json({ error: "Not Found: User not in any room" });
+        return;
+    }
+
+    PresenceState.removeUserEntry(user.username);
+    res.sendStatus(200);
+};
+
+// user entering Server-Side Event Broadcasting for their room
+// separate from joinRoom to for keep-alive headers
+export const enterRoomBroadcast = async (req: Request, res: Response) => {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const user: User = (req as any).user;
+    const { roomID } = req.params;
+    
+    // Ensure user presence in room
+    const presence = PresenceState.getUserEntry(user.username);
+    if (presence == undefined) {
+        res.status(404).write(JSON.stringify({ error: "Not Found: User not in any room" }));
+        res.end();
+        return;
+    }
+    if (presence.roomID !== roomID) {
+        res.status(400).write(JSON.stringify({ error: "Bad Request: RoomID does not match current active room" }));
+        res.end();
+        return;
+    }
+    
+    // set connection and send message
+    Broadcaster.addUserResponse(roomID, res);
+
+    req.on("close", () => {
+        //remove from room->user map
+        Broadcaster.removeUserResponse(roomID, res);
+        res.end();
+    });
 };
