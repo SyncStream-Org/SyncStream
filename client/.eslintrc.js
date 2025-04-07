@@ -34,6 +34,7 @@ module.exports = {
     'jsx-a11y/control-has-associated-label': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    'react/require-default-props': 'off',
   },
   parserOptions: {
     ecmaVersion: 2022,
