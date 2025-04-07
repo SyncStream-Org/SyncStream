@@ -3,10 +3,10 @@ import { createEventSource } from 'eventsource-client';
 import { Types } from 'syncstream-sharedlib';
 import { generateRoute } from '../utilities';
 
-export function useSSE(
+export function useRoomSSE(
   roomID: string,
   token: string,
-  onMediaUpdate: (type: Types.UpdateType, update: Types.FileData) => void,
+  onMediaUpdate: (type: Types.UpdateType, update: Types.MediaData) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
