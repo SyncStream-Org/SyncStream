@@ -21,18 +21,18 @@ declare module 'room-types' {
   }
 
   // TODO: define permissions
-  export interface RoomFilePermissions {
+  export interface RoomMediaPermissions {
     canEdit: boolean;
   }
 
-  export interface RoomFileAttributes {
-    fileID: string;
+  export interface RoomMediaAttributes {
+    mediaID: string;
     roomID: string;
-    fileName: string;
-    fileExtension: string;
-    permissions: RoomFilePermissions;
+    mediaName: string;
+    mediaType: string;
+    permissions: RoomMediaPermissions;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  export interface RoomFileCreationAttributes extends Omit<RoomFileAttributes, 'fileID'> {}
+  export interface RoomMediaCreationAttributes extends Omit<RoomMediaAttributes, 'mediaID'> {}
 }

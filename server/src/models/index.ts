@@ -1,12 +1,12 @@
 import User from './users';
 import Room, { setupRoomAssociations } from "./rooms";
 import RoomUser, { setupRoomUserAssociations } from "./roomUsers";
-import RoomFile, { setupRoomFileAssociations } from "./roomFiles";
+import RoomMedia, { setupRoomMediaAssociations } from "./roomMedia";
 
 export default function setupAssociations() {
   setupRoomAssociations();
   setupRoomUserAssociations();
-  setupRoomFileAssociations();
+  setupRoomMediaAssociations();
 }
 
-export { User, Room, RoomUser, RoomFile };
+export { User, Room, RoomUser, RoomMedia };

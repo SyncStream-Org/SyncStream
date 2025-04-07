@@ -13,26 +13,26 @@ import * as api from '../../../api';
 
 interface FileUpdateProps {
   roomID: string;
-  mediaObject: Types.FileData;
+  mediaObject: Types.MediaData;
   setOpen: (open: boolean) => void;
 }
 
 export function FileUpdate({ roomID, mediaObject, setOpen }: FileUpdateProps) {
-  const [fileName, setFileName] = useState('');
+  const [mediaName, setMediaName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    api.Files.updateRoomFile(roomID, mediaObject.fileName, {
-      fileName,
+    api.Media.updateRoomMedia(roomID, mediaObject.mediaID!, {
+      mediaName,
     }).then((success) => {
       if (success !== api.SuccessState.SUCCESS) {
         console.error('Error updating file');
       }
       setIsLoading(false);
-      setFileName('');
+      setMediaName('');
       setOpen(false);
     });
   };
@@ -40,7 +40,7 @@ export function FileUpdate({ roomID, mediaObject, setOpen }: FileUpdateProps) {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Updating {mediaObject.fileName}</DialogTitle>
+        <DialogTitle>Updating {mediaObject.mediaName}</DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
@@ -51,8 +51,8 @@ export function FileUpdate({ roomID, mediaObject, setOpen }: FileUpdateProps) {
             <Input
               id="name"
               className="col-span-3"
-              value={fileName}
-              onChange={(e) => setFileName(e.target.value)}
+              value={mediaName}
+              onChange={(e) => setMediaName(e.target.value)}
               disabled={isLoading}
               required
             />

@@ -2,7 +2,7 @@ import Room from '../../src/models/rooms';
 import RoomService from '../../src/services/roomService';
 
 jest.mock('../../src/models/rooms');
-jest.mock('../../src/models/roomFiles');
+jest.mock('../../src/models/roomMedia');
 
 describe('RoomService', () => {
   let mockRoom: Room;

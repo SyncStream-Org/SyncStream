@@ -6,15 +6,15 @@ import {
 } from '../utilities';
 import { SuccessState } from '../types';
 
-export function getAllRoomFiles(roomID: string): Promise<{
+export function getAllRoomMedia(roomID: string): Promise<{
   success: SuccessState;
-  data?: Types.FileData[];
+  data?: Types.MediaData[];
 }> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
-    generateRoute(`rooms/${roomID}/files`),
+    generateRoute(`rooms/${roomID}/media`),
     {
       method: 'GET',
       headers,
@@ -27,14 +27,14 @@ export function getAllRoomFiles(roomID: string): Promise<{
         const body = await res.json();
 
         for (let i = 0; i < body.length; i += 1) {
-          if (!Validation.isFileData(body[i])) {
+          if (!Validation.isMediaData(body[i])) {
             return { success: SuccessState.ERROR };
           }
         }
 
         return {
           success: SuccessState.SUCCESS,
-          data: body as Types.FileData[],
+          data: body as Types.MediaData[],
         };
       }
 
@@ -45,7 +45,7 @@ export function getAllRoomFiles(roomID: string): Promise<{
         };
       }
 
-      printUnexpectedError('rooms/{roomID}/markdown failed', res);
+      printUnexpectedError('rooms/{roomID}/media failed', res);
       return { success: SuccessState.ERROR };
     })
     .catch((error) => {
@@ -54,22 +54,22 @@ export function getAllRoomFiles(roomID: string): Promise<{
     });
 }
 
-export function createFile(
+export function createMedia(
   roomID: string,
-  fileData: Types.FileData,
+  MediaData: Types.MediaData,
 ): Promise<{
   success: SuccessState;
-  data?: Types.FileData;
+  data?: Types.MediaData;
 }> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
-    generateRoute(`rooms/${roomID}/files`),
+    generateRoute(`rooms/${roomID}/media`),
     {
       method: 'PUT',
       headers,
-      body: JSON.stringify(fileData),
+      body: JSON.stringify(MediaData),
     },
   );
 
@@ -78,13 +78,13 @@ export function createFile(
       if (res.status === 200) {
         const body = await res.json();
 
-        if (!Validation.isFileData(body)) {
+        if (!Validation.isMediaData(body)) {
           return { success: SuccessState.ERROR };
         }
 
         return {
           success: SuccessState.SUCCESS,
-          data: body as Types.FileData,
+          data: body as Types.MediaData,
         };
       }
 
@@ -93,7 +93,7 @@ export function createFile(
         return { success: SuccessState.FAIL };
       }
 
-      printUnexpectedError('rooms/{roomID}/files failed', res);
+      printUnexpectedError('rooms/{roomID}/media failed', res);
       return { success: SuccessState.ERROR };
     })
     .catch((error) => {
@@ -102,18 +102,18 @@ export function createFile(
     });
 }
 
-export function getRoomFile(
+export function getRoomMedia(
   roomID: string,
-  fileName: string,
+  mediaID: string,
 ): Promise<{
   success: SuccessState;
-  data?: Types.FileData;
+  data?: Types.MediaData;
 }> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
-    generateRoute(`rooms/${roomID}/files/${fileName}`),
+    generateRoute(`rooms/${roomID}/media/${mediaID}`),
     {
       method: 'GET',
       headers,
@@ -125,13 +125,13 @@ export function getRoomFile(
       if (res.status === 200) {
         const body = await res.json();
 
-        if (!Validation.isFileData(body)) {
+        if (!Validation.isMediaData(body)) {
           return { success: SuccessState.ERROR };
         }
 
         return {
           success: SuccessState.SUCCESS,
-          data: body as Types.FileData,
+          data: body as Types.MediaData,
         };
       }
 
@@ -145,7 +145,7 @@ export function getRoomFile(
         return { success: SuccessState.FAIL };
       }
 
-      printUnexpectedError('rooms/{roomID}/files/{fileName} failed', res);
+      printUnexpectedError('rooms/{roomID}/media/{mediaID} failed', res);
       return { success: SuccessState.ERROR };
     })
     .catch((error) => {
@@ -154,20 +154,20 @@ export function getRoomFile(
     });
 }
 
-export function updateRoomFile(
+export function updateRoomMedia(
   roomID: string,
-  fileName: string,
-  fileData: Types.FileDataUpdate,
+  mediaID: string,
+  MediaData: Types.MediaDataUpdate,
 ): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
-    generateRoute(`rooms/${roomID}/files/${fileName}`),
+    generateRoute(`rooms/${roomID}/media/${mediaID}`),
     {
       method: 'PUT',
       headers,
-      body: JSON.stringify(fileData),
+      body: JSON.stringify(MediaData),
     },
   );
 
@@ -185,7 +185,7 @@ export function updateRoomFile(
         return SuccessState.FAIL;
       }
 
-      printUnexpectedError('rooms/{roomID}/files/{fileName} failed', res);
+      printUnexpectedError('rooms/{roomID}/media/{mediaID} failed', res);
       return SuccessState.ERROR;
     })
     .catch((error) => {
@@ -194,15 +194,15 @@ export function updateRoomFile(
     });
 }
 
-export function deleteRoomFile(
+export function deleteRoomMedia(
   roomID: string,
-  fileName: string,
+  mediaID: string,
 ): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
   const request: RequestInfo = new Request(
-    generateRoute(`rooms/${roomID}/files/${fileName}`),
+    generateRoute(`rooms/${roomID}/media/${mediaID}`),
     {
       method: 'DELETE',
       headers,
@@ -218,7 +218,7 @@ export function deleteRoomFile(
         return SuccessState.FAIL;
       }
 
-      printUnexpectedError('rooms/{roomID}/files/{fileName} failed', res);
+      printUnexpectedError('rooms/{roomID}/media/{mediaID} failed', res);
       return SuccessState.ERROR;
     })
     .catch((error) => {

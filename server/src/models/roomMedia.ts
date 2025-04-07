@@ -1,30 +1,30 @@
 import { Model, DataTypes, literal } from 'sequelize';
 import sequelize from '../db';
-import { RoomFileAttributes, RoomFileCreationAttributes, RoomFilePermissions } from 'room-types';
+import { RoomMediaAttributes, RoomMediaCreationAttributes, RoomMediaPermissions } from 'room-types';
 import Room from './rooms';
 
-class RoomFile extends Model<RoomFileAttributes, RoomFileCreationAttributes> implements RoomFileAttributes {
-  declare fileID: string;
-  declare fileName: string;
+class RoomMedia extends Model<RoomMediaAttributes, RoomMediaCreationAttributes> implements RoomMediaAttributes {
+  declare mediaID: string;
+  declare mediaName: string;
   declare roomID: string;
-  declare fileExtension: string;
-  declare permissions: RoomFilePermissions;
+  declare mediaType: string;
+  declare permissions: RoomMediaPermissions;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
 }
 
-RoomFile.init({
-  fileID: {
+RoomMedia.init({
+  mediaID: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: literal('gen_random_uuid()'),
   },
-  fileName: {
+  mediaName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  fileExtension: {
+  mediaType: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -45,19 +45,19 @@ RoomFile.init({
 },
 {
   sequelize,
-  tableName: 'RoomFiles',
+  tableName: 'RoomMedia',
   timestamps: true,
   indexes: [
     {
       unique: true,
-      fields: ['roomID', 'fileName', 'fileExtension'],
+      fields: ['roomID', 'mediaName', 'mediaType'],
     },
   ],
 }
 );
 
-export function setupRoomFileAssociations() {
-  RoomFile.belongsTo(Room, { foreignKey: 'roomID', targetKey: 'roomID' });
-  Room.hasMany(RoomFile, { foreignKey: 'roomID', sourceKey: 'roomID', hooks: true });
+export function setupRoomMediaAssociations() {
+  RoomMedia.belongsTo(Room, { foreignKey: 'roomID', targetKey: 'roomID' });
+  Room.hasMany(RoomMedia, { foreignKey: 'roomID', sourceKey: 'roomID', hooks: true });
 }
-export default RoomFile;
+export default RoomMedia;

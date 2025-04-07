@@ -36,7 +36,7 @@ interface User {
 interface EditorProps {
   username: string;
   sessionToken: string;
-  activeDoc: Types.FileData | null;
+  activeDoc: Types.MediaData | null;
   roomID: string;
   serverURL: string;
 }
@@ -70,7 +70,7 @@ export default function DocumentEditor({
 
     const websocketProvider = new WebsocketProvider(
       wsURL,
-      activeDoc.fileID!,
+      activeDoc.mediaID!,
       doc,
       {
         params: { token: sessionToken },
@@ -156,7 +156,7 @@ export default function DocumentEditor({
     <div className="editor-container w-full mx-auto overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">{activeDoc?.fileName}</h2>
+          <h2 className="text-xl font-bold">{activeDoc?.mediaName}</h2>
           <div className="flex items-center gap-2">
             <div
               className="w-3 h-3 rounded-full"

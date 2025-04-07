@@ -1,5 +1,5 @@
 import { schedule } from 'node-cron';
-import filesService from '../services/filesService';
+import filesService from '../services/mediaService';
 import fs from 'fs';
 import path from 'path';
 
@@ -13,10 +13,10 @@ export default function cleanup() {
     const files = fs.readdirSync(ROOT_DIR!);
     for (const file of files) {
 
-      const fileFromDB = await filesService.getFileByFileID(file);
+      const fileFromDB = await filesService.getMediaByID(file);
 
       if (fileFromDB === null) {
-        const filePath = path.join(ROOT_DIR!, fileFromDB!.fileID);
+        const filePath = path.join(ROOT_DIR!, fileFromDB!.mediaID);
         try {
           fs.rmSync(filePath);
         } catch (err) {

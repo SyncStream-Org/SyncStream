@@ -13,7 +13,7 @@ import { FileDelete } from './file-delete';
 
 interface FileItemProps {
   roomID: string;
-  mediaObject: Types.FileData;
+  mediaObject: Types.MediaData;
   children: React.ReactNode;
 }
 
