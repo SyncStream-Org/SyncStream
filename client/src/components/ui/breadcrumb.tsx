@@ -36,6 +36,7 @@ function BreadcrumbLink({
   className,
   ...props
 }: React.ComponentProps<'a'> & {
+  // eslint-disable-next-line react/require-default-props
   asChild?: boolean;
 }) {
   const Comp = asChild ? Slot : 'a';

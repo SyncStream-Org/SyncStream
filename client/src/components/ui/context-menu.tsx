@@ -57,6 +57,7 @@ function ContextMenuSubTrigger({
   children,
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.SubTrigger> & {
+  // eslint-disable-next-line react/require-default-props
   inset?: boolean;
 }) {
   return (
@@ -115,7 +116,9 @@ function ContextMenuItem({
   variant = 'default',
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Item> & {
+  // eslint-disable-next-line react/require-default-props
   inset?: boolean;
+  // eslint-disable-next-line react/require-default-props
   variant?: 'default' | 'destructive';
 }) {
   return (
