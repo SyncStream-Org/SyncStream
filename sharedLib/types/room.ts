@@ -1,32 +1,32 @@
 import { FileData } from './file';
 
 export interface RoomPermissions {
-  admin: boolean; // NOTE: all permissions an owner has, EXCEPT deleting the room
-  canInviteUser: boolean;
-  canRemoveUser: boolean;
+    admin: boolean; // NOTE: all permissions an owner has, EXCEPT deleting the room
+    canInviteUser: boolean;
+    canRemoveUser: boolean;
 }
 
 export interface InviteData {
-  username: string;
-  permissions?: RoomPermissions;
+    username: string;
+    permissions?: RoomPermissions;
 }
 
 export interface RoomData {
-  roomName: string;
-  roomOwner?: string;
-  roomID?: string;
-  isMember?: boolean;
+    roomName: string;
+    roomOwner?: string;
+    roomID?: string;
+    isMember?: boolean;
 }
 
 export interface UserRoomData {
-  roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
-  userPermissions: RoomPermissions;
+    roomData: RoomData; // NOTE: UserRoomData never requires more than minimum RoomData
+    userPermissions: RoomPermissions;
 }
 
 // one or both
 export interface RoomUpdateData {
-  newRoomName?: string;
-  newOwnerID?: string;
+    newRoomName?: string;
+    newOwnerID?: string;
 }
 
 export type UpdateType = 'create' | 'update' | 'delete';
