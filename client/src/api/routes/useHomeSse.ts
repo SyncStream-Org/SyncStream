@@ -3,10 +3,9 @@ import { createEventSource } from 'eventsource-client';
 import { Types, Validation } from 'syncstream-sharedlib';
 import { generateRoute } from '../utilities';
 
-export function useRoomSSE(
-  roomID: string,
+export function useHomeSse(
   token: string,
-  onMediaUpdate: (type: Types.UpdateType, update: Types.MediaData) => void,
+  onRoomUpdate: (type: Types.UpdateType, update: Types.RoomData) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -14,7 +13,7 @@ export function useRoomSSE(
   const connect = useCallback(() => {
     try {
       eventSourceRef.current = createEventSource({
-        url: generateRoute(`user/rooms/${roomID}/broadcast`),
+        url: generateRoute(`user/broadcast`),
         headers: {
           'Session-Token': token,
         },
@@ -24,17 +23,10 @@ export function useRoomSSE(
         onMessage: (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (!Validation.isRoomBroadcastUpdate(data)) {
+            if (!Validation.isUserBroadcastUpdate(data)) {
               throw new Error('Invalid media update data');
             }
-            switch (data.endpoint) {
-              case 'media':
-                onMediaUpdate(data.type, data.data);
-                break;
-              default:
-                console.warn(`Unknown endpoint: ${data.endpoint}`);
-                break;
-            }
+            onRoomUpdate(data.type, data.data);
           } catch (err) {
             setError(
               err instanceof Error ? err : new Error('Failed to parse message'),
@@ -59,7 +51,7 @@ export function useRoomSSE(
       );
       return () => {};
     }
-  }, [roomID, token, onMediaUpdate]);
+  }, [token, onRoomUpdate]);
 
   useEffect(() => {
     const cleanup = connect();
