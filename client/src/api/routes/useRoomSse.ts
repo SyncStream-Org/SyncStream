@@ -13,7 +13,6 @@ export function useRoomSSE(
 
   const connect = useCallback(() => {
     try {
-      // Create new EventSource connection
       eventSourceRef.current = createEventSource({
         url: generateRoute(`user/rooms/${roomID}/broadcast`),
         headers: {
@@ -59,7 +58,6 @@ export function useRoomSSE(
     }
   }, [roomID, token, onMediaUpdate]);
 
-  // Connect on mount, disconnect on unmount
   useEffect(() => {
     const cleanup = connect();
     return cleanup;
