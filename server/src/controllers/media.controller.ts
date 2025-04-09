@@ -40,7 +40,7 @@ export const createMedia = async (req: Request, res: Response) => {
         permissions: roomMedia.permissions,
     };
 
-    Broadcaster.pushUpdateToUsers(
+    Broadcaster.pushUpdateToRoom(
         roomID,
         {
             endpoint: 'media',
@@ -91,7 +91,7 @@ export const updateRoomMedia = async (req: Request, res: Response) => {
         permissions: updatedRoomMedia.permissions,
     };
 
-    Broadcaster.pushUpdateToUsers(
+    Broadcaster.pushUpdateToRoom(
         roomID,
         {
             endpoint: 'media',
@@ -114,7 +114,7 @@ export const deleteRoomMedia = async (req: Request, res: Response) => {
 
     await mediaService.deleteRoomMedia(roomMedia);
 
-    Broadcaster.pushUpdateToUsers(
+    Broadcaster.pushUpdateToRoom(
         roomID,
         {
             endpoint: 'media',
