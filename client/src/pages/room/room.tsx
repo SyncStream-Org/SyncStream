@@ -72,7 +72,7 @@ function RoomPage(props: Props) {
     return () => {
       newSocket.close();
     };
-  }, [signalingServerURL]);
+  }, []);
 
   const initiateAudioCall = async (channel: string) => {
     if (!socket || !currentAudioInput || !currentAudioOutput) return;
