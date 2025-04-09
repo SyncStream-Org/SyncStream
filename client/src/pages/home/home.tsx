@@ -17,6 +17,7 @@ import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
+import { useHomeSse } from '@/api/routes/useHomeSse';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types

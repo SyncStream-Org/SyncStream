@@ -2,9 +2,10 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 
 import Launch from '../pages/launch/launch';
-import Home from '../pages/home/home';
+// import Home from '../pages/home/home';
 import Settings from '../pages/settings/settings';
 import Room from '../pages/room/room';
+import Home from '../pages/home/home_functional';
 
 export default function App() {
   return (
