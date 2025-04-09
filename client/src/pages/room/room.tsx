@@ -36,13 +36,20 @@ function RoomPage(props: Props) {
     useState<MediaStream | null>(null);
   const [currentAudioOutput, setCurrentAudioOutput] =
     useState<MediaStream | null>(null);
+  const [currentVoiceCallChannel, setCurrentVoiceCallChannel] =
+    useState<String | null>(null);
   const [currentVoiceCall, setCurrentVoiceCall] =
     useState<RTCPeerConnection | null>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
 
   useEffect(() => {
+    const webSocketPrefix = SessionState.getInstance().serverURL.includes(
+      'https',
+    )
+      ? 'wss'
+      : 'ws';
     const newSocket = new WebSocket(
-      `wss://${SessionState.getInstance().serverURL.split('://')[1]}/rooms/${room?.roomID}/audioCalls?token=${SessionState.getInstance().sessionToken}`,
+      `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${room?.roomID}/voice/${currentVoiceCallChannel}?token=${SessionState.getInstance().sessionToken}`,
     );
     setSocket(newSocket);
 
@@ -72,19 +79,19 @@ function RoomPage(props: Props) {
     return () => {
       newSocket.close();
     };
-  }, []);
+  }, [currentVoiceCallChannel]);
 
   const initiateAudioCall = async (channel: string) => {
     if (!socket || !currentAudioInput || !currentAudioOutput) return;
 
     const peerConnection = new RTCPeerConnection();
     setCurrentVoiceCall(peerConnection);
+    setCurrentVoiceCallChannel(channel);
 
     socket.send(
       JSON.stringify({
         type: 'join',
         id: SessionState.getInstance().currentUser.username,
-        chennel: channel,
       }),
     );
 

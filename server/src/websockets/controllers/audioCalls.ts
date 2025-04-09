@@ -20,7 +20,7 @@ const broadcast = (message: any, senderId: string, channel: string) => {
 
 export default function wsAudioCalls(ws: WebSocket, req: Request) {
   let clientId = "";
-  let clientChannel = "";
+  const clientChannel = req.params.channel;
 
   ws.on("message", (message) => {
     try {
@@ -30,14 +30,13 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
         case "join": {
           // Register a client to a channel
           clientId = data.id;
-          clientChannel = data.channel;
 
           clients.push({ id: clientId, socket: ws, channel: clientChannel });
           console.log(`Client ${clientId} joined channel ${clientChannel}`);
           break;
         }
         case "offer": {
-          if (clientId === "" || clientChannel === "") {
+          if (clientId === "") {
             console.error("Client has not joined. Cannot send offer.");
             return;
           }
@@ -53,7 +52,7 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
           break;
         }
         case "answer": {
-          if (clientId === "" || clientChannel === "") {
+          if (clientId === "") {
             console.error("Client has not joined. Cannot send answer.");
             return;
           }
@@ -69,7 +68,7 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
           break;
         }
         case "candidate": {
-          if (clientId === "" || clientChannel === "") {
+          if (clientId === "") {
             console.error("Client has not joined. Cannot send canidate.");
             return;
           }

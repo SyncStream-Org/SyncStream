@@ -8,6 +8,6 @@ const routerWs = Router();
 expressWs(routerWs as unknown as Application);
 
 routerWs.ws("/rooms/:roomID/doc/:docID", wsAuth, wsPresence, wsDoc);
-routerWs.ws("/rooms/:roomID/audioCalls", wsAuth, wsAudioCalls);
+routerWs.ws("/rooms/:roomID/voice/:channel", wsAuth, wsPresence, wsAudioCalls);
 
 export default routerWs;
