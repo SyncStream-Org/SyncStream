@@ -260,7 +260,7 @@ export const enterUserBroadcast = async (req: Request, res: Response) => {
 
   req.on("close", () => {
       //remove from room->user map
-      Broadcaster.removeRoomResponse(user.username, res);
+      Broadcaster.removeUserResponse(user.username);
       res.end();
   });
 };

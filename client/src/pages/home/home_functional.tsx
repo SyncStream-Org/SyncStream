@@ -44,8 +44,7 @@ function Home(props: Props) {
           });
         } else {
           if (res.data === undefined) throw Error('Unreachable');
-
-          setRooms(res.data);
+          setRooms(res.data.map((room) => ({ isMember: true, ...room })));
         }
       });
     } else {
@@ -91,6 +90,7 @@ function Home(props: Props) {
 
   const onRoomUpdate = useCallback(
     (type: Types.UpdateType, update: Types.RoomData) => {
+      console.log('Room update:', type, update);
       setRooms((prevRooms) => {
         switch (type) {
           case 'update':
@@ -110,7 +110,7 @@ function Home(props: Props) {
   );
 
   useHomeSse(SessionState.getInstance().sessionToken, onRoomUpdate);
-  
+
   useEffect(() => {
     fetchRooms();
   }, []);

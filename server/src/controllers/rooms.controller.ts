@@ -56,7 +56,7 @@ export const createRoom = async (req: Request, res: Response) => {
     [username],
     {
       type: "create",
-      data: roomDataResponse,
+      data: {isMember: true, ...roomDataResponse},
     },
   );
 
