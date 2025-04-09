@@ -25,9 +25,110 @@ function RoomPage(props: Props) {
   const room = useLocation().state?.room as Types.RoomData | undefined;
   const [media, setMedia] = useState<Types.MediaData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.MediaData | null>(null);
-  const [activeStream, setActiveStream] = useState<Types.MediaData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.MediaData | null>(
+    null,
+  );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
+
+  // Web RTC Voice Calling
+  const [currentAudioInput, setCurrentAudioInput] =
+    useState<MediaStream | null>(null);
+  const [currentAudioOutput, setCurrentAudioOutput] =
+    useState<MediaStream | null>(null);
+  const [currentVoiceCall, setCurrentVoiceCall] =
+    useState<RTCPeerConnection | null>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    const newSocket = new WebSocket(
+      `wss://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${room?.roomID}/audioCalls?token=${SessionState.getInstance().sessionToken}`,
+    );
+    setSocket(newSocket);
+
+    newSocket.onmessage = async (event) => {
+      const message = JSON.parse(event.data);
+
+      if (message.type === 'offer' && currentVoiceCall) {
+        await currentVoiceCall.setRemoteDescription(
+          new RTCSessionDescription(message.offer),
+        );
+        const answer = await currentVoiceCall.createAnswer();
+        await currentVoiceCall.setLocalDescription(answer);
+        newSocket.send(JSON.stringify({ type: 'answer', answer }));
+      } else if (message.type === 'answer' && currentVoiceCall) {
+        await currentVoiceCall.setRemoteDescription(
+          new RTCSessionDescription(message.answer),
+        );
+      } else if (message.type === 'candidate' && currentVoiceCall) {
+        await currentVoiceCall.addIceCandidate(
+          new RTCIceCandidate(message.candidate),
+        );
+      }
+    };
+
+    newSocket.onclose = () => setSocket(null);
+
+    return () => {
+      newSocket.close();
+    };
+  }, [signalingServerURL]);
+
+  const initiateAudioCall = async (channel: string) => {
+    if (!socket || !currentAudioInput || !currentAudioOutput) return;
+
+    const peerConnection = new RTCPeerConnection();
+    setCurrentVoiceCall(peerConnection);
+
+    // Add audio tracks to the peer connection
+    currentAudioInput
+      .getTracks()
+      .forEach((track) => peerConnection.addTrack(track, currentAudioInput));
+
+    currentAudioOutput
+      .getTracks()
+      .forEach((track) => peerConnection.addTrack(track, currentAudioInput));
+
+    // ICE candidate handling
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.send(
+          JSON.stringify({ type: 'candidate', candidate: event.candidate }),
+        );
+      }
+    };
+
+    // Send offer to signaling server
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+    socket.send(JSON.stringify({ type: 'offer', offer, channel }));
+  };
+
+  // Grab initial audio devices
+  navigator.mediaDevices.enumerateDevices().then((devices) => {
+    const inputs = devices.filter((device) => device.kind === 'audioinput');
+    const outputs = devices.filter((device) => device.kind === 'audiooutput');
+
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          deviceId: inputs[0].deviceId,
+        },
+      })
+      .then((stream) => {
+        setCurrentAudioInput(stream);
+      });
+
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          deviceId: outputs[0].deviceId,
+        },
+      })
+      .then((stream) => {
+        setCurrentAudioOutput(stream);
+      });
+  });
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -73,7 +174,11 @@ function RoomPage(props: Props) {
     [],
   );
 
-  useRoomSSE(room?.roomID!, SessionState.getInstance().sessionToken, onMediaUpdate);
+  useRoomSSE(
+    room?.roomID!,
+    SessionState.getInstance().sessionToken,
+    onMediaUpdate,
+  );
 
   useEffect(() => {
     handleRoomFetch();
@@ -135,7 +240,17 @@ function RoomPage(props: Props) {
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
+            {settingsOpen === true && (
+              <RoomSettings
+                roomID={room?.roomID!}
+                setAudioInStream={(stream) => {
+                  setCurrentAudioInput(stream);
+                }}
+                setAudioOutStream={(stream) => {
+                  setCurrentAudioOutput(stream);
+                }}
+              />
+            )}
           </div>
         </SidebarInset>
       </SidebarProvider>

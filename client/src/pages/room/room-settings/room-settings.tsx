@@ -17,12 +17,16 @@ import * as api from '../../../api';
 
 interface Props {
   roomID: string;
+  setAudioInStream: (stream: MediaStream) => void;
+  setAudioOutStream: (stream: MediaStream) => void;
 }
 
 interface State {
   allUsers: string[];
   usersInRoom: string[];
   currentUserToModify: string;
+  audioInput: MediaDeviceInfo[];
+  audioOutput: MediaDeviceInfo[];
 }
 
 // TODO: localize
@@ -34,7 +38,17 @@ export default class RoomSettings extends React.Component<Props, State> {
       allUsers: [],
       usersInRoom: [],
       currentUserToModify: '',
+      audioInput: [],
+      audioOutput: [],
     };
+
+    // Grab audio devices
+    navigator.mediaDevices.enumerateDevices().then((res) => {
+      this.setState({
+        audioInput: res.filter((device) => device.kind === 'audioinput'),
+        audioOutput: res.filter((device) => device.kind === 'audiooutput'),
+      });
+    });
 
     api.User.getAllUsers().then(async (res) => {
       if (
@@ -100,8 +114,40 @@ export default class RoomSettings extends React.Component<Props, State> {
       });
     };
 
-    const handleSelectChange = (value: string) => {
+    const handleUserSelectChange = (value: string) => {
       this.setState({ currentUserToModify: value });
+    };
+
+    const handleAudioInputSelect = (value: string) => {
+      const deviceInfo = this.state.audioInput.filter(
+        (info) => info.label === value,
+      )[0];
+
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: deviceInfo.deviceId,
+          },
+        })
+        .then((stream) => {
+          this.props.setAudioInStream(stream);
+        });
+    };
+
+    const handleAudioOutputSelect = (value: string) => {
+      const deviceInfo = this.state.audioOutput.filter(
+        (info) => info.label === value,
+      )[0];
+
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: deviceInfo.deviceId,
+          },
+        })
+        .then((stream) => {
+          this.props.setAudioOutStream(stream);
+        });
     };
 
     const handleInvite = () => {
@@ -178,7 +224,7 @@ export default class RoomSettings extends React.Component<Props, State> {
         <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
           Invite or Ban User
         </h2>
-        <Select onValueChange={handleSelectChange}>
+        <Select onValueChange={handleUserSelectChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="User to Modify" />
           </SelectTrigger>
@@ -205,6 +251,36 @@ export default class RoomSettings extends React.Component<Props, State> {
             onClick={handleBan}
           />
         </div>
+
+        <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+          Audio Devices
+        </h1>
+        <Select onValueChange={handleAudioInputSelect}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Audio Input" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Inputs</SelectLabel>
+              {this.state.audioInput.map((device) => (
+                <SelectItem value={device.label}>{device.label}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Select onValueChange={handleAudioOutputSelect}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Audio Output" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Outputs</SelectLabel>
+              {this.state.audioOutput.map((device) => (
+                <SelectItem value={device.label}>{device.label}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     );
   }
