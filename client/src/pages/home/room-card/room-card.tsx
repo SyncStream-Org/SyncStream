@@ -10,6 +10,7 @@ import * as api from '../../../api';
 interface Props {
   roomData: Types.RoomData;
   navigate: NavigateFunction;
+  updateRoomList: () => void;
   isInvite?: boolean;
 }
 
@@ -67,6 +68,8 @@ export default class RoomCard extends React.Component<Props, State> {
             message:
               'Unable to accept invite to room. Room with that name may not exist or you may not be invited to that room.',
           });
+        } else {
+          this.props.updateRoomList();
         }
       });
     };
@@ -86,6 +89,8 @@ export default class RoomCard extends React.Component<Props, State> {
             message:
               'Unable to decline invite to room. Room with that name may not exist or you may not be invited to that room.',
           });
+        } else {
+          this.props.updateRoomList();
         }
       });
     };

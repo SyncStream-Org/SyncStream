@@ -266,7 +266,7 @@ export const inviteUser = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [username],
     {
-      type: "update",
+      type: "create",
       data: { isMember: false, ...roomDataResponse },
     },
   );
