@@ -42,7 +42,7 @@ function RoomPage(props: Props) {
 
   useEffect(() => {
     const newSocket = new WebSocket(
-      `wss://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${room?.roomID}/audioCalls?token=${SessionState.getInstance().sessionToken}`,
+      `wss://${SessionState.getInstance().serverURL.split('://')[1]}/rooms/${room?.roomID}/audioCalls?token=${SessionState.getInstance().sessionToken}`,
     );
     setSocket(newSocket);
 
@@ -80,6 +80,14 @@ function RoomPage(props: Props) {
     const peerConnection = new RTCPeerConnection();
     setCurrentVoiceCall(peerConnection);
 
+    socket.send(
+      JSON.stringify({
+        type: 'join',
+        id: SessionState.getInstance().currentUser.username,
+        chennel: channel,
+      }),
+    );
+
     // Add audio tracks to the peer connection
     currentAudioInput
       .getTracks()
@@ -87,7 +95,7 @@ function RoomPage(props: Props) {
 
     currentAudioOutput
       .getTracks()
-      .forEach((track) => peerConnection.addTrack(track, currentAudioInput));
+      .forEach((track) => peerConnection.addTrack(track, currentAudioOutput));
 
     // ICE candidate handling
     peerConnection.onicecandidate = (event) => {
@@ -101,7 +109,7 @@ function RoomPage(props: Props) {
     // Send offer to signaling server
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
-    socket.send(JSON.stringify({ type: 'offer', offer, channel }));
+    socket.send(JSON.stringify({ type: 'offer', offer }));
   };
 
   // Grab initial audio devices

@@ -36,15 +36,46 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
           console.log(`Client ${clientId} joined channel ${clientChannel}`);
           break;
         }
-        case "offer":
-        case "answer":
-        case "candidate": {
-          // Broadcast signaling data to other clients in the same channel
+        case "offer": {
+          if (clientId === "" || clientChannel === "") {
+            console.error("Client has not joined. Cannot send offer.");
+            return;
+          }
           broadcast(
             {
-              type: data.type,
+              type: "offer",
               offer: data.offer,
+              sender: clientId,
+            },
+            clientId,
+            clientChannel,
+          );
+          break;
+        }
+        case "answer": {
+          if (clientId === "" || clientChannel === "") {
+            console.error("Client has not joined. Cannot send answer.");
+            return;
+          }
+          broadcast(
+            {
+              type: "answer",
               answer: data.answer,
+              sender: clientId,
+            },
+            clientId,
+            clientChannel,
+          );
+          break;
+        }
+        case "candidate": {
+          if (clientId === "" || clientChannel === "") {
+            console.error("Client has not joined. Cannot send canidate.");
+            return;
+          }
+          broadcast(
+            {
+              type: "candidate",
               candidate: data.candidate,
               sender: clientId,
             },
