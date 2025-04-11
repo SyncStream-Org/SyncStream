@@ -1,19 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { createEventSource } from 'eventsource-client';
-import { Types } from 'syncstream-sharedlib';
+import { Types, Validation } from 'syncstream-sharedlib';
 import { generateRoute } from '../utilities';
 
-export function useSSE(
+export function useRoomSSE(
   roomID: string,
   token: string,
-  onMediaUpdate: (type: Types.UpdateType, update: Types.FileData) => void,
+  onMediaUpdate: (type: Types.UpdateType, update: Types.MediaData) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
 
   const connect = useCallback(() => {
     try {
-      // Create new EventSource connection
       eventSourceRef.current = createEventSource({
         url: generateRoute(`user/rooms/${roomID}/broadcast`),
         headers: {
@@ -25,6 +24,9 @@ export function useSSE(
         onMessage: (event) => {
           try {
             const data = JSON.parse(event.data);
+            if (!Validation.isRoomBroadcastUpdate(data)) {
+              throw new Error('Invalid media update data');
+            }
             switch (data.endpoint) {
               case 'media':
                 onMediaUpdate(data.type, data.data);
@@ -59,7 +61,6 @@ export function useSSE(
     }
   }, [roomID, token, onMediaUpdate]);
 
-  // Connect on mount, disconnect on unmount
   useEffect(() => {
     const cleanup = connect();
     return cleanup;

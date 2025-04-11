@@ -10,6 +10,7 @@ import {
   RoomUserPermissions,
 } from "room-types";
 import Room from "../models/rooms";
+import Broadcaster from "../utils/broadcaster";
 
 export const createRoom = async (req: Request, res: Response) => {
   const roomNameSM: Types.StringMessage = req.body;
@@ -50,12 +51,21 @@ export const createRoom = async (req: Request, res: Response) => {
     return;
   }
 
+  // broadcast the update to the room owner
+  Broadcaster.pushUpdateToUsers(
+    [username],
+    {
+      type: "create",
+      data: {isMember: true, ...roomDataResponse},
+    },
+  );
+
   res.json(roomDataResponse);
 };
 
 export const updateRoom = async (req: Request, res: Response) => {
   const roomUser: RoomUser = (req as any).roomUser;
-  const room: Room = (req as any).room;
+  let room: Room = (req as any).room;
 
   if (!roomUser.permissions.canEdit) {
     res
@@ -94,13 +104,40 @@ export const updateRoom = async (req: Request, res: Response) => {
       return;
     }
 
-    await roomService.updateRoomOwner(room, roomUpdateData.newOwnerID);
+    room = await roomService.updateRoomOwner(room, roomUpdateData.newOwnerID);
   }
   if (roomUpdateData.newRoomName) {
-    await roomService.updateRoomName(room, roomUpdateData.newRoomName);
+    room = await roomService.updateRoomName(room, roomUpdateData.newRoomName);
   }
 
-    res.sendStatus(204);
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+
+  // get all of the users
+  const users = await roomService.getAllRoomUsers(room.roomID);
+  const members = users.filter((user) => user.isMember).map((user) => user.username);
+  const invited = users.filter((user) => !user.isMember).map((user) => user.username);
+
+  // broadcast the update to all users
+  Broadcaster.pushUpdateToUsers(
+    members,
+    {
+      type: "update",
+      data: { isMember: true, ...roomDataResponse },
+    },
+  );
+  Broadcaster.pushUpdateToUsers(
+    invited,
+    {
+      type: "update",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
+
+  res.sendStatus(204);
 }
 
 export const deleteRoom = async (req: Request, res: Response) => {
@@ -112,9 +149,33 @@ export const deleteRoom = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: Room" });
     return;
   }
+  
+  // get all of the users
+  const users = await roomService.getAllRoomUsers(room.roomID);
+  const members = users.filter((user) => user.isMember).map((user) => user.username);
+  const invited = users.filter((user) => !user.isMember).map((user) => user.username);
 
   await roomService.deleteRoom(room);
-
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+  // broadcast the update to all users
+  Broadcaster.pushUpdateToUsers(
+    members,
+    {
+      type: "delete",
+      data: { isMember: true, ...roomDataResponse },
+    },
+  );
+  Broadcaster.pushUpdateToUsers(
+    invited,
+    {
+      type: "delete",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -193,6 +254,23 @@ export const inviteUser = async (req: Request, res: Response) => {
     return;
   }
 
+  // get the room and send to the user
+  const room = (await roomService.getRoomById(roomID))!;
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+
+  // broadcast the update to the invited user
+  Broadcaster.pushUpdateToUsers(
+    [username],
+    {
+      type: "create",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
+
   res.sendStatus(200);
 };
 
@@ -223,8 +301,24 @@ export const removeUser = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: User not part of Room" });
     return;
   }
+  const member = roomUser.isMember;
 
   await userService.removeRoomUser(roomUser);
+  const room = (await roomService.getRoomById(roomID))!;
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+
+  // broadcast the update to the user
+  Broadcaster.pushUpdateToUsers(
+    [username],
+    {
+      type: "delete",
+      data: { isMember: member, ...roomDataResponse },
+    },
+  );
 
   res.sendStatus(200);
 };
