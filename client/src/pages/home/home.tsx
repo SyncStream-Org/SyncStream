@@ -1,4 +1,4 @@
-import { useState, useEffect, SyntheticEvent, useCallback} from 'react';
+import { useState, useEffect, SyntheticEvent, useCallback } from 'react';
 import './home.css';
 
 import { NavigateFunction } from 'react-router-dom';
@@ -14,9 +14,9 @@ import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
+import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
-import { useHomeSse } from '@/api/routes/useHomeSse';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -113,6 +113,7 @@ function Home(props: Props) {
 
   useEffect(() => {
     fetchRooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -202,7 +203,3 @@ function Home(props: Props) {
   );
 }
 export default asPage(Home, false);
-
-
-
-
