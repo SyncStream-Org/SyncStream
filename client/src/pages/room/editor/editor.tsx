@@ -138,31 +138,30 @@ export default function DocumentEditor({
   // className="w-full mx-auto"
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="border-b p-4">
+      <div className="border-b p-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">{activeDoc?.mediaName}</h2>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
+            {otherUsers.map((user) => (
+              <div key={user.name} className="flex items-center gap-1">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: user.color }}
+                />
+                <span className="text-xs">{user.name}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center gap-1">
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-2 h-2 rounded-full"
               style={{
                 backgroundColor: status === 'connected' ? '#4caf50' : '#ff9800',
               }}
             />
-            <span className="text-sm text-gray-600 dark:text-gray-300">
+            <span className="text-xs text-gray-600 dark:text-gray-300">
               {status === 'connected' ? 'Connected' : 'Connecting...'}
             </span>
           </div>
-        </div>
-        <div className="flex items-center gap-4 mt-2">
-          {otherUsers.map((user, _) => (
-            <div key={user.name} className="flex items-center gap-2">
-              <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: user.color }}
-              />
-              <span className="text-sm">{user.name}</span>
-            </div>
-          ))}
         </div>
       </div>
       <div className="flex-1 overflow-hidden">
