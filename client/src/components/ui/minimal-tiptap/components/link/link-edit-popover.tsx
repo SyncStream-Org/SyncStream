@@ -50,7 +50,7 @@ const LinkEditPopover = ({ editor, size, variant }: LinkEditPopoverProps) => {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <ToolbarButton
           isActive={editor.isActive("link")}
           tooltip="Link"

@@ -5,7 +5,7 @@ import { SectionTwo } from '@/components/ui/minimal-tiptap/components/section/tw
 import { SectionThree } from '@/components/ui/minimal-tiptap/components/section/three';
 import { SectionFour } from '@/components/ui/minimal-tiptap/components/section/four';
 import { SectionFive } from '@/components/ui/minimal-tiptap/components/section/five';
-// import '@/components/ui/minimal-tiptap/styles/index.css';
+import { SectionSix } from '@/components/ui/minimal-tiptap/components/section/six';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -15,14 +15,6 @@ export function Toolbar({ editor }: ToolbarProps) {
   if (!editor) {
     return null;
   }
-
-  const checkForUndo = () => {
-    return !editor?.can()?.chain()?.undo()?.run();
-  };
-
-  const checkForRedo = () => {
-    return !editor?.can()?.chain()?.redo()?.run();
-  };
 
   return (
     <div className="shrink-0 overflow-x-auto border-b border-border p-2">
@@ -63,6 +55,10 @@ export function Toolbar({ editor }: ToolbarProps) {
           activeActions={['blockquote', 'codeBlock', 'horizontalRule']}
           mainActionCount={3}
         />
+
+        <Separator orientation="vertical" className="mr-2 h-4" />
+
+        <SectionSix editor={editor} />
       </div>
     </div>
   );
