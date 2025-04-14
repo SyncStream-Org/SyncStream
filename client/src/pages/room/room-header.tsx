@@ -12,8 +12,8 @@ import { Types } from 'syncstream-sharedlib';
 
 interface RoomHeaderProps {
   roomHome: boolean;
-  activeDoc: Types.FileData | null;
-  activeStream: Types.FileData | null;
+  activeDoc: Types.MediaData | null;
+  activeStream: Types.MediaData | null;
 }
 
 export function RoomHeader({
@@ -38,8 +38,8 @@ export function RoomHeader({
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
               <BreadcrumbPage>
-                {activeDoc?.fileName ||
-                  activeStream?.fileName ||
+                {activeDoc?.mediaName ||
+                  activeStream?.mediaName ||
                   (roomHome ? 'Home' : 'Settings')}
               </BreadcrumbPage>
             </BreadcrumbItem>

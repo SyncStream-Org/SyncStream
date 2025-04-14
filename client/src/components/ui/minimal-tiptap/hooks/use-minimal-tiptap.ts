@@ -7,6 +7,8 @@ import { Typography } from "@tiptap/extension-typography"
 import { Placeholder } from "@tiptap/extension-placeholder"
 import { Underline } from "@tiptap/extension-underline"
 import { TextStyle } from "@tiptap/extension-text-style"
+import Collaboration from '@tiptap/extension-collaboration';
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import {
   Link,
   Image,
@@ -22,6 +24,8 @@ import { cn } from "@/utilities/utils"
 import { fileToBase64, getOutput, randomId } from "../utils"
 import { useThrottle } from "../hooks/use-throttle"
 import { toast } from "sonner"
+import { WebsocketProvider } from "y-websocket"
+import * as Y from "yjs"
 
 export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   value?: Content
@@ -31,134 +35,79 @@ export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   throttleDelay?: number
   onUpdate?: (content: Content) => void
   onBlur?: (content: Content) => void
+  provider: WebsocketProvider | null,
+  ydoc: Y.Doc | null,
+  username: string,
+  color: string,
 }
 
-const createExtensions = (placeholder: string) => [
-  StarterKit.configure({
-    horizontalRule: false,
-    codeBlock: false,
-    paragraph: { HTMLAttributes: { class: "text-node" } },
-    heading: { HTMLAttributes: { class: "heading-node" } },
-    blockquote: { HTMLAttributes: { class: "block-node" } },
-    bulletList: { HTMLAttributes: { class: "list-node" } },
-    orderedList: { HTMLAttributes: { class: "list-node" } },
-    code: { HTMLAttributes: { class: "inline", spellcheck: "false" } },
-    dropcursor: { width: 2, class: "ProseMirror-dropcursor border" },
-  }),
-  Link,
-  Underline,
-  Image.configure({
-    allowedMimeTypes: ["image/*"],
-    maxFileSize: 5 * 1024 * 1024,
-    allowBase64: true,
-    uploadFn: async (file) => {
-      // NOTE: This is a fake upload function. Replace this with your own upload logic.
-      // This function should return the uploaded image URL.
-
-      // wait 3s to simulate upload
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-
-      const src = await fileToBase64(file)
-
-      // either return { id: string | number, src: string } or just src
-      // return src;
-      return { id: randomId(), src }
-    },
-    onToggle(editor, files, pos) {
-      editor.commands.insertContentAt(
-        pos,
-        files.map((image) => {
-          const blobUrl = URL.createObjectURL(image)
-          const id = randomId()
-
-          return {
-            type: "image",
-            attrs: {
-              id,
-              src: blobUrl,
-              alt: image.name,
-              title: image.name,
-              fileName: image.name,
-            },
-          }
-        })
-      )
-    },
-    onImageRemoved({ id, src }) {
-      console.log("Image removed", { id, src })
-    },
-    onValidationError(errors) {
-      errors.forEach((error) => {
-        toast.error("Image validation error", {
-          position: "bottom-right",
-          description: error.reason,
-        })
-      })
-    },
-    onActionSuccess({ action }) {
-      const mapping = {
-        copyImage: "Copy Image",
-        copyLink: "Copy Link",
-        download: "Download",
-      }
-      toast.success(mapping[action], {
-        position: "bottom-right",
-        description: "Image action success",
-      })
-    },
-    onActionError(error, { action }) {
-      const mapping = {
-        copyImage: "Copy Image",
-        copyLink: "Copy Link",
-        download: "Download",
-      }
-      toast.error(`Failed to ${mapping[action]}`, {
-        position: "bottom-right",
-        description: error.message,
-      })
-    },
-  }),
-  FileHandler.configure({
-    allowBase64: true,
-    allowedMimeTypes: ["image/*"],
-    maxFileSize: 5 * 1024 * 1024,
-    onDrop: (editor, files, pos) => {
-      files.forEach(async (file) => {
-        const src = await fileToBase64(file)
-        editor.commands.insertContentAt(pos, {
-          type: "image",
-          attrs: { src },
-        })
-      })
-    },
-    onPaste: (editor, files) => {
-      files.forEach(async (file) => {
-        const src = await fileToBase64(file)
-        editor.commands.insertContent({
-          type: "image",
-          attrs: { src },
-        })
-      })
-    },
-    onValidationError: (errors) => {
-      errors.forEach((error) => {
-        toast.error("Image validation error", {
-          position: "bottom-right",
-          description: error.reason,
-        })
-      })
-    },
-  }),
-  Color,
-  TextStyle,
-  Selection,
-  Typography,
-  UnsetAllMarks,
-  HorizontalRule,
-  ResetMarksOnEnter,
-  CodeBlockLowlight,
-  Placeholder.configure({ placeholder: () => placeholder }),
-]
+const createExtensions = (
+  placeholder: string, 
+  provider: WebsocketProvider | null, 
+  ydoc: Y.Doc | null, 
+  username: string, 
+  color: string,
+) => {
+  // Base extensions that don't depend on collaboration
+  const baseExtensions = [
+    StarterKit.configure({
+      horizontalRule: false,
+      codeBlock: false,
+      paragraph: { HTMLAttributes: { class: "text-node" } },
+      heading: { HTMLAttributes: { class: "heading-node" } },
+      blockquote: { HTMLAttributes: { class: "block-node" } },
+      bulletList: { HTMLAttributes: { class: "list-node" } },
+      orderedList: { HTMLAttributes: { class: "list-node" } },
+      code: { HTMLAttributes: { class: "inline", spellcheck: "false" } },
+      dropcursor: { width: 2, class: "ProseMirror-dropcursor border" },
+    }),
+    Link,
+    Underline,
+    Image.configure({
+      allowedMimeTypes: ["image/*"],
+      maxFileSize: 5 * 1024 * 1024,
+      allowBase64: true,
+    }),
+    Placeholder.configure({
+      placeholder,
+    }),
+    Typography,
+    TextStyle,
+    HorizontalRule,
+    Color,
+    Selection,
+    UnsetAllMarks,
+    ResetMarksOnEnter,
+    CodeBlockLowlight,
+  ];
+  
+  // Only add collaboration extensions if both ydoc and provider are available
+  if (ydoc && provider) {
+    try {
+      const collaborationExtensions = [
+        Collaboration.configure({
+          document: ydoc,
+        }),
+        CollaborationCursor.configure({
+          provider: provider,
+          user: {
+            name: username,
+            color: color,
+          },
+        }),
+      ];
+      
+      return [...baseExtensions, ...collaborationExtensions];
+    } catch (err) {
+      console.error("Error configuring collaboration extensions:", err);
+      toast.error("Error setting up collaboration. Falling back to non-collaborative mode.");
+      // If collaboration setup fails, return base extensions only
+      return baseExtensions;
+    }
+  }
+  
+  return baseExtensions;
+};
 
 export const useMinimalTiptapEditor = ({
   value,
@@ -168,6 +117,10 @@ export const useMinimalTiptapEditor = ({
   throttleDelay = 0,
   onUpdate,
   onBlur,
+  provider,
+  ydoc,
+  username,
+  color,
   ...props
 }: UseMinimalTiptapEditorProps) => {
   const throttledSetValue = useThrottle(
@@ -195,7 +148,7 @@ export const useMinimalTiptapEditor = ({
   )
 
   const editor = useEditor({
-    extensions: createExtensions(placeholder),
+    extensions: createExtensions(placeholder, provider, ydoc, username, color),
     editorProps: {
       attributes: {
         autocomplete: "off",
@@ -208,7 +161,7 @@ export const useMinimalTiptapEditor = ({
     onCreate: ({ editor }) => handleCreate(editor),
     onBlur: ({ editor }) => handleBlur(editor),
     ...props,
-  })
+  }, [ydoc, provider, username, color])
 
   return editor
 }

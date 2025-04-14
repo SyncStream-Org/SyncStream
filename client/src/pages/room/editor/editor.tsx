@@ -1,28 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Collaboration from '@tiptap/extension-collaboration';
-import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
-import { Typography } from '@tiptap/extension-typography';
-import { Placeholder } from '@tiptap/extension-placeholder';
-import { Underline } from '@tiptap/extension-underline';
-import { TextStyle } from '@tiptap/extension-text-style';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { Types } from 'syncstream-sharedlib';
 import { MeasuredContainer } from '@/components/ui/minimal-tiptap/components/measured-container';
-import { cn } from '@/utilities/utils';
 import { LinkBubbleMenu } from '@/components/ui/minimal-tiptap/components/bubble-menu/link-bubble-menu';
-import {
-  Link,
-  HorizontalRule,
-  CodeBlockLowlight,
-  Selection,
-  Color,
-  UnsetAllMarks,
-  ResetMarksOnEnter,
-} from '../../../components/ui/minimal-tiptap/extensions';
+import { cn } from '@/utilities/utils';
+import { useMinimalTiptapEditor } from '@/components/ui/minimal-tiptap/hooks/use-minimal-tiptap';
+import { EditorContent } from '@tiptap/react';
 import { Toolbar } from './toolbar';
+import '@/components/ui/minimal-tiptap/styles/index.css';
 import './editor.css';
 
 const COLORS = [
@@ -129,54 +115,13 @@ export default function DocumentEditor({
     };
   }, [username, roomID, activeDoc, userColor, serverURL, sessionToken]);
 
-  const editor = useEditor(
-    {
-      extensions: [
-        StarterKit.configure({
-          horizontalRule: false,
-          codeBlock: false,
-          paragraph: { HTMLAttributes: { class: 'text-node' } },
-          heading: { HTMLAttributes: { class: 'heading-node' } },
-          blockquote: { HTMLAttributes: { class: 'block-node' } },
-          bulletList: { HTMLAttributes: { class: 'list-node' } },
-          orderedList: { HTMLAttributes: { class: 'list-node' } },
-          code: { HTMLAttributes: { class: 'inline', spellcheck: 'false' } },
-          dropcursor: { width: 2, class: 'ProseMirror-dropcursor border' },
-        }),
-        Link,
-        Underline,
-        Color,
-        TextStyle,
-        Selection,
-        Typography,
-        UnsetAllMarks,
-        HorizontalRule,
-        ResetMarksOnEnter,
-        CodeBlockLowlight,
-        ...(ydoc
-          ? [
-              Collaboration.configure({
-                document: ydoc,
-              }),
-              CollaborationCursor.configure({
-                provider,
-                user: {
-                  name: username,
-                  color: userColor,
-                },
-              }),
-            ]
-          : []),
-      ],
-      editorProps: {
-        attributes: {
-          class:
-            'w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none min-h-[450px] p-4 dark:prose-invert [&_*]:!max-w-none',
-        },
-      },
-    },
-    [ydoc, provider],
-  );
+  const editor = useMinimalTiptapEditor({
+    ydoc,
+    provider,
+    placeholder: 'Start typing...',
+    username,
+    color: userColor,
+  });
 
   if (!editor || !ydoc || !provider) {
     return (
@@ -189,7 +134,7 @@ export default function DocumentEditor({
   // TODO: localize
 
   return (
-    <div className="editor-container w-full mx-auto overflow-hidden">
+    <div className="w-full mx-auto overflow-hidden">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{activeDoc?.mediaName}</h2>
