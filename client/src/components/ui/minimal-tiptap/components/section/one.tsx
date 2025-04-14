@@ -4,8 +4,8 @@ import type { Level } from "@tiptap/extension-heading"
 import type { FormatAction } from "../../types"
 import type { VariantProps } from "class-variance-authority"
 import type { toggleVariants } from "@/components/ui/toggle"
-import { cn } from "@/lib/utils"
-import { CaretDownIcon, LetterCaseCapitalizeIcon } from "@radix-ui/react-icons"
+import { cn } from "@/utilities/utils"
+import { ChevronDown, CaseSensitive  } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -134,8 +134,8 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
             size={size}
             variant={variant}
           >
-            <LetterCaseCapitalizeIcon className="size-5" />
-            <CaretDownIcon className="size-5" />
+            <CaseSensitive className="size-5" />
+            <ChevronDown className="size-5" />
           </ToolbarButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-full">
