@@ -16,6 +16,11 @@ import {
 import { Toggle } from '@/components/ui/toggle';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { SectionOne } from '@/components/ui/minimal-tiptap/components/section/one';
+import { SectionTwo } from '@/components/ui/minimal-tiptap/components/section/two';
+import { SectionThree } from '@/components/ui/minimal-tiptap/components/section/three';
+import { SectionFour } from '@/components/ui/minimal-tiptap/components/section/four';
+import { SectionFive } from '@/components/ui/minimal-tiptap/components/section/five';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -35,146 +40,193 @@ export function Toolbar({ editor }: ToolbarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2 border-b">
-      {/* Heading controls */}
-      <div className="flex">
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('heading', { level: 1 })}
-          onPressedChange={() =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run()
-          }
-          aria-label="Toggle Heading 1"
-        >
-          <Heading1 className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('heading', { level: 2 })}
-          onPressedChange={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          aria-label="Toggle Heading 2"
-        >
-          <Heading2 className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('heading', { level: 3 })}
-          onPressedChange={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          aria-label="Toggle Heading 3"
-        >
-          <Heading3 className="h-4 w-4" />
-        </Toggle>
-      </div>
+    // <div className="flex flex-wrap items-center gap-2 p-2 border-b">
+    //   {/* Heading controls */}
+    //   <div className="flex">
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('heading', { level: 1 })}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleHeading({ level: 1 }).run()
+    //       }
+    //       aria-label="Toggle Heading 1"
+    //     >
+    //       <Heading1 className="h-4 w-4" />
+    //     </Toggle>
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('heading', { level: 2 })}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleHeading({ level: 2 }).run()
+    //       }
+    //       aria-label="Toggle Heading 2"
+    //     >
+    //       <Heading2 className="h-4 w-4" />
+    //     </Toggle>
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('heading', { level: 3 })}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleHeading({ level: 3 }).run()
+    //       }
+    //       aria-label="Toggle Heading 3"
+    //     >
+    //       <Heading3 className="h-4 w-4" />
+    //     </Toggle>
+    //   </div>
 
-      <Separator orientation="vertical" className="h-6" />
+    //   <Separator orientation="vertical" className="h-6" />
 
-      {/* Text formatting controls */}
-      <div className="flex">
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('bold')}
-          onPressedChange={() => editor.chain().focus().toggleBold().run()}
-          aria-label="Toggle Bold"
-        >
-          <Bold className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('italic')}
-          onPressedChange={() => editor.chain().focus().toggleItalic().run()}
-          aria-label="Toggle Italic"
-        >
-          <Italic className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('code')}
-          onPressedChange={() => editor.chain().focus().toggleCode().run()}
-          aria-label="Toggle Code"
-        >
-          <Code className="h-4 w-4" />
-        </Toggle>
-      </div>
+    //   {/* Text formatting controls */}
+    //   <div className="flex">
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('bold')}
+    //       onPressedChange={() => editor.chain().focus().toggleBold().run()}
+    //       aria-label="Toggle Bold"
+    //     >
+    //       <Bold className="h-4 w-4" />
+    //     </Toggle>
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('italic')}
+    //       onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+    //       aria-label="Toggle Italic"
+    //     >
+    //       <Italic className="h-4 w-4" />
+    //     </Toggle>
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('code')}
+    //       onPressedChange={() => editor.chain().focus().toggleCode().run()}
+    //       aria-label="Toggle Code"
+    //     >
+    //       <Code className="h-4 w-4" />
+    //     </Toggle>
+    //   </div>
 
-      <Separator orientation="vertical" className="h-6" />
+    //   <Separator orientation="vertical" className="h-6" />
 
-      {/* List controls */}
-      <div className="flex">
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('bulletList')}
-          onPressedChange={() =>
-            editor.chain().focus().toggleBulletList().run()
-          }
-          aria-label="Toggle Bullet List"
-        >
-          <List className="h-4 w-4" />
-        </Toggle>
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('orderedList')}
-          onPressedChange={() =>
-            editor.chain().focus().toggleOrderedList().run()
-          }
-          aria-label="Toggle Ordered List"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Toggle>
-      </div>
+    //   {/* List controls */}
+    //   <div className="flex">
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('bulletList')}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleBulletList().run()
+    //       }
+    //       aria-label="Toggle Bullet List"
+    //     >
+    //       <List className="h-4 w-4" />
+    //     </Toggle>
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('orderedList')}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleOrderedList().run()
+    //       }
+    //       aria-label="Toggle Ordered List"
+    //     >
+    //       <ListOrdered className="h-4 w-4" />
+    //     </Toggle>
+    //   </div>
 
-      <Separator orientation="vertical" className="h-6" />
+    //   <Separator orientation="vertical" className="h-6" />
 
-      {/* Block controls */}
-      <div className="flex">
-        <Toggle
-          size="sm"
-          pressed={editor.isActive('blockquote')}
-          onPressedChange={() =>
-            editor.chain().focus().toggleBlockquote().run()
-          }
-          aria-label="Toggle Blockquote"
-        >
-          <Quote className="h-4 w-4" />
-        </Toggle>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="p-2 h-8 w-8"
-          aria-label="Insert Horizontal Rule"
-        >
-          <Minus className="h-4 w-4" />
-        </Button>
-      </div>
+    //   {/* Block controls */}
+    //   <div className="flex">
+    //     <Toggle
+    //       size="sm"
+    //       pressed={editor.isActive('blockquote')}
+    //       onPressedChange={() =>
+    //         editor.chain().focus().toggleBlockquote().run()
+    //       }
+    //       aria-label="Toggle Blockquote"
+    //     >
+    //       <Quote className="h-4 w-4" />
+    //     </Toggle>
+    //     <Button
+    //       variant="ghost"
+    //       size="sm"
+    //       onClick={() => editor.chain().focus().setHorizontalRule().run()}
+    //       className="p-2 h-8 w-8"
+    //       aria-label="Insert Horizontal Rule"
+    //     >
+    //       <Minus className="h-4 w-4" />
+    //     </Button>
+    //   </div>
 
-      <Separator orientation="vertical" className="h-6" />
+    //   <Separator orientation="vertical" className="h-6" />
 
-      {/* History controls */}
-      <div className="flex">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={checkForUndo()}
-          className="p-2 h-8 w-8"
-          aria-label="Undo"
-        >
-          <Undo className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={checkForRedo()}
-          className="p-2 h-8 w-8"
-          aria-label="Redo"
-        >
-          <Redo className="h-4 w-4" />
-        </Button>
+    //   {/* History controls */}
+    //   <div className="flex">
+    //     <Button
+    //       variant="ghost"
+    //       size="sm"
+    //       onClick={() => editor.chain().focus().undo().run()}
+    //       disabled={checkForUndo()}
+    //       className="p-2 h-8 w-8"
+    //       aria-label="Undo"
+    //     >
+    //       <Undo className="h-4 w-4" />
+    //     </Button>
+    //     <Button
+    //       variant="ghost"
+    //       size="sm"
+    //       onClick={() => editor.chain().focus().redo().run()}
+    //       disabled={checkForRedo()}
+    //       className="p-2 h-8 w-8"
+    //       aria-label="Redo"
+    //     >
+    //       <Redo className="h-4 w-4" />
+    //     </Button>
+    //   </div>
+    // </div>
+    <div className="shrink-0 overflow-x-auto border-b border-border p-2">
+      <div className="flex w-max items-center gap-px">
+        <SectionOne
+          editor={editor}
+          activeLevels={[1, 2, 3]}
+          variant="outline"
+        />
+
+        <Separator orientation="vertical" className="mx-2 h-7" />
+
+        <SectionTwo
+          editor={editor}
+          activeActions={[
+            'italic',
+            'bold',
+            'underline',
+            'code',
+            'strikethrough',
+            'clearFormatting',
+          ]}
+          mainActionCount={5}
+          variant="outline"
+        />
+
+        <Separator orientation="vertical" className="mx-2 h-7" />
+
+        <SectionThree editor={editor} variant="outline" />
+
+        <Separator orientation="vertical" className="mx-2 h-7" />
+
+        <SectionFour
+          editor={editor}
+          activeActions={['bulletList', 'orderedList']}
+          mainActionCount={2}
+          variant="outline"
+        />
+
+        <Separator orientation="vertical" className="mx-2 h-7" />
+
+        <SectionFive
+          editor={editor}
+          activeActions={['blockquote', 'codeBlock', 'horizontalRule']}
+          mainActionCount={3}
+          variant="outline"
+        />
       </div>
     </div>
   );

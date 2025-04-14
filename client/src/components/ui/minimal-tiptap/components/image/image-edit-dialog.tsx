@@ -2,7 +2,7 @@ import type { Editor } from "@tiptap/react"
 import type { VariantProps } from "class-variance-authority"
 import type { toggleVariants } from "@/components/ui/toggle"
 import { useState } from "react"
-import { ImageIcon } from "@radix-ui/react-icons"
+import { Image } from "lucide-react"
 import { ToolbarButton } from "../toolbar-button"
 import {
   Dialog,
@@ -31,7 +31,7 @@ const ImageEditDialog = ({ editor, size, variant }: ImageEditDialogProps) => {
           size={size}
           variant={variant}
         >
-          <ImageIcon className="size-5" />
+          <Image className="size-5" />
         </ToolbarButton>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">

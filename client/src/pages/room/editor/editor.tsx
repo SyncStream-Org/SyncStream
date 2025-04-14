@@ -3,9 +3,25 @@ import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Collaboration from '@tiptap/extension-collaboration';
 import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
+import { Typography } from '@tiptap/extension-typography';
+import { Placeholder } from '@tiptap/extension-placeholder';
+import { Underline } from '@tiptap/extension-underline';
+import { TextStyle } from '@tiptap/extension-text-style';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { Types } from 'syncstream-sharedlib';
+import { MeasuredContainer } from '@/components/ui/minimal-tiptap/components/measured-container';
+import { cn } from '@/utilities/utils';
+import { LinkBubbleMenu } from '@/components/ui/minimal-tiptap/components/bubble-menu/link-bubble-menu';
+import {
+  Link,
+  HorizontalRule,
+  CodeBlockLowlight,
+  Selection,
+  Color,
+  UnsetAllMarks,
+  ResetMarksOnEnter,
+} from '../../../components/ui/minimal-tiptap/extensions';
 import { Toolbar } from './toolbar';
 import './editor.css';
 
@@ -116,7 +132,27 @@ export default function DocumentEditor({
   const editor = useEditor(
     {
       extensions: [
-        StarterKit,
+        StarterKit.configure({
+          horizontalRule: false,
+          codeBlock: false,
+          paragraph: { HTMLAttributes: { class: 'text-node' } },
+          heading: { HTMLAttributes: { class: 'heading-node' } },
+          blockquote: { HTMLAttributes: { class: 'block-node' } },
+          bulletList: { HTMLAttributes: { class: 'list-node' } },
+          orderedList: { HTMLAttributes: { class: 'list-node' } },
+          code: { HTMLAttributes: { class: 'inline', spellcheck: 'false' } },
+          dropcursor: { width: 2, class: 'ProseMirror-dropcursor border' },
+        }),
+        Link,
+        Underline,
+        Color,
+        TextStyle,
+        Selection,
+        Typography,
+        UnsetAllMarks,
+        HorizontalRule,
+        ResetMarksOnEnter,
+        CodeBlockLowlight,
         ...(ydoc
           ? [
               Collaboration.configure({
@@ -135,7 +171,7 @@ export default function DocumentEditor({
       editorProps: {
         attributes: {
           class:
-            'w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none min-h-[450px] p-4 dark:prose-invert [&_*]:!max-w-none'
+            'w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none min-h-[450px] p-4 dark:prose-invert [&_*]:!max-w-none',
         },
       },
     },
@@ -181,8 +217,21 @@ export default function DocumentEditor({
           ))}
         </div>
       </div>
-      <Toolbar editor={editor} />
-      <div className="editor-content no-scrollbar w-full">
+      <MeasuredContainer
+        as="div"
+        name="editor"
+        className={cn(
+          'flex h-auto min-h-72 w-full flex-col rounded-md border border-input shadow-sm focus-within:border-primary',
+        )}
+      >
+        <Toolbar editor={editor} />
+        <EditorContent
+          editor={editor}
+          className={cn('minimal-tiptap-editor')}
+        />
+        <LinkBubbleMenu editor={editor} />
+      </MeasuredContainer>
+      {/* <div className="editor-content no-scrollbar w-full">
         {editor && (
           <>
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
@@ -216,7 +265,7 @@ export default function DocumentEditor({
             />
           </>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
