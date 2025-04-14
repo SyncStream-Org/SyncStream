@@ -13,6 +13,9 @@ import {
   Quote,
   Minus,
 } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 interface ToolbarProps {
   editor: Editor | null;
@@ -32,104 +35,146 @@ export function Toolbar({ editor }: ToolbarProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 p-2 border-b">
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 1 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Heading1 className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 2 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Heading2 className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`p-2 rounded ${editor.isActive('heading', { level: 3 }) ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Heading3 className="w-4 h-4" />
-      </button>
+    <div className="flex flex-wrap items-center gap-2 p-2 border-b">
+      {/* Heading controls */}
+      <div className="flex">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('heading', { level: 1 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          aria-label="Toggle Heading 1"
+        >
+          <Heading1 className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('heading', { level: 2 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          aria-label="Toggle Heading 2"
+        >
+          <Heading2 className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('heading', { level: 3 })}
+          onPressedChange={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          aria-label="Toggle Heading 3"
+        >
+          <Heading3 className="h-4 w-4" />
+        </Toggle>
+      </div>
 
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <Separator orientation="vertical" className="h-6" />
 
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        className={`p-2 rounded ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Bold className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        className={`p-2 rounded ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Italic className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        className={`p-2 rounded ${editor.isActive('code') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Code className="w-4 h-4" />
-      </button>
+      {/* Text formatting controls */}
+      <div className="flex">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('bold')}
+          onPressedChange={() => editor.chain().focus().toggleBold().run()}
+          aria-label="Toggle Bold"
+        >
+          <Bold className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('italic')}
+          onPressedChange={() => editor.chain().focus().toggleItalic().run()}
+          aria-label="Toggle Italic"
+        >
+          <Italic className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('code')}
+          onPressedChange={() => editor.chain().focus().toggleCode().run()}
+          aria-label="Toggle Code"
+        >
+          <Code className="h-4 w-4" />
+        </Toggle>
+      </div>
 
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <Separator orientation="vertical" className="h-6" />
 
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={`p-2 rounded ${editor.isActive('bulletList') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <List className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={`p-2 rounded ${editor.isActive('orderedList') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <ListOrdered className="w-4 h-4" />
-      </button>
+      {/* List controls */}
+      <div className="flex">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('bulletList')}
+          onPressedChange={() =>
+            editor.chain().focus().toggleBulletList().run()
+          }
+          aria-label="Toggle Bullet List"
+        >
+          <List className="h-4 w-4" />
+        </Toggle>
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('orderedList')}
+          onPressedChange={() =>
+            editor.chain().focus().toggleOrderedList().run()
+          }
+          aria-label="Toggle Ordered List"
+        >
+          <ListOrdered className="h-4 w-4" />
+        </Toggle>
+      </div>
 
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <Separator orientation="vertical" className="h-6" />
 
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={`p-2 rounded ${editor.isActive('blockquote') ? 'bg-gray-200 dark:bg-gray-600' : ''}`}
-      >
-        <Quote className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-        className="p-2 rounded"
-      >
-        <Minus className="w-4 h-4" />
-      </button>
+      {/* Block controls */}
+      <div className="flex">
+        <Toggle
+          size="sm"
+          pressed={editor.isActive('blockquote')}
+          onPressedChange={() =>
+            editor.chain().focus().toggleBlockquote().run()
+          }
+          aria-label="Toggle Blockquote"
+        >
+          <Quote className="h-4 w-4" />
+        </Toggle>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="p-2 h-8 w-8"
+          aria-label="Insert Horizontal Rule"
+        >
+          <Minus className="h-4 w-4" />
+        </Button>
+      </div>
 
-      <div className="ml-auto flex items-center gap-1">
-        <button
-          type="button"
+      <Separator orientation="vertical" className="h-6" />
+
+      {/* History controls */}
+      <div className="flex">
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={checkForUndo()}
-          className="p-2 rounded disabled:opacity-50"
+          className="p-2 h-8 w-8"
+          aria-label="Undo"
         >
-          <Undo className="w-4 h-4" />
-        </button>
-        <button
-          type="button"
+          <Undo className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={checkForRedo()}
-          className="p-2 rounded disabled:opacity-50"
+          className="p-2 h-8 w-8"
+          aria-label="Redo"
         >
-          <Redo className="w-4 h-4" />
-        </button>
+          <Redo className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
