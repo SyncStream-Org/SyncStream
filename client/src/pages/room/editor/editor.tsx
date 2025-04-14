@@ -135,7 +135,7 @@ export default function DocumentEditor({
       editorProps: {
         attributes: {
           class:
-            'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none min-h-[450px] p-4 dark:prose-invert',
+            'w-full prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none min-h-[450px] p-4 dark:prose-invert [&_*]:!max-w-none'
         },
       },
     },
@@ -182,35 +182,38 @@ export default function DocumentEditor({
         </div>
       </div>
       <Toolbar editor={editor} />
-      <div className="editor-content no-scrollbar">
+      <div className="editor-content no-scrollbar w-full">
         {editor && (
           <>
             <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-              <div className="flex items-center gap-1 rounded-md border bg-white p-1 shadow-md">
+              <div className="flex items-center gap-1 rounded-md border bg-white p-1 shadow-md dark:bg-gray-800 dark:border-gray-700">
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleBold().run()}
-                  className={`p-1 rounded ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
                 >
                   <span className="font-bold">B</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleItalic().run()}
-                  className={`p-1 rounded ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
                 >
                   <span className="italic">I</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleCode().run()}
-                  className={`p-1 rounded ${editor.isActive('code') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${editor.isActive('code') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
                 >
                   <span className="font-mono">{'<>'}</span>
                 </button>
               </div>
             </BubbleMenu>
-            <EditorContent editor={editor} />
+            <EditorContent
+              editor={editor}
+              className="w-full border rounded-md overflow-hidden break-words [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_.ProseMirror_p]:my-1 [&_.ProseMirror_p]:leading-relaxed [&_.ProseMirror_*]:max-w-full [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap"
+            />
           </>
         )}
       </div>
