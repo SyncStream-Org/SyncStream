@@ -5,7 +5,7 @@ import { SectionTwo } from '@/components/ui/minimal-tiptap/components/section/tw
 import { SectionThree } from '@/components/ui/minimal-tiptap/components/section/three';
 import { SectionFour } from '@/components/ui/minimal-tiptap/components/section/four';
 import { SectionFive } from '@/components/ui/minimal-tiptap/components/section/five';
-import '@/components/ui/minimal-tiptap/styles/index.css';
+// import '@/components/ui/minimal-tiptap/styles/index.css';
 
 interface ToolbarProps {
   editor: Editor | null;

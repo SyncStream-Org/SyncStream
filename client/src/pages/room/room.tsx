@@ -12,7 +12,6 @@ import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -116,15 +115,13 @@ function RoomPage(props: Props) {
             <Separator />
             <div className="flex flex-1 flex-col pt-0 overflow-hidden">
               {activeDoc !== null && settingsOpen !== true && (
-                <TooltipProvider>
-                  <DocEditor
-                    activeDoc={activeDoc}
-                    username={SessionState.getInstance().currentUser.username}
-                    sessionToken={SessionState.getInstance().sessionToken}
-                    roomID={room?.roomID!}
-                    serverURL={SessionState.getInstance().serverURL}
-                  />
-                </TooltipProvider>
+                <DocEditor
+                  activeDoc={activeDoc}
+                  username={SessionState.getInstance().currentUser.username}
+                  sessionToken={SessionState.getInstance().sessionToken}
+                  roomID={room?.roomID!}
+                  serverURL={SessionState.getInstance().serverURL}
+                />
               )}
               {activeDoc === null &&
                 activeStream === null &&

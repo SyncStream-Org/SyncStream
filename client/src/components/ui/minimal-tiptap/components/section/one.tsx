@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { ToolbarButton } from "../toolbar-button"
 import { ShortcutKey } from "../shortcut-key"
+import { Button } from "@/components/ui/button"
 
 interface TextStyle
   extends Omit<
@@ -123,7 +124,7 @@ export const SectionOne: React.FC<SectionOneProps> = React.memo(
 
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger>
           <ToolbarButton
             isActive={editor.isActive("heading")}
             tooltip="Text styles"

@@ -132,9 +132,9 @@ export default function DocumentEditor({
   }
 
   // TODO: localize
-
+  // className="w-full mx-auto"
   return (
-    <div className="w-full mx-auto overflow-hidden">
+    <div>
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{activeDoc?.mediaName}</h2>
