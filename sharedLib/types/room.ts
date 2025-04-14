@@ -31,8 +31,13 @@ export interface RoomUpdateData {
 
 export type UpdateType = 'create' | 'update' | 'delete';
 
-export interface BroadcastUpdate {
+export interface RoomBroadcastUpdate {
   endpoint: 'room' | 'media' | 'user'; // lets the client know what is being updated
   type: UpdateType;    
   data: MediaData | UserRoomData | RoomUpdateData;
+}
+
+export interface UserBroadcastUpdate {
+    type: UpdateType;
+    data: RoomData;
 }

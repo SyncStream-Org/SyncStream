@@ -3,7 +3,7 @@ import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
-import { useSSE } from '@/api/routes/useSse';
+import { useRoomSSE } from '@/api/routes/useRoomSse';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -25,7 +25,9 @@ function RoomPage(props: Props) {
   const room = useLocation().state?.room as Types.RoomData | undefined;
   const [media, setMedia] = useState<Types.MediaData[]>([]);
   const [activeDoc, setActiveDoc] = useState<Types.MediaData | null>(null);
-  const [activeStream, setActiveStream] = useState<Types.MediaData | null>(null);
+  const [activeStream, setActiveStream] = useState<Types.MediaData | null>(
+    null,
+  );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
 
@@ -73,11 +75,16 @@ function RoomPage(props: Props) {
     [],
   );
 
-  useSSE(room?.roomID!, SessionState.getInstance().sessionToken, onMediaUpdate);
+  useRoomSSE(
+    room?.roomID!,
+    SessionState.getInstance().sessionToken,
+    onMediaUpdate,
+  );
 
   useEffect(() => {
     handleRoomFetch();
-  }, [room]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex h-screen">

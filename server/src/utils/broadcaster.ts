@@ -2,40 +2,42 @@ import { Types } from 'syncstream-sharedlib';
 import { Response } from 'express';
 
 class Broadcaster {
-  private globalMap: Map<string, Response[]>;
+  private roomMap: Map<string, Response[]>;
+  private userMap: Map<string, Response>;
 
   constructor() {
-    this.globalMap = new Map<string, Response[]>();
+    this.roomMap = new Map<string, Response[]>();
+    this.userMap = new Map<string, Response>();
   }
 
-  public addUserResponse(roomID: string, userRes: Response): void {
+  public addRoomResponse(roomID: string, userRes: Response): void {
     // initialize key entry if it doesn't exist
-    if (!this.globalMap.has(roomID)) {
-      this.globalMap.set(roomID, [userRes]);
+    if (!this.roomMap.has(roomID)) {
+      this.roomMap.set(roomID, [userRes]);
       return;
     }
 
     // append key entry is it does exist
-    this.globalMap.get(roomID)?.push(userRes);
+    this.roomMap.get(roomID)?.push(userRes);
   }
 
-  public removeUserResponse(roomID: string, userRes: Response): void {
-    const filteredSet = this.globalMap.get(roomID)!.filter(res => res !== userRes);
+  public removeRoomResponse(roomID: string, userRes: Response): void {
+    const filteredSet = this.roomMap.get(roomID)!.filter(res => res !== userRes);
     
     // delete key if filtering out the userRes leaves an empty list (room is empty)
     if (filteredSet.length === 0) {
-      this.globalMap.delete(roomID);
+      this.roomMap.delete(roomID);
       return;
     }
 
     // roomID left with filteredSet 
-    this.globalMap.set(
+    this.roomMap.set(
       roomID, filteredSet
     )
   }
 
-  public pushUpdateToUsers(roomID: string, update: Types.BroadcastUpdate): void {
-    const userResList = this.globalMap.get(roomID);
+  public pushUpdateToRoom(roomID: string, update: Types.RoomBroadcastUpdate): void {
+    const userResList = this.roomMap.get(roomID);
 
     // assertion, should never happen
     if (!userResList) {
@@ -44,6 +46,23 @@ class Broadcaster {
 
     for (const res of userResList) {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
+    }
+  }
+
+  public addUserResponse(userID: string, userRes: Response): void {
+    this.userMap.set(userID, userRes);
+  }
+
+  public removeUserResponse(userID: string): void {
+    this.userMap.delete(userID);
+  }
+
+  public pushUpdateToUsers(usernames: string[], update: Types.UserBroadcastUpdate): void {
+    for (const username of usernames) {
+      const userRes = this.userMap.get(username);
+      if (userRes) {
+        userRes.write(`data: ${JSON.stringify(update)}\n\n`);
+      }
     }
   }
 }

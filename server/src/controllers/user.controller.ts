@@ -48,7 +48,7 @@ export const getUserDetails = async (req: Request, res: Response) => {
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await userService.listAllUsers();
+  const users = await userService.listAllUsers(true);
 
   if (!users.length) {
     res.sendStatus(204);
@@ -239,11 +239,28 @@ export const enterRoomBroadcast = async (req: Request, res: Response) => {
     }
     
     // set connection and send message
-    Broadcaster.addUserResponse(roomID, res);
+    Broadcaster.addRoomResponse(roomID, res);
 
     req.on("close", () => {
         //remove from room->user map
-        Broadcaster.removeUserResponse(roomID, res);
+        Broadcaster.removeRoomResponse(roomID, res);
         res.end();
     });
+};
+
+export const enterUserBroadcast = async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const user: User = (req as any).user;
+  
+  // set connection and send message
+  Broadcaster.addUserResponse(user.username, res);
+
+  req.on("close", () => {
+      //remove from room->user map
+      Broadcaster.removeUserResponse(user.username);
+      res.end();
+  });
 };
