@@ -1,5 +1,5 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/utilities/utils"
 
 interface ResizeProps extends React.HTMLAttributes<HTMLDivElement> {
   isResizing?: boolean
