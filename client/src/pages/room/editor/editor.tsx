@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import { Types } from 'syncstream-sharedlib';
-import { MeasuredContainer } from '@/components/ui/minimal-tiptap/components/measured-container';
 import { LinkBubbleMenu } from '@/components/ui/minimal-tiptap/components/bubble-menu/link-bubble-menu';
 import { cn } from '@/utilities/utils';
 import { useMinimalTiptapEditor } from '@/components/ui/minimal-tiptap/hooks/use-minimal-tiptap';
 import { EditorContent } from '@tiptap/react';
+import { MeasuredContainer } from '@/components/ui/minimal-tiptap/components/measured-container';
 import { Toolbar } from './toolbar';
 import '@/components/ui/minimal-tiptap/styles/index.css';
 import './editor.css';
@@ -118,9 +118,12 @@ export default function DocumentEditor({
   const editor = useMinimalTiptapEditor({
     ydoc,
     provider,
-    placeholder: 'Start typing...',
+    placeholder: '',
     username,
     color: userColor,
+    throttleDelay: 2000,
+    output: 'html',
+    editorClassName: 'focus:outline-none px-5 py-4 h-full',
   });
 
   if (!editor || !ydoc || !provider) {
@@ -134,7 +137,7 @@ export default function DocumentEditor({
   // TODO: localize
   // className="w-full mx-auto"
   return (
-    <div>
+    <div className="w-full h-full flex flex-col">
       <div className="border-b p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">{activeDoc?.mediaName}</h2>
@@ -145,7 +148,7 @@ export default function DocumentEditor({
                 backgroundColor: status === 'connected' ? '#4caf50' : '#ff9800',
               }}
             />
-            <span className="text-sm text-gray-600  dark:text-gray-300">
+            <span className="text-sm text-gray-600 dark:text-gray-300">
               {status === 'connected' ? 'Connected' : 'Connecting...'}
             </span>
           </div>
@@ -162,55 +165,39 @@ export default function DocumentEditor({
           ))}
         </div>
       </div>
-      <MeasuredContainer
-        as="div"
-        name="editor"
-        className={cn(
-          'flex h-auto min-h-72 w-full flex-col rounded-md border border-input shadow-sm focus-within:border-primary',
-        )}
-      >
-        <Toolbar editor={editor} />
-        <EditorContent
-          editor={editor}
-          className={cn('minimal-tiptap-editor')}
-        />
-        <LinkBubbleMenu editor={editor} />
-      </MeasuredContainer>
-      {/* <div className="editor-content no-scrollbar w-full">
-        {editor && (
-          <>
-            <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-              <div className="flex items-center gap-1 rounded-md border bg-white p-1 shadow-md dark:bg-gray-800 dark:border-gray-700">
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().toggleBold().run()}
-                  className={`p-1 rounded ${editor.isActive('bold') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
-                >
-                  <span className="font-bold">B</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().toggleItalic().run()}
-                  className={`p-1 rounded ${editor.isActive('italic') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
-                >
-                  <span className="italic">I</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => editor.chain().focus().toggleCode().run()}
-                  className={`p-1 rounded ${editor.isActive('code') ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
-                >
-                  <span className="font-mono">{'<>'}</span>
-                </button>
-              </div>
-            </BubbleMenu>
-            <EditorContent
-              editor={editor}
-              className="w-full border rounded-md overflow-hidden break-words [&_.ProseMirror]:min-h-[400px] [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none [&_.ProseMirror_p]:my-1 [&_.ProseMirror_p]:leading-relaxed [&_.ProseMirror_*]:max-w-full [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap"
-            />
-          </>
-        )}
-      </div> */}
+      <div className="flex-1 overflow-hidden">
+        {' '}
+        {/* Add this wrapper */}
+        <MeasuredContainer
+          as="div"
+          name="editor"
+          className={cn(
+            'flex flex-col shadow-sm focus-within:border-primary',
+            'h-full w-full rounded-xl overflow-hidden',
+          )}
+          style={{
+            maxWidth: '100%', // Ensures it never exceeds parent width
+          }}
+        >
+          <Toolbar editor={editor} />
+          <EditorContent
+            editor={editor}
+            className={cn(
+              'minimal-tiptap-editor',
+              'focus:outline-none px-5 py-4 flex-1 overflow-y-auto overflow-x-hidden',
+            )}
+            style={{
+              maxWidth: '100%',
+              width: '100%',
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
+              // Force horizontal constraints to match container
+              boxSizing: 'border-box',
+            }}
+          />
+          <LinkBubbleMenu editor={editor} />
+        </MeasuredContainer>
+      </div>
     </div>
   );
 }

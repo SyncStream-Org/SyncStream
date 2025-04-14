@@ -27,11 +27,7 @@ export function Toolbar({ editor }: ToolbarProps) {
   return (
     <div className="shrink-0 overflow-x-auto border-b border-border p-2">
       <div className="flex w-max items-center gap-px">
-        <SectionOne
-          editor={editor}
-          activeLevels={[1, 2, 3]}
-          variant="outline"
-        />
+        <SectionOne editor={editor} activeLevels={[1, 2, 3]} />
 
         <Separator orientation="vertical" className="mr-2 h-4" />
 
@@ -46,12 +42,11 @@ export function Toolbar({ editor }: ToolbarProps) {
             'clearFormatting',
           ]}
           mainActionCount={5}
-          variant="outline"
         />
 
         <Separator orientation="vertical" className="mr-2 h-4" />
 
-        <SectionThree editor={editor} variant="outline" />
+        <SectionThree editor={editor} />
 
         <Separator orientation="vertical" className="mr-2 h-4" />
 
@@ -59,7 +54,6 @@ export function Toolbar({ editor }: ToolbarProps) {
           editor={editor}
           activeActions={['bulletList', 'orderedList']}
           mainActionCount={2}
-          variant="outline"
         />
 
         <Separator orientation="vertical" className="mr-2 h-4" />
@@ -68,7 +62,6 @@ export function Toolbar({ editor }: ToolbarProps) {
           editor={editor}
           activeActions={['blockquote', 'codeBlock', 'horizontalRule']}
           mainActionCount={3}
-          variant="outline"
         />
       </div>
     </div>
