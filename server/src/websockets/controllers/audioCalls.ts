@@ -24,7 +24,7 @@ const broadcast = (message: any, senderId: string, callId: CallID) => {
 };
 
 export default function wsAudioCalls(ws: WebSocket, req: Request) {
-  let clientId = "";
+  const clientId = req.params.userid;
   const clientChannel = req.params.channel;
   const clientRoom = req.params.roomID;
 
@@ -33,23 +33,7 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
       const data = JSON.parse(message.toString());
 
       switch (data.type) {
-        case "join": {
-          // Register a client to a channel
-          clientId = data.id;
-
-          clients.push({
-            id: clientId,
-            socket: ws,
-            callId: { room: clientRoom, channel: clientChannel },
-          });
-          console.log(`Client ${clientId} joined channel ${clientChannel}`);
-          break;
-        }
         case "offer": {
-          if (clientId === "") {
-            console.error("Client has not joined. Cannot send offer.");
-            return;
-          }
           broadcast(
             {
               type: "offer",
@@ -62,10 +46,6 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
           break;
         }
         case "answer": {
-          if (clientId === "") {
-            console.error("Client has not joined. Cannot send answer.");
-            return;
-          }
           broadcast(
             {
               type: "answer",
@@ -78,10 +58,6 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
           break;
         }
         case "candidate": {
-          if (clientId === "") {
-            console.error("Client has not joined. Cannot send canidate.");
-            return;
-          }
           broadcast(
             {
               type: "candidate",

@@ -36,13 +36,12 @@ export function DocCard({
         onClick={handleCardClick}
       >
         <CardContent className="p-3 flex flex-col items-center justify-center select-none h-full w-full">
-          {item.mediaType === 'doc' ? (
+          {(item.mediaType === 'doc' && (
             <FileText className="h-10 w-10 mb-2 text-blue-500" />
-          ) : item.mediaType === 'stream' ? (
-            <Monitor className="h-10 w-10 mb-2 text-purple-500" />
-          ) : (
-            <Mic className="h-10 w-10 mb-2 text-green-500" />
-          )}
+          )) ||
+            (item.mediaType === 'stream' && (
+              <Monitor className="h-10 w-10 mb-2 text-purple-500" />
+            )) || <Mic className="h-10 w-10 mb-2 text-green-500" />}
           <span className="text-sm font-medium text-center">
             {item.mediaName}
           </span>

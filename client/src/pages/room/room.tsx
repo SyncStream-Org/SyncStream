@@ -12,6 +12,7 @@ import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -32,26 +33,78 @@ function RoomPage(props: Props) {
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
 
   // Web RTC Voice Calling
-  const [currentAudioInput, setCurrentAudioInput] =
-    useState<MediaStream | null>(null);
-  const [currentAudioOutput, setCurrentAudioOutput] =
-    useState<MediaStream | null>(null);
-  const [currentVoiceCallChannel, setCurrentVoiceCallChannel] =
-    useState<String | null>(null);
-  const [currentVoiceCall, setCurrentVoiceCall] =
-    useState<RTCPeerConnection | null>(null);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [currentAudioInput, setCurrentAudioInput] = useState<
+    MediaStream | undefined
+  >(undefined);
+  const [currentAudioOutput, setCurrentAudioOutput] = useState<
+    MediaStream | undefined
+  >(undefined);
+  const [currentVoiceCallChannel, setCurrentVoiceCallChannel] = useState<
+    String | undefined
+  >(undefined);
+  const [currentVoiceCall, setCurrentVoiceCall] = useState<
+    RTCPeerConnection | undefined
+  >(undefined);
+  const [socket, setSocket] = useState<WebSocket | undefined>(undefined);
 
+  // Call on unload
   useEffect(() => {
+    return () => {
+      if (socket !== undefined) {
+        socket.close();
+      }
+    };
+  }, [socket]);
+
+  // Initialize audio devices
+  useEffect(() => {
+    // Grab initial audio devices
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const inputs = devices.filter((device) => device.kind === 'audioinput');
+      const outputs = devices.filter((device) => device.kind === 'audiooutput');
+
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: inputs[0].deviceId,
+          },
+        })
+        .then((stream) => {
+          setCurrentAudioInput(stream);
+        });
+
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: outputs[0].deviceId,
+          },
+        })
+        .then((stream) => {
+          setCurrentAudioOutput(stream);
+        });
+    });
+  }, []);
+
+  const initiateAudioCall = async (channel: string) => {
+    console.log(currentAudioInput, currentAudioOutput, currentVoiceCall);
+    if (
+      currentAudioInput === undefined ||
+      currentAudioOutput === undefined ||
+      currentVoiceCallChannel !== undefined
+    )
+      return;
+
+    console.log('Initiating Call');
+
+    // Initiate web socket for signaller
     const webSocketPrefix = SessionState.getInstance().serverURL.includes(
       'https',
     )
       ? 'wss'
       : 'ws';
     const newSocket = new WebSocket(
-      `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${room?.roomID}/voice/${currentVoiceCallChannel}?token=${SessionState.getInstance().sessionToken}`,
+      `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${room?.roomID}/voice/${currentVoiceCallChannel}?token=${SessionState.getInstance().sessionToken}&userid=${SessionState.getInstance().currentUser.username}`,
     );
-    setSocket(newSocket);
 
     newSocket.onmessage = async (event) => {
       const message = JSON.parse(event.data);
@@ -74,76 +127,44 @@ function RoomPage(props: Props) {
       }
     };
 
-    newSocket.onclose = () => setSocket(null);
+    newSocket.onclose = () => setSocket(undefined);
 
-    return () => {
-      newSocket.close();
+    newSocket.onopen = async () => {
+      console.log('Socket OPEN');
+
+      // Create the connection
+      const peerConnection = new RTCPeerConnection();
+
+      // Add audio tracks to the peer connection
+      currentAudioInput
+        .getTracks()
+        .forEach((track) => peerConnection.addTrack(track, currentAudioInput));
+
+      currentAudioOutput
+        .getTracks()
+        .forEach((track) => peerConnection.addTrack(track, currentAudioOutput));
+
+      // ICE candidate handling
+      peerConnection.onicecandidate = (event) => {
+        if (event.candidate) {
+          newSocket.send(
+            JSON.stringify({ type: 'candidate', candidate: event.candidate }),
+          );
+        }
+      };
+
+      // Send offer to signaling server
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      newSocket.send(JSON.stringify({ type: 'offer', offer }));
+
+      console.log(peerConnection, newSocket);
+
+      setCurrentVoiceCall(peerConnection);
+      setCurrentVoiceCallChannel(channel);
+      setSocket(newSocket);
     };
-  }, [currentVoiceCallChannel]);
-
-  const initiateAudioCall = async (channel: string) => {
-    if (!socket || !currentAudioInput || !currentAudioOutput) return;
-
-    const peerConnection = new RTCPeerConnection();
-    setCurrentVoiceCall(peerConnection);
-    setCurrentVoiceCallChannel(channel);
-
-    socket.send(
-      JSON.stringify({
-        type: 'join',
-        id: SessionState.getInstance().currentUser.username,
-      }),
-    );
-
-    // Add audio tracks to the peer connection
-    currentAudioInput
-      .getTracks()
-      .forEach((track) => peerConnection.addTrack(track, currentAudioInput));
-
-    currentAudioOutput
-      .getTracks()
-      .forEach((track) => peerConnection.addTrack(track, currentAudioOutput));
-
-    // ICE candidate handling
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.send(
-          JSON.stringify({ type: 'candidate', candidate: event.candidate }),
-        );
-      }
-    };
-
-    // Send offer to signaling server
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
-    socket.send(JSON.stringify({ type: 'offer', offer }));
   };
-
-  // Grab initial audio devices
-  navigator.mediaDevices.enumerateDevices().then((devices) => {
-    const inputs = devices.filter((device) => device.kind === 'audioinput');
-    const outputs = devices.filter((device) => device.kind === 'audiooutput');
-
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          deviceId: inputs[0].deviceId,
-        },
-      })
-      .then((stream) => {
-        setCurrentAudioInput(stream);
-      });
-
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          deviceId: outputs[0].deviceId,
-        },
-      })
-      .then((stream) => {
-        setCurrentAudioOutput(stream);
-      });
-  });
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -197,6 +218,7 @@ function RoomPage(props: Props) {
 
   useEffect(() => {
     handleRoomFetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
 
   return (
@@ -268,6 +290,13 @@ function RoomPage(props: Props) {
           </div>
         </SidebarInset>
       </SidebarProvider>
+      <Button
+        onClick={() => {
+          initiateAudioCall('test');
+        }}
+      >
+        TEST CALL
+      </Button>
     </div>
   );
 }
