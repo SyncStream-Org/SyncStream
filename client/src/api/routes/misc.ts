@@ -24,7 +24,7 @@ export function echo(): Promise<SuccessState> {
     body: JSON.stringify(uuid),
   });
 
-  return fetch(request)
+  return fetch(request, { signal: AbortSignal.timeout(1500) })
     .then(async (res) => {
       if (res.ok) {
         const body = await res.json();
