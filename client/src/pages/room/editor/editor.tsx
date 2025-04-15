@@ -84,7 +84,6 @@ export default function DocumentEditor({
     });
 
     websocketProvider.on('connection-close', (CloseEvent) => {
-      console.log('Connection closed:', CloseEvent);
       if (CloseEvent?.code === 1008) {
         websocketProvider.shouldConnect = false;
       }
