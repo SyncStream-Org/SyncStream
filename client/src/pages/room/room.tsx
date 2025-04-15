@@ -4,6 +4,8 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
 import { useRoomSSE } from '@/api/routes/useRoomSse';
+import { Button } from '@/components/ui/button';
+import { useWebRTCAudio } from '@/api/routes/useWebRTC';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -12,8 +14,6 @@ import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
-import { Button } from '@/components/ui/button';
-import { useWebRTCAudio } from '@/api/routes/useWebRTC';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types

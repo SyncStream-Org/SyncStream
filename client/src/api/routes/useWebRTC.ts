@@ -227,7 +227,11 @@ export function useWebRTCAudio(roomID: string) {
       }
     };
 
-    newSocket.onclose = () => {
+    newSocket.onclose = (e) => {
+      if (e.code !== 0) {
+        console.error(e.reason);
+      }
+
       setSocket(undefined);
       setChannel(undefined);
     };

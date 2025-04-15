@@ -44,18 +44,6 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   const username = req.query.userid as string;
   const callID = { channel: req.params.channel, room: req.params.roomID };
 
-  // Run sanity checks
-  // if (callID.room does not exists) {
-  //   console.error("Tried to join a channel in a room that does not exist.");
-  //   ws.close();
-  //   return;
-  // }
-  // if (callID.channel does not exists) {
-  //   console.error("Tried to join a channel that does not exist.");
-  //   ws.close();
-  //   return;
-  // }
-
   // Add to map
   const callID_str = JSON.stringify(callID);
   if (!calls.has(callID_str)) {
