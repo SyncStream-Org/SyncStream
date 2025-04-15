@@ -21,7 +21,6 @@ export function useHomeSse(
           setError(null);
         },
         onMessage: (event) => {
-          console.log('Received message:', event.data);
           try {
             const data = JSON.parse(event.data);
             if (!Validation.isUserBroadcastUpdate(data)) {

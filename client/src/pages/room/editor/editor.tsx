@@ -61,6 +61,7 @@ export default function DocumentEditor({
   const [otherUsers, setOtherUsers] = useState<User[]>([]);
 
   useEffect(() => {
+    console.log('yjs rerenders');
     if (!activeDoc) {
       return () => {};
     }
@@ -84,7 +85,6 @@ export default function DocumentEditor({
     });
 
     websocketProvider.on('connection-close', (CloseEvent) => {
-      console.log('Connection closed:', CloseEvent);
       if (CloseEvent?.code === 1008) {
         websocketProvider.shouldConnect = false;
       }
@@ -112,6 +112,8 @@ export default function DocumentEditor({
     return () => {
       websocketProvider.disconnect();
       doc.destroy();
+      setYdoc(null);
+      setProvider(null);
     };
   }, [username, roomID, activeDoc, userColor, serverURL, sessionToken]);
 
@@ -179,6 +181,7 @@ export default function DocumentEditor({
           }}
         >
           <Toolbar editor={editor} />
+          <LinkBubbleMenu editor={editor} />
           <EditorContent
             editor={editor}
             className={cn(
@@ -194,7 +197,6 @@ export default function DocumentEditor({
               boxSizing: 'border-box',
             }}
           />
-          <LinkBubbleMenu editor={editor} />
         </MeasuredContainer>
       </div>
     </div>

@@ -41,14 +41,13 @@ export interface UseMinimalTiptapEditorProps extends UseEditorOptions {
   color: string,
 }
 
-const createExtensions = (
+export const createExtensions = (
   placeholder: string, 
   provider: WebsocketProvider | null, 
   ydoc: Y.Doc | null, 
   username: string, 
   color: string,
 ) => {
-  // Base extensions that don't depend on collaboration
   const baseExtensions = [
     StarterKit.configure({
       horizontalRule: false,
@@ -79,32 +78,21 @@ const createExtensions = (
     UnsetAllMarks,
     ResetMarksOnEnter,
     CodeBlockLowlight,
+    ...(ydoc
+      ? [
+          Collaboration.configure({
+            document: ydoc,
+          }),
+          CollaborationCursor.configure({
+            provider,
+            user: {
+              name: username,
+              color: color,
+            },
+          }),
+        ]
+      : []),
   ];
-  
-  // Only add collaboration extensions if both ydoc and provider are available
-  if (ydoc && provider) {
-    try {
-      const collaborationExtensions = [
-        Collaboration.configure({
-          document: ydoc,
-        }),
-        CollaborationCursor.configure({
-          provider: provider,
-          user: {
-            name: username,
-            color: color,
-          },
-        }),
-      ];
-      
-      return [...baseExtensions, ...collaborationExtensions];
-    } catch (err) {
-      console.error("Error configuring collaboration extensions:", err);
-      toast.error("Error setting up collaboration. Falling back to non-collaborative mode.");
-      // If collaboration setup fails, return base extensions only
-      return baseExtensions;
-    }
-  }
   
   return baseExtensions;
 };
@@ -165,5 +153,3 @@ export const useMinimalTiptapEditor = ({
 
   return editor
 }
-
-export default useMinimalTiptapEditor
