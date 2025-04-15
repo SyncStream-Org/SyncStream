@@ -39,10 +39,3 @@
   padding: 1rem;
   border-top: 1px solid #ddd;
 }
-
-/* Additional styles for the toolbar */
-.toolbar {
-  border-bottom: 1px solid #ddd;
-  padding: 0.5rem;
-  background-color: #f9f9f9;
-}

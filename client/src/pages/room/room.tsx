@@ -240,6 +240,7 @@ function RoomPage(props: Props) {
             props.navigate('/home');
           }}
           goToSettings={() => {
+            api.User.leaveRoomPresence();
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}

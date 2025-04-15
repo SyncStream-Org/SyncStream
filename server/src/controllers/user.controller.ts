@@ -30,6 +30,7 @@ export const authenticate = async (req: Request, res: Response) => {
     return;
   }
 
+  PresenceState.removeUserEntry(userData.username);
   const token = Auth.generateToken(userData.username);
   const response: Types.StringMessage = { msg: token };
   res.json(response);
