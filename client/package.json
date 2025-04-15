@@ -120,8 +120,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
-    "remove": "^0.1.5",
-    "socket.io": "^4.8.1",
     "syncstream-sharedlib": "file:../sharedLib",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
