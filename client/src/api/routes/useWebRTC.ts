@@ -151,7 +151,7 @@ export function useWebRTCAudio(roomID: string) {
       ? 'wss'
       : 'ws';
     const newSocket = new WebSocket(
-      `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${roomID}/voice/${channel}?token=${SessionState.getInstance().sessionToken}&userid=${SessionState.getInstance().currentUser.username}`,
+      `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${roomID}/voice/${newChannel}?token=${SessionState.getInstance().sessionToken}&userid=${SessionState.getInstance().currentUser.username}`,
     );
 
     // Handle events from server
@@ -238,7 +238,7 @@ export function useWebRTCAudio(roomID: string) {
       // Broadcast join so others can send offers
       newSocket.send(JSON.stringify({ type: 'join' }));
 
-      setChannel(channel);
+      setChannel(newChannel);
       setSocket(newSocket);
     };
   };

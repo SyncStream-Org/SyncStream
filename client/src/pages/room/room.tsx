@@ -13,6 +13,7 @@ import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 import { Button } from '@/components/ui/button';
+import { useWebRTCAudio } from '@/api/routes/useWebRTC';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -31,6 +32,10 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
+
+  // Get webRTC connections
+  if (room?.roomID === undefined) throw Error('Unreachable');
+  const webrtcAudio = useWebRTCAudio(room?.roomID);
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -147,10 +152,10 @@ function RoomPage(props: Props) {
               <RoomSettings
                 roomID={room?.roomID!}
                 setAudioInStream={(stream) => {
-                  setCurrentAudioInput(stream);
+                  webrtcAudio.setAudioInput(stream);
                 }}
                 setAudioOutStream={(stream) => {
-                  setCurrentAudioOutput(stream);
+                  webrtcAudio.setAudioOutput(stream);
                 }}
               />
             )}
@@ -159,10 +164,17 @@ function RoomPage(props: Props) {
       </SidebarProvider>
       <Button
         onClick={() => {
-          initiateAudioCall('test');
+          webrtcAudio.initiateAudioCall('test');
         }}
       >
         TEST CALL
+      </Button>
+      <Button
+        onClick={() => {
+          webrtcAudio.closeAudioCall();
+        }}
+      >
+        TEST CLOSE CALL
       </Button>
     </div>
   );

@@ -56,10 +56,6 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   //   return;
   // }
 
-  console.log(
-    `Client [${username}] in room [${callID.room}] has connected to voice channel [${callID.channel}]`,
-  );
-
   // Add to map
   const callID_str = JSON.stringify(callID);
   if (!calls.has(callID_str)) {
@@ -68,7 +64,7 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   const call = calls.get(callID_str);
   if (call === undefined) throw Error("Unreachable");
 
-  if (!call.has(username)) {
+  if (call.has(username)) {
     console.error(
       `Tried to connect with a user that already is in call. ${callID_str} / ${username}`,
     );
@@ -76,6 +72,10 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
     return;
   }
   call.set(username, ws);
+
+  console.log(
+    `Client [${username}] in room [${callID.room}] has connected to voice channel [${callID.channel}]`,
+  );
 
   ws.on("message", (message) => {
     try {
@@ -147,7 +147,7 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
 
   ws.on("close", () => {
     // Remove the client on disconnection
-    const index = call.delete(username);
+    call.delete(username);
     console.log(
       `Client [${username}] in room [${callID.room}] has disconnected from voice channel [${callID.channel}]`,
     );
