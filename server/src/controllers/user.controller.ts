@@ -49,7 +49,7 @@ export const getUserDetails = async (req: Request, res: Response) => {
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await userService.listAllUsers();
+  const users = await userService.listAllUsers(true);
 
   if (!users.length) {
     res.sendStatus(204);

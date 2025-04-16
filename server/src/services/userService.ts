@@ -172,8 +172,13 @@ class UserService {
     return await roomUser.save();
   }
 
-  public async listAllUsers(): Promise<User[]> {
-    return await User.findAll();
+  public async listAllUsers(noAdmin?: boolean): Promise<User[]> {
+    if (noAdmin === undefined) {
+      noAdmin = false;
+    }
+    return await User.findAll({
+      where: noAdmin ? { admin: false } : {}
+    });
   }
 }
 
