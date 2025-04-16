@@ -5,7 +5,11 @@ import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
 import { useRoomSSE } from '@/api/routes/useRoomSse';
 import { Button } from '@/components/ui/button';
-import { useWebRTCAudio } from '@/api/routes/useWebRTC';
+import {
+  closeAudioCall,
+  initiateAudioCall,
+  useWebRTCAudio,
+} from '@/api/routes/useWebRTCAudio';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -34,8 +38,7 @@ function RoomPage(props: Props) {
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
 
   // Get webRTC connections
-  if (room?.roomID === undefined) throw Error('Unreachable');
-  const webrtcAudio = useWebRTCAudio(room?.roomID);
+  useWebRTCAudio();
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -148,34 +151,29 @@ function RoomPage(props: Props) {
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && (
-              <RoomSettings
-                roomID={room?.roomID!}
-                setAudioInStream={(stream) => {
-                  webrtcAudio.setAudioInput(stream);
-                }}
-                setAudioOutStream={(stream) => {
-                  webrtcAudio.setAudioOutput(stream);
-                }}
-              />
-            )}
+            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
           </div>
         </SidebarInset>
       </SidebarProvider>
       <Button
         onClick={() => {
-          webrtcAudio.initiateAudioCall('test');
+          if (room?.roomID === undefined) throw Error('Unreachable');
+          initiateAudioCall(room?.roomID, 'test');
         }}
       >
         TEST CALL
       </Button>
       <Button
         onClick={() => {
-          webrtcAudio.closeAudioCall();
+          closeAudioCall();
         }}
       >
         TEST CLOSE CALL
       </Button>
+      <audio controls>
+        <source src="https://www.computerhope.com/jargon/m/example.mp3" />
+      </audio>
+      <audio id="remoteAudio" controls autoplay />
     </div>
   );
 }

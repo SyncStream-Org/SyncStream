@@ -13,12 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  addStreamToAudio,
+  getCurrentIO,
+  resetAudio,
+  setInID,
+  setOutID,
+} from '@/api/routes/useWebRTCAudio';
 import * as api from '../../../api';
 
 interface Props {
   roomID: string;
-  setAudioInStream: (stream: MediaStream) => void;
-  setAudioOutStream: (stream: MediaStream) => void;
 }
 
 interface State {
@@ -27,6 +32,8 @@ interface State {
   currentUserToModify: string;
   audioInput: MediaDeviceInfo[];
   audioOutput: MediaDeviceInfo[];
+  currentAudioInput: MediaStream;
+  currentAudioOutput: MediaStream;
 }
 
 // TODO: localize
@@ -40,6 +47,8 @@ export default class RoomSettings extends React.Component<Props, State> {
       currentUserToModify: '',
       audioInput: [],
       audioOutput: [],
+      currentAudioInput: new MediaStream(),
+      currentAudioOutput: new MediaStream(),
     };
 
     // Grab audio devices
@@ -49,6 +58,27 @@ export default class RoomSettings extends React.Component<Props, State> {
         audioOutput: res.filter((device) => device.kind === 'audiooutput'),
       });
     });
+
+    const io = getCurrentIO();
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          deviceId: io[0],
+        },
+      })
+      .then((stream) => {
+        this.setState({ currentAudioInput: stream });
+      });
+
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          deviceId: io[1],
+        },
+      })
+      .then((stream) => {
+        this.setState({ currentAudioOutput: stream });
+      });
 
     api.User.getAllUsers().then(async (res) => {
       if (
@@ -130,7 +160,11 @@ export default class RoomSettings extends React.Component<Props, State> {
           },
         })
         .then((stream) => {
-          this.props.setAudioInStream(stream);
+          this.setState({ currentAudioInput: stream });
+          resetAudio();
+          addStreamToAudio(stream);
+          setInID(stream.id);
+          addStreamToAudio(this.state.currentAudioOutput);
         });
     };
 
@@ -146,7 +180,11 @@ export default class RoomSettings extends React.Component<Props, State> {
           },
         })
         .then((stream) => {
-          this.props.setAudioOutStream(stream);
+          this.setState({ currentAudioOutput: stream });
+          resetAudio();
+          addStreamToAudio(stream);
+          setOutID(stream.id);
+          addStreamToAudio(this.state.currentAudioInput);
         });
     };
 

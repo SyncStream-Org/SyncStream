@@ -24,6 +24,7 @@ const broadcast = (message: any, callID: CallID, from: string, to?: string) => {
   if (to === undefined) {
     call.forEach((ws, username, map) => {
       if (username !== from) {
+        console.log(`Sent to ${username}`);
         ws.send(JSON.stringify(message));
       }
     });
@@ -68,12 +69,24 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   ws.on("message", (message) => {
     try {
       const data = JSON.parse(message.toString());
+      console.log(JSON.stringify(data));
 
       switch (data.type) {
         case "join": {
           broadcast(
             {
               type: "join",
+              username: username,
+            },
+            callID,
+            username,
+          );
+          break;
+        }
+        case "leave": {
+          broadcast(
+            {
+              type: "leave",
               username: username,
             },
             callID,
