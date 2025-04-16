@@ -9,7 +9,7 @@ const router = Router();
 
 router.post("/authenticate", ErrorCatcher(controller.authenticate));
 
-router.use(authMiddleware);
+router.use(ErrorCatcher(authMiddleware));
 
 router.get("/", ErrorCatcher(controller.getUserDetails));
 router.get("/all", ErrorCatcher(controller.getAllUsers));
