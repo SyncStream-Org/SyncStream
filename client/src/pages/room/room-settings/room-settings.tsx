@@ -14,11 +14,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  addStreamToAudio,
-  getCurrentIO,
-  resetAudio,
-  setInID,
-  setOutID,
+  getLocalInputDevice,
+  setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
 import * as api from '../../../api';
 
@@ -30,10 +27,8 @@ interface State {
   allUsers: string[];
   usersInRoom: string[];
   currentUserToModify: string;
-  audioInput: MediaDeviceInfo[];
-  audioOutput: MediaDeviceInfo[];
-  currentAudioInput: MediaStream;
-  currentAudioOutput: MediaStream;
+  audioInputList: MediaDeviceInfo[];
+  currentAudioInput: string | undefined;
 }
 
 // TODO: localize
@@ -45,40 +40,25 @@ export default class RoomSettings extends React.Component<Props, State> {
       allUsers: [],
       usersInRoom: [],
       currentUserToModify: '',
-      audioInput: [],
-      audioOutput: [],
-      currentAudioInput: new MediaStream(),
-      currentAudioOutput: new MediaStream(),
+      audioInputList: [],
+      currentAudioInput: undefined,
     };
 
-    // Grab audio devices
+    // Grab audio devices (and label of current audio device)
     navigator.mediaDevices.enumerateDevices().then((res) => {
+      // Get local device label
+      const localDevice = getLocalInputDevice();
+      let newLabel: string | undefined;
+
+      if (localDevice !== undefined) {
+        newLabel = localDevice.getTracks()[0].label;
+      }
+
       this.setState({
-        audioInput: res.filter((device) => device.kind === 'audioinput'),
-        audioOutput: res.filter((device) => device.kind === 'audiooutput'),
+        audioInputList: res.filter((device) => device.kind === 'audioinput'),
+        currentAudioInput: newLabel,
       });
     });
-
-    const io = getCurrentIO();
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          deviceId: io[0],
-        },
-      })
-      .then((stream) => {
-        this.setState({ currentAudioInput: stream });
-      });
-
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: {
-          deviceId: io[1],
-        },
-      })
-      .then((stream) => {
-        this.setState({ currentAudioOutput: stream });
-      });
 
     api.User.getAllUsers().then(async (res) => {
       if (
@@ -149,7 +129,7 @@ export default class RoomSettings extends React.Component<Props, State> {
     };
 
     const handleAudioInputSelect = (value: string) => {
-      const deviceInfo = this.state.audioInput.filter(
+      const deviceInfo = this.state.audioInputList.filter(
         (info) => info.label === value,
       )[0];
 
@@ -160,31 +140,8 @@ export default class RoomSettings extends React.Component<Props, State> {
           },
         })
         .then((stream) => {
-          this.setState({ currentAudioInput: stream });
-          resetAudio();
-          addStreamToAudio(stream);
-          setInID(stream.id);
-          addStreamToAudio(this.state.currentAudioOutput);
-        });
-    };
-
-    const handleAudioOutputSelect = (value: string) => {
-      const deviceInfo = this.state.audioOutput.filter(
-        (info) => info.label === value,
-      )[0];
-
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: {
-            deviceId: deviceInfo.deviceId,
-          },
-        })
-        .then((stream) => {
-          this.setState({ currentAudioOutput: stream });
-          resetAudio();
-          addStreamToAudio(stream);
-          setOutID(stream.id);
-          addStreamToAudio(this.state.currentAudioInput);
+          this.setState({ currentAudioInput: deviceInfo.label });
+          setLocalInputDevice(stream);
         });
     };
 
@@ -291,30 +248,25 @@ export default class RoomSettings extends React.Component<Props, State> {
         </div>
 
         <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
-          Audio Devices
+          Audio Input Device
         </h1>
         <Select onValueChange={handleAudioInputSelect}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Audio Input" />
+            <SelectValue
+              placeholder={
+                this.state.currentAudioInput === undefined
+                  ? 'Audio Input'
+                  : this.state.currentAudioInput
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Inputs</SelectLabel>
-              {this.state.audioInput.map((device) => (
-                <SelectItem value={device.label}>{device.label}</SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <Select onValueChange={handleAudioOutputSelect}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Audio Output" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Outputs</SelectLabel>
-              {this.state.audioOutput.map((device) => (
-                <SelectItem value={device.label}>{device.label}</SelectItem>
+              {this.state.audioInputList.map((device) => (
+                <SelectItem key={device.label} value={device.label}>
+                  {device.label}
+                </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>

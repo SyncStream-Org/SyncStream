@@ -1,16 +1,34 @@
 import { useState, useEffect, useCallback } from 'react';
 import SessionState from '@/utilities/session-state';
 
-let localInput = new MediaStream();
-let combinedOutput = new MediaStream();
+// Audio Streams
+let localInput: MediaStream | undefined;
+const combinedOutput = new MediaStream();
 
-let audioInID: string = '';
-let audioOutID: string = '';
-let channel: String | undefined;
+// Connection Variables
+let socket: WebSocket | undefined;
+let channel: string | undefined;
+let roomID: string | undefined;
 const peerConnections: Map<string, RTCPeerConnection> = new Map();
 const peerTracks: Map<string, MediaStreamTrack[]> = new Map();
-let socket: WebSocket | undefined;
 
+// If in a call (errors on impossible state)
+export function isInCall(): boolean {
+  if (socket !== undefined && channel !== undefined && roomID !== undefined) {
+    // In Call
+    return true;
+  }
+
+  if (socket === undefined && channel === undefined && roomID === undefined) {
+    // Not In Call
+    return false;
+  }
+
+  // Socket or channel is defined while the other isn't... HOW?>?!?>
+  throw Error('Impossible state reached in WebRTC Voice Call.');
+}
+
+// Waits for the socket connection to open
 const waitForOpenConnection = (ws: WebSocket): Promise<void> => {
   return new Promise((resolve, reject) => {
     const maxNumberOfAttempts = 10;
@@ -30,6 +48,7 @@ const waitForOpenConnection = (ws: WebSocket): Promise<void> => {
   });
 };
 
+// Waits for an answer from peer (for username to be in peerConnections)
 const waitForAnswer = (username: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     const maxNumberOfAttempts = 10;
@@ -49,14 +68,16 @@ const waitForAnswer = (username: string): Promise<boolean> => {
   });
 };
 
+// Create a peerConnection
 function createPeerConnection(username: string) {
-  console.log(socket);
-  if (socket === undefined) {
+  // Sanity check to make sure you are in a call
+  if (!isInCall()) {
     throw Error(
       'Tried to create a new peer connection when not connected to a call.',
     );
   }
 
+  // ICE servers for NAT problems (google free servers)
   const configuration = {
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
@@ -75,6 +96,13 @@ function createPeerConnection(username: string) {
 
   // Handle new candidate
   pc.onicecandidate = (e) => {
+    // Sanity check due to lingering connections
+    if (!isInCall()) {
+      console.error('ICE Candidate tried to send when not connected to call.');
+      return;
+    }
+
+    // Build message to propogate
     const message: {
       type: string;
       candidate: {
@@ -93,48 +121,49 @@ function createPeerConnection(username: string) {
       message.candidate.sdpMLineIndex = e.candidate.sdpMLineIndex;
     }
 
-    if (socket === undefined) {
-      console.error('ICE Candidate tried to send when not connected to call.');
-      return;
-    }
-    socket.send(JSON.stringify(message));
+    // Send to other peers
+    socket?.send(JSON.stringify(message));
   };
 
   // Setup output track handling
-  peerTracks.set(username, []);
+  peerTracks.set(username, []); // Make sure tracks can be placed in map
   pc.ontrack = (event) => {
     event.streams[0].getTracks().forEach((track) => {
+      // Place in combined output and in peerTracks
+      console.log(track);
       combinedOutput.addTrack(track);
       peerTracks.get(username)?.push(track);
     });
   };
 
-  // Add audio tracks to the peer connection
-  console.log(localInput);
+  // Add local audio input to the peer connection
+  if (localInput === undefined)
+    throw Error(
+      'Initiated a peer connection before a local audio input was set.',
+    );
+
   localInput.getTracks().forEach((track) => {
-    console.log(track);
-    pc.addTrack(track, localInput);
+    pc.addTrack(track, localInput as MediaStream);
   });
 
   return pc;
 }
 
 // Function for initiating an audio call
-export async function initiateAudioCall(roomID: string, newChannel: string) {
-  if (socket !== undefined) {
+export async function initiateAudioCall(newRoomID: string, newChannel: string) {
+  // Sanity checks
+  if (isInCall()) {
     throw Error("Can't get in new call, already in call.");
   }
 
-  console.log('Initiating Call');
-
-  // Initiate web socket for signaller
+  // Initiate web socket for signal server
   const webSocketPrefix = SessionState.getInstance().serverURL.includes('https')
     ? 'wss'
     : 'ws';
   const newSocket = new WebSocket(
     `${webSocketPrefix}://${
       SessionState.getInstance().serverURL.split('//')[1]
-    }/rooms/${roomID}/voice/${newChannel}?token=${
+    }/rooms/${newRoomID}/voice/${newChannel}?token=${
       SessionState.getInstance().sessionToken
     }&userid=${SessionState.getInstance().currentUser.username}`,
   );
@@ -144,8 +173,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
     const message = JSON.parse(event.data);
 
     if (message.type === 'join') {
-      console.log('JOIN');
-      // On join, send a offer to other
+      // On join, send a offer to the client that joined
       if (peerConnections.has(message.username)) {
         console.error(
           'Someone who already has a connection to you wants to make another.',
@@ -166,7 +194,6 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
 
       peerConnections.set(message.username, pc);
     } else if (message.type === 'leave') {
-      console.log('LEAVE');
       // Delete user peer connection and tracks from combined output
       peerConnections.delete(message.username);
       peerTracks.get(message.username)?.forEach((val) => {
@@ -174,7 +201,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
       });
       peerTracks.delete(message.username);
     } else if (message.type === 'offer') {
-      console.log('OFFER');
+      // On offer from other peer, create peer connection and send answer
       if (peerConnections.has(message.username)) {
         console.error(
           'Someone who already has a connection to you wants to make another.',
@@ -183,7 +210,6 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
       }
 
       const pc = createPeerConnection(message.username);
-      console.log(message);
       await pc.setRemoteDescription(message);
 
       const answer = await pc.createAnswer();
@@ -198,7 +224,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
 
       peerConnections.set(message.username, pc);
     } else if (message.type === 'answer') {
-      console.log('ANSWER');
+      // On answer from peer, handle description
       if (!peerConnections.has(message.username)) {
         console.error('Someone answered a non existent offer.');
         return;
@@ -208,11 +234,10 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
       if (pc === undefined) throw Error('Unreachable');
       await pc.setRemoteDescription(message);
     } else if (message.type === 'candidate') {
-      console.log(peerConnections, message);
-      console.log('CANDIDATE');
-
+      // Handle candidates from other peers
       const res = await waitForAnswer(message.username);
       if (!res) {
+        // Error on timeout
         console.error('Someone answered a non existent offer.');
         return;
       }
@@ -229,78 +254,97 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
   };
 
   newSocket.onclose = (e) => {
+    // If non stanard code, print reason
     if (![1000, 1005].includes(e.code)) {
-      console.error(e.reason);
+      console.error(`${e.code}: ${e.reason}`);
     }
 
+    if (e.code === 1008 && e.reason.includes('Media ID is invalid')) {
+      throw Error('Tried to join a call that does not exist.');
+    }
+
+    // Set socket and channel as undefined
     socket = undefined;
     channel = undefined;
+    roomID = undefined;
   };
 
+  // Wait for socket to open and send the join message
   try {
     await waitForOpenConnection(newSocket);
-  } catch (e) {
-    console.error(e);
+  } catch {
     return;
   }
   newSocket.send(JSON.stringify({ type: 'join' }));
-  console.log('Socket OPEN');
 
+  // Set socket and channel
   channel = newChannel;
+  roomID = newRoomID;
   socket = newSocket;
 }
 
+// Close and clean up an audio call
 export async function closeAudioCall() {
-  if (socket === undefined || channel === undefined) return;
-  console.log('Closing Call');
+  // Sanity check. If not in call, no need to run the rest, but not an error as this is called on unload
+  if (!isInCall()) return;
 
-  socket.send(JSON.stringify({ type: 'leave' }));
-  socket.close();
+  // Close and cleanup socket
+  socket?.send(JSON.stringify({ type: 'leave' }));
+  socket?.close();
+  socket = undefined;
+
+  // Clear peer connections and tracks
   peerConnections.clear();
   peerTracks.clear();
+
+  // Clear remote media streams
   combinedOutput.getAudioTracks().forEach((track) => {
     combinedOutput.removeTrack(track);
   });
+
+  // Set channel as undefined
+  channel = undefined;
+  roomID = undefined;
 }
 
-export function resetAudio() {
-  combinedOutput = new MediaStream();
+// Get current local input device
+export function getLocalInputDevice() {
+  return localInput;
 }
 
-export function addStreamToAudio(stream: MediaStream) {
-  stream.getTracks().forEach((val) => combinedOutput.addTrack(val));
-}
+// Set local input device from somehwere else (reset call if needed)
+export function setLocalInputDevice(stream: MediaStream) {
+  // Set new input
+  localInput = stream;
 
-export function setInID(id: string) {
-  audioInID = id;
-}
-
-export function setOutID(id: string) {
-  audioOutID = id;
-}
-
-export function getCurrentIO() {
-  return [audioInID, audioOutID];
+  // If in call, reset
+  if (isInCall()) {
+    const channelCache = channel as string;
+    const roomCache = roomID as string;
+    closeAudioCall();
+    initiateAudioCall(roomCache, channelCache);
+  }
 }
 
 // Build and contain the WebRTC instance for Audio
 export function useWebRTCAudio() {
   // Initialize audio devices
   useEffect(() => {
-    // Grab local microphone
-    navigator.mediaDevices
-      .getUserMedia({ audio: true, video: false })
-      .then((stream) => {
-        localInput = stream;
-      });
+    // Grab default local microphone (if not set yet)
+    if (localInput === undefined) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: false })
+        .then((stream) => {
+          localInput = stream;
+        });
+    }
 
     // Link remote output to audio elemnt
-    document.getElementById('remoteAudio').srcObject = combinedOutput;
+    document.getElementById('remoteAudioPlayer').srcObject = combinedOutput;
 
     // Call on unload to close any call that exists
     return () => {
       closeAudioCall();
-      combinedOutput = new MediaStream();
     };
   }, []);
 }
