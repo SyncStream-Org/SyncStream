@@ -110,10 +110,10 @@ function createPeerConnection(username: string) {
   };
 
   // Add audio tracks to the peer connection
-  console.log(combinedOutput);
-  combinedOutput.getTracks().forEach((track) => {
+  console.log(localInput);
+  localInput.getTracks().forEach((track) => {
     console.log(track);
-    pc.addTrack(track, combinedOutput);
+    pc.addTrack(track, localInput);
   });
 
   return pc;
@@ -221,7 +221,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
       if (pc === undefined) throw Error('Unreachable');
 
       if (!message.candidate.candidate) {
-        await pc.addIceCandidate(null);
+        await pc.addIceCandidate(undefined);
       } else {
         await pc.addIceCandidate(message.candidate);
       }
@@ -257,6 +257,10 @@ export async function closeAudioCall() {
   socket.send(JSON.stringify({ type: 'leave' }));
   socket.close();
   peerConnections.clear();
+  peerTracks.clear();
+  combinedOutput.getAudioTracks().forEach((track) => {
+    combinedOutput.removeTrack(track);
+  });
 }
 
 export function resetAudio() {

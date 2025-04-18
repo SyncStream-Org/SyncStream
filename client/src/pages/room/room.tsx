@@ -173,7 +173,7 @@ function RoomPage(props: Props) {
       <audio controls>
         <source src="https://www.computerhope.com/jargon/m/example.mp3" />
       </audio>
-      <audio id="remoteAudio" controls autoplay />
+      <audio id="remoteAudio" controls autoPlay />
     </div>
   );
 }
