@@ -1,11 +1,14 @@
-import SessionState from '@/utilities/session-state';
 import { useState, useEffect, useCallback } from 'react';
+import SessionState from '@/utilities/session-state';
 
+let localInput = new MediaStream();
 let combinedOutput = new MediaStream();
+
 let audioInID: string = '';
 let audioOutID: string = '';
 let channel: String | undefined;
 const peerConnections: Map<string, RTCPeerConnection> = new Map();
+const peerTracks: Map<string, MediaStreamTrack[]> = new Map();
 let socket: WebSocket | undefined;
 
 const waitForOpenConnection = (ws: WebSocket): Promise<void> => {
@@ -46,7 +49,7 @@ const waitForAnswer = (username: string): Promise<boolean> => {
   });
 };
 
-function createPeerConnection() {
+function createPeerConnection(username: string) {
   console.log(socket);
   if (socket === undefined) {
     throw Error(
@@ -97,15 +100,20 @@ function createPeerConnection() {
     socket.send(JSON.stringify(message));
   };
 
+  // Setup output track handling
+  peerTracks.set(username, []);
   pc.ontrack = (event) => {
-    document.getElementById('remoteAudio').srcObject = event.streams[0];
+    event.streams[0].getTracks().forEach((track) => {
+      combinedOutput.addTrack(track);
+      peerTracks.get(username)?.push(track);
+    });
   };
 
   // Add audio tracks to the peer connection
   console.log(combinedOutput);
   combinedOutput.getTracks().forEach((track) => {
     console.log(track);
-    pc.addTrack(track);
+    pc.addTrack(track, combinedOutput);
   });
 
   return pc;
@@ -124,7 +132,11 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
     ? 'wss'
     : 'ws';
   const newSocket = new WebSocket(
-    `${webSocketPrefix}://${SessionState.getInstance().serverURL.split('//')[1]}/rooms/${roomID}/voice/${newChannel}?token=${SessionState.getInstance().sessionToken}&userid=${SessionState.getInstance().currentUser.username}`,
+    `${webSocketPrefix}://${
+      SessionState.getInstance().serverURL.split('//')[1]
+    }/rooms/${roomID}/voice/${newChannel}?token=${
+      SessionState.getInstance().sessionToken
+    }&userid=${SessionState.getInstance().currentUser.username}`,
   );
 
   // Handle events from server
@@ -141,7 +153,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
         return;
       }
 
-      const pc = createPeerConnection();
+      const pc = createPeerConnection(message.username);
       const offer = await pc.createOffer();
       newSocket.send(
         JSON.stringify({
@@ -155,7 +167,12 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
       peerConnections.set(message.username, pc);
     } else if (message.type === 'leave') {
       console.log('LEAVE');
+      // Delete user peer connection and tracks from combined output
       peerConnections.delete(message.username);
+      peerTracks.get(message.username)?.forEach((val) => {
+        combinedOutput.removeTrack(val);
+      });
+      peerTracks.delete(message.username);
     } else if (message.type === 'offer') {
       console.log('OFFER');
       if (peerConnections.has(message.username)) {
@@ -165,7 +182,7 @@ export async function initiateAudioCall(roomID: string, newChannel: string) {
         return;
       }
 
-      const pc = createPeerConnection();
+      const pc = createPeerConnection(message.username);
       console.log(message);
       await pc.setRemoteDescription(message);
 
@@ -266,47 +283,20 @@ export function getCurrentIO() {
 export function useWebRTCAudio() {
   // Initialize audio devices
   useEffect(() => {
-    // Grab initial audio devices
-    //   async function init() {
-    //     combinedOutput = await navigator.mediaDevices.getUserMedia({
-    //       audio: true,
-    //       video: false,
-    //     });
-    //   }
+    // Grab local microphone
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: false })
+      .then((stream) => {
+        localInput = stream;
+      });
 
-    //   init();
-    navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const inputs = devices.filter((device) => device.kind === 'audioinput');
-      const outputs = devices.filter((device) => device.kind === 'audiooutput');
-
-      audioInID = inputs[0].deviceId;
-      audioOutID = inputs[0].deviceId;
-      console.log(inputs[0], outputs[0]);
-      combinedOutput = new MediaStream();
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: {
-            deviceId: inputs[0].deviceId,
-          },
-        })
-        .then((stream) => {
-          stream.getTracks().forEach((val) => combinedOutput.addTrack(val));
-        });
-
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: {
-            deviceId: outputs[0].deviceId,
-          },
-        })
-        .then((stream) => {
-          stream.getTracks().forEach((val) => combinedOutput.addTrack(val));
-        });
-    });
+    // Link remote output to audio elemnt
+    document.getElementById('remoteAudio').srcObject = combinedOutput;
 
     // Call on unload to close any call that exists
     return () => {
       closeAudioCall();
+      combinedOutput = new MediaStream();
     };
   }, []);
 }
