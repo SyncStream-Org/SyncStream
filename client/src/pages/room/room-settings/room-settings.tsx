@@ -18,6 +18,7 @@ import {
   setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
 import * as api from '../../../api';
+import SessionState from '@/utilities/session-state';
 
 interface Props {
   roomID: string;
@@ -143,6 +144,9 @@ export default class RoomSettings extends React.Component<Props, State> {
           this.setState({ currentAudioInput: deviceInfo.label });
           setLocalInputDevice(stream);
         });
+
+      // Save the selection in cache
+      SessionState.getInstance().audioDeviceID = deviceInfo.deviceId;
     };
 
     const handleInvite = () => {

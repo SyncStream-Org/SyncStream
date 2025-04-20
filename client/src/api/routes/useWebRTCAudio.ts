@@ -302,7 +302,15 @@ export async function closeAudioCall() {
     combinedOutput.removeTrack(track);
   });
 
+  // Stop local tracks
+  localInput?.getTracks().forEach((track) => {
+    if (track.readyState === 'live') {
+      track.stop();
+    }
+  });
+
   // Set channel as undefined
+  localInput = undefined;
   channel = undefined;
   roomID = undefined;
 }
@@ -331,7 +339,18 @@ export function useWebRTCAudio() {
   // Initialize audio devices
   useEffect(() => {
     // Grab default local microphone (if not set yet)
-    if (localInput === undefined) {
+    const audioID = SessionState.getInstance().audioDeviceID;
+    if (audioID) {
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: audioID,
+          },
+        })
+        .then((stream) => {
+          localInput = stream;
+        });
+    } else {
       navigator.mediaDevices
         .getUserMedia({ audio: true, video: false })
         .then((stream) => {
