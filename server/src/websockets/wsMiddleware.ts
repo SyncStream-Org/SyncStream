@@ -54,29 +54,17 @@ export async function wsPresence(
   }
 
   const roomID = req.params.roomID;
-  let roomMediaList;
-  try {
-    roomMediaList = await mediaService.listAllMediaForRoom(roomID);
-  } catch {
-    ws.close(1008, `Room ID is invalid ${roomID}`);
-    return;
-  }
+  const mediaID = req.params.docID || req.params.channel;
 
-  const filtered = roomMediaList.filter((val) => val.mediaType === mediaType);
-  if (mediaType === "doc") {
-    const mediaID = req.params.docID;
-    if (!filtered.map((val) => val.mediaID).includes(mediaID)) {
-      ws.close(1008, `Media ID is invalid ${mediaID}`);
-      return;
+  try {
+    const mediaObject = await mediaService.getMediaByID(roomID, mediaID);
+    if (mediaObject === null || mediaObject.mediaType !== mediaType) {
+      ws.close(1008, 'Media not found');
+      return
     }
-  } else if (mediaType === "voice" || mediaType === "stream") {
-    const mediaID = req.params.channel;
-    if (!filtered.map((val) => val.mediaName).includes(mediaID)) {
-      ws.close(1008, `Media ID is invalid ${mediaID}`);
-      return;
-    }
-  } else {
-    throw Error("Unreachable");
+  } catch {
+    ws.close(1008, 'Invalid room/media ID');
+    return;
   }
 
   PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);

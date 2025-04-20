@@ -9,8 +9,8 @@ class MediaService {
     return media;
   }
 
-  public async getMediaByID(mediaID: string): Promise<RoomMedia | null> {
-    const media = await RoomMedia.findOne({ where: { mediaID:mediaID } });
+  public async getMediaByID(roomID: string, mediaID: string): Promise<RoomMedia | null> {
+    const media = await RoomMedia.findOne({ where: { roomID: roomID, mediaID: mediaID } });
     return media;
   }
 

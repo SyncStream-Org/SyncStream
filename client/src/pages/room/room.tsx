@@ -171,10 +171,7 @@ function RoomPage(props: Props) {
       >
         TEST CLOSE CALL
       </Button>
-      <audio controls>
-        <source src="https://www.computerhope.com/jargon/m/example.mp3" />
-      </audio>
-      <audio id="remoteAudio" controls autoPlay />
+      <audio id="remoteAudioPlayer" autoPlay />
     </div>
   );
 }
