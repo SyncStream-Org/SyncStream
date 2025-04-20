@@ -158,7 +158,8 @@ function RoomPage(props: Props) {
       <Button
         onClick={() => {
           if (room?.roomID === undefined) throw Error('Unreachable');
-          initiateAudioCall(room?.roomID, 'test');
+          if (activeVoice === null) return;
+          initiateAudioCall(room?.roomID, activeVoice.mediaID!);
         }}
       >
         TEST CALL
