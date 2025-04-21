@@ -8,6 +8,8 @@ import {
   printUnexpectedError,
 } from '../utilities';
 import { SuccessState } from '../types';
+import pkg from '../../../package.json';
+const version = pkg.version;
 
 export function echo(): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders(false);
@@ -30,10 +32,19 @@ export function echo(): Promise<SuccessState> {
         const body = await res.json();
         if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
-        const response = body as Types.StringMessage;
-        return response.msg === uuid.msg
-          ? SuccessState.SUCCESS
-          : SuccessState.FAIL;
+        const response = (body as Types.StringMessage).msg.split("+");
+        const resUUID = response[0];
+        const serverVersion = response[1].split('.');
+        if (resUUID !== uuid.msg) {
+          return SuccessState.ERROR;
+        }
+
+        const clientVersion = version.toString().split('.');
+        if (serverVersion[0] !== clientVersion[0] || serverVersion[1] < clientVersion[1]) {
+          return SuccessState.FAIL; // show client incompatible versions
+        } 
+
+        return SuccessState.SUCCESS;
       }
 
       printUnexpectedError('echo API Call Failed', res);
