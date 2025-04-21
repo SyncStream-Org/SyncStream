@@ -4,7 +4,6 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
 import { useRoomSSE } from '@/api/routes/useRoomSse';
-import { Button } from '@/components/ui/button';
 import {
   closeAudioCall,
   initiateAudioCall,
@@ -18,6 +17,7 @@ import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
+import VoiceChannelCard from './voiceChannelCard';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -38,7 +38,7 @@ function RoomPage(props: Props) {
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
 
   // Get webRTC connections
-  useWebRTCAudio();
+  const userAudioData = useWebRTCAudio();
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -94,6 +94,14 @@ function RoomPage(props: Props) {
     handleRoomFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room]);
+
+  useEffect(() => {
+    if (activeVoice) {
+      initiateAudioCall(room?.roomID!, activeVoice.mediaID!);
+    } else {
+      closeAudioCall();
+    }
+  }, [activeVoice]);
 
   return (
     <div className="flex h-screen">
@@ -154,24 +162,18 @@ function RoomPage(props: Props) {
             {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
           </div>
         </SidebarInset>
+        <VoiceChannelCard 
+          callActive={!!activeVoice}
+          channelName={activeVoice?.mediaName!}
+          users={userAudioData}
+          onMuteToggle={() => {}}
+          onLeaveCall={() => {
+            closeAudioCall();
+            setActiveVoice(null);
+          }}
+        />
       </SidebarProvider>
-      <Button
-        onClick={() => {
-          if (room?.roomID === undefined) throw Error('Unreachable');
-          if (activeVoice === null) return;
-          initiateAudioCall(room?.roomID, activeVoice.mediaID!);
-        }}
-      >
-        TEST CALL
-      </Button>
-      <Button
-        onClick={() => {
-          closeAudioCall();
-        }}
-      >
-        TEST CLOSE CALL
-      </Button>
-      <audio id="remoteAudioPlayer" autoPlay />
+      <audio id="remoteAudioPlayer" autoPlay hidden />
     </div>
   );
 }

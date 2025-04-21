@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import hark from 'hark';
 import SessionState from '@/utilities/session-state';
 
 // Audio Streams
@@ -11,6 +12,7 @@ let channel: string | undefined;
 let roomID: string | undefined;
 const peerConnections: Map<string, RTCPeerConnection> = new Map();
 const peerTracks: Map<string, MediaStreamTrack[]> = new Map();
+const channelMetadata: Map<string, boolean> = new Map();
 
 // If in a call (errors on impossible state)
 export function isInCall(): boolean {
@@ -68,6 +70,22 @@ const waitForAnswer = (username: string): Promise<boolean> => {
   });
 };
 
+function trackAudioLevels(username: string, stream: MediaStream) {
+  const userStream = hark(stream);
+
+  userStream.on('speaking', () => {
+    if (channelMetadata.has(username)) {
+      channelMetadata.set(username, true);
+    }
+  });
+
+  userStream.on('stopped_speaking', () => {
+    if (channelMetadata.has(username)) {
+      channelMetadata.set(username, false);
+    }
+  });
+}
+
 // Create a peerConnection
 function createPeerConnection(username: string) {
   // Sanity check to make sure you are in a call
@@ -76,7 +94,11 @@ function createPeerConnection(username: string) {
       'Tried to create a new peer connection when not connected to a call.',
     );
   }
-
+  // track the current user's audio level
+  trackAudioLevels(
+    SessionState.getInstance().currentUser.username,
+    localInput!,
+  );
   // ICE servers for NAT problems (google free servers)
   const configuration = {
     iceServers: [
@@ -128,6 +150,8 @@ function createPeerConnection(username: string) {
   // Setup output track handling
   peerTracks.set(username, []); // Make sure tracks can be placed in map
   pc.ontrack = (event) => {
+    channelMetadata.set(username, false);
+    trackAudioLevels(username, event.streams[0]);
     event.streams[0].getTracks().forEach((track) => {
       // Place in combined output and in peerTracks
       console.log(track);
@@ -168,6 +192,8 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
     }&userid=${SessionState.getInstance().currentUser.username}`,
   );
 
+  channelMetadata.set(SessionState.getInstance().currentUser.username, false);
+
   // Handle events from server
   newSocket.onmessage = async (event) => {
     const message = JSON.parse(event.data);
@@ -200,6 +226,7 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         combinedOutput.removeTrack(val);
       });
       peerTracks.delete(message.username);
+      channelMetadata.delete(message.username);
     } else if (message.type === 'offer') {
       // On offer from other peer, create peer connection and send answer
       if (peerConnections.has(message.username)) {
@@ -221,7 +248,6 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         }),
       );
       await pc.setLocalDescription(answer);
-
       peerConnections.set(message.username, pc);
     } else if (message.type === 'answer') {
       // On answer from peer, handle description
@@ -296,9 +322,11 @@ export async function closeAudioCall() {
   // Clear peer connections and tracks
   peerConnections.clear();
   peerTracks.clear();
+  channelMetadata.clear();
 
   // Clear remote media streams
   combinedOutput.getAudioTracks().forEach((track) => {
+    track.stop();
     combinedOutput.removeTrack(track);
   });
 
@@ -336,6 +364,10 @@ export function setLocalInputDevice(stream: MediaStream) {
 
 // Build and contain the WebRTC instance for Audio
 export function useWebRTCAudio() {
+  const [audioData, setAudioData] = useState<
+    Array<{ name: string; isTalking: boolean }>
+  >([]);
+
   // Initialize audio devices
   useEffect(() => {
     // Grab default local microphone (if not set yet)
@@ -358,12 +390,24 @@ export function useWebRTCAudio() {
         });
     }
 
+    const pollAudio = setInterval(() => {
+      const dataArray = Array.from(channelMetadata.entries()).map(
+        ([key, val]) => {
+          return { name: key, isTalking: val };
+        },
+      );
+      setAudioData(dataArray);
+    }, 100);
     // Link remote output to audio elemnt
-    document.getElementById('remoteAudioPlayer').srcObject = combinedOutput;
-
+    if (document.getElementById('remoteAudioPlayer') !== null) {
+      document!.getElementById('remoteAudioPlayer')!.srcObject = combinedOutput;
+    }
     // Call on unload to close any call that exists
     return () => {
       closeAudioCall();
+      clearInterval(pollAudio);
     };
   }, []);
+
+  return audioData;
 }
