@@ -8,6 +8,7 @@ import {
   closeAudioCall,
   initiateAudioCall,
   useWebRTCAudio,
+  toggleMute,
 } from '@/api/routes/useWebRTCAudio';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
@@ -166,7 +167,7 @@ function RoomPage(props: Props) {
           callActive={!!activeVoice}
           channelName={activeVoice?.mediaName!}
           users={userAudioData}
-          onMuteToggle={() => {}}
+          onMuteToggle={toggleMute}
           onLeaveCall={() => {
             closeAudioCall();
             setActiveVoice(null);

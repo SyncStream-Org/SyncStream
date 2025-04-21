@@ -343,6 +343,15 @@ export async function closeAudioCall() {
   roomID = undefined;
 }
 
+export function toggleMute() {
+  if (localInput === undefined) return;
+  localInput.getTracks().forEach((track) => {
+    if (track.kind === 'audio') {
+      track.enabled = !track.enabled;
+    }
+  });
+}
+
 // Get current local input device
 export function getLocalInputDevice() {
   return localInput;
