@@ -87,66 +87,66 @@ function RoomPage(props: Props) {
   }, []);
 
   return (
-      <div className="flex h-screen">
-        {/* Sidebar */}
-        <SidebarProvider>
-          <AppSidebar
-            room={room!}
-            username={SessionState.getInstance().currentUser.username}
-            media={media}
+    <div className="flex h-screen">
+      {/* Sidebar */}
+      <SidebarProvider>
+        <AppSidebar
+          room={room!}
+          username={SessionState.getInstance().currentUser.username}
+          media={media}
+          activeDoc={activeDoc}
+          setActiveDoc={setActiveDoc}
+          activeStream={activeStream}
+          setActiveStream={setActiveStream}
+          activeVoice={activeVoice}
+          setActiveVoice={setActiveVoice}
+          goToHome={() => {
+            api.User.leaveRoomPresence();
+            props.navigate('/home');
+          }}
+          goToSettings={() => {
+            api.User.leaveRoomPresence();
+            props.navigate('/settings');
+          }}
+          setRoomHome={handleHomeClick}
+          setRoomSettings={handleSettingsClick}
+        />
+        {/* Main Content */}
+        {/* Text Editor */}
+        <SidebarInset>
+          <RoomHeader
+            roomHome={activeDoc === null && activeStream === null}
             activeDoc={activeDoc}
-            setActiveDoc={setActiveDoc}
             activeStream={activeStream}
-            setActiveStream={setActiveStream}
-            activeVoice={activeVoice}
-            setActiveVoice={setActiveVoice}
-            goToHome={() => {
-              api.User.leaveRoomPresence();
-              props.navigate('/home');
-            }}
-            goToSettings={() => {
-              api.User.leaveRoomPresence();
-              props.navigate('/settings');
-            }}
-            setRoomHome={handleHomeClick}
-            setRoomSettings={handleSettingsClick}
           />
-          {/* Main Content */}
-          {/* Text Editor */}
-          <SidebarInset>
-            <RoomHeader
-              roomHome={activeDoc === null && activeStream === null}
-              activeDoc={activeDoc}
-              activeStream={activeStream}
-            />
-            <Separator />
-            <div className="flex flex-1 flex-col pt-0 overflow-hidden">
-              {activeDoc !== null && settingsOpen !== true && (
-                <DocEditor
-                  activeDoc={activeDoc}
-                  username={SessionState.getInstance().currentUser.username}
-                  sessionToken={SessionState.getInstance().sessionToken}
+          <Separator />
+          <div className="flex flex-1 flex-col pt-0 overflow-hidden">
+            {activeDoc !== null && settingsOpen !== true && (
+              <DocEditor
+                activeDoc={activeDoc}
+                username={SessionState.getInstance().currentUser.username}
+                sessionToken={SessionState.getInstance().sessionToken}
+                roomID={room?.roomID!}
+                serverURL={SessionState.getInstance().serverURL}
+              />
+            )}
+            {activeDoc === null &&
+              activeStream === null &&
+              settingsOpen === false && (
+                <RoomHome
+                  media={media}
                   roomID={room?.roomID!}
-                  serverURL={SessionState.getInstance().serverURL}
+                  refresh={handleRoomFetch}
+                  setActiveDoc={setActiveDoc}
+                  setActiveStream={setActiveStream}
+                  setActiveVoice={setActiveVoice}
                 />
               )}
-              {activeDoc === null &&
-                activeStream === null &&
-                settingsOpen === false && (
-                  <RoomHome
-                    media={media}
-                    roomID={room?.roomID!}
-                    refresh={handleRoomFetch}
-                    setActiveDoc={setActiveDoc}
-                    setActiveStream={setActiveStream}
-                    setActiveVoice={setActiveVoice}
-                  />
-                )}
-              {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
-      </div>
+            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }
 

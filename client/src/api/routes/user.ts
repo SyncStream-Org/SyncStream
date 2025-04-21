@@ -429,17 +429,16 @@ export function leaveRoomPresence(): Promise<SuccessState> {
   return fetch(request)
     .then(async (res) => {
       if (res.ok) return SuccessState.SUCCESS;
-      
+
       if (res.status === 404) {
-        console.error('Leaving room presence failed: User was not in any room.');
+        console.error(
+          'Leaving room presence failed: User was not in any room.',
+        );
         return SuccessState.FAIL;
       }
 
       // Handle cases where user is not in any room
-      printUnexpectedError(
-        'user/rooms/presence DELETE API Call Failed',
-        res,
-      );
+      printUnexpectedError('user/rooms/presence DELETE API Call Failed', res);
       return SuccessState.ERROR;
     })
     .catch((error) => {
