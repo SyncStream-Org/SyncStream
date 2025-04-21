@@ -26,8 +26,7 @@ export function RoomHome({
 
   const filteredMedia = media.filter((item) => {
     const matchesType =
-      mediaTypeFilter.length === 0 ||
-      mediaTypeFilter.includes(item.mediaType);
+      mediaTypeFilter.length === 0 || mediaTypeFilter.includes(item.mediaType);
 
     const matchesSearch = item.mediaName
       .toLowerCase()

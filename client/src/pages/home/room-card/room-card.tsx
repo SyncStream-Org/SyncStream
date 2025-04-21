@@ -31,8 +31,7 @@ export default class RoomCard extends React.Component<Props, State> {
     const handleJoinRoom = (event: React.SyntheticEvent) => {
       if (
         !this.props.isInvite ||
-        (this.props.isInvite &&
-          SessionState.getInstance().currentUser.admin)
+        (this.props.isInvite && SessionState.getInstance().currentUser.admin)
       ) {
         api.User.joinRoomPresence(this.props.roomData.roomID!).then(
           (success: api.SuccessState) => {
