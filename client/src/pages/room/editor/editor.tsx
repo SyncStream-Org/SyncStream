@@ -66,7 +66,9 @@ export default function DocumentEditor({
       return () => {};
     }
     const webSocketPrefix = serverURL.includes('https') ? 'wss' : 'ws';
-    const wsURL = `${webSocketPrefix}://${serverURL.split('//')[1]}/rooms/${roomID}/doc`;
+    const wsURL = `${webSocketPrefix}://${
+      serverURL.split('//')[1]
+    }/rooms/${roomID}/doc`;
 
     const doc = new Y.Doc();
     setYdoc(doc);

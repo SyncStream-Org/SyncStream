@@ -117,5 +117,3 @@ export function VoiceChannelCard({
     </Card>
   ) : null;
 }
-
-export default VoiceChannelCard;

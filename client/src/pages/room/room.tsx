@@ -16,9 +16,9 @@ import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
+import { VoiceChannelCard } from './voiceChannelCard';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
-import VoiceChannelCard from './voiceChannelCard';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -102,7 +102,7 @@ function RoomPage(props: Props) {
     } else {
       closeAudioCall();
     }
-  }, [activeVoice]);
+  }, [activeVoice, room?.roomID]);
 
   return (
     <div className="flex h-screen">
@@ -163,7 +163,7 @@ function RoomPage(props: Props) {
             {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
           </div>
         </SidebarInset>
-        <VoiceChannelCard 
+        <VoiceChannelCard
           callActive={!!activeVoice}
           channelName={activeVoice?.mediaName!}
           users={userAudioData}

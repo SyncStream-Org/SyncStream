@@ -1,7 +1,7 @@
 import './room-settings.css';
 import React from 'react';
-import Localize from '@/utilities/localize';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import PrimaryInput from '@/components/inputs/primary-input';
 import PrimaryButton from '@/components/buttons/primary-button';
 import {
@@ -17,8 +17,8 @@ import {
   getLocalInputDevice,
   setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
-import * as api from '../../../api';
 import SessionState from '@/utilities/session-state';
+import * as api from '../../../api';
 
 interface Props {
   roomID: string;

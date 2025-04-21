@@ -54,7 +54,11 @@ class Settings extends React.Component<Props, State> {
             {this.state.categories.map((category) => (
               <div
                 key={category}
-                className={`p-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer ${this.state.activeCategory === category ? 'bg-gray-200 dark:bg-gray-700' : ''}`}
+                className={`p-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer ${
+                  this.state.activeCategory === category
+                    ? 'bg-gray-200 dark:bg-gray-700'
+                    : ''
+                }`}
                 onClick={() => {
                   this.setState({ activeCategory: category });
                 }}
