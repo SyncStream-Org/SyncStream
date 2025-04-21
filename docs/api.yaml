@@ -1,0 +1,730 @@
+openapi: 3.0.3
+info:
+  title: SyncStream API
+  description: API documentation for the SyncStream backend.
+servers:
+  - url: https://api.syncstream.example.com
+paths:
+  /api:
+    get:
+      summary: Get OpenAPI Specification
+      description: Returns the OpenAPI YAML specification file.
+      responses:
+        '200':
+          description: OpenAPI spec returned successfully
+          content:
+            text/yaml:
+              schema:
+                type: string
+                
+  /admin/user/:
+    put:
+      summary: Create user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserData'
+      responses:
+        '200':
+          description: User created with auto-generated password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StringMessage'
+        '400': { description: Malformed body }
+        '403': { description: Insufficient permissions }
+        '409': { description: Conflict }
+
+  /admin/user/{user}:
+    delete:
+      summary: Delete user (admin only)
+      parameters:
+        - in: path
+          name: user
+          required: true
+          schema:
+            type: string
+      responses:
+        '403': { description: Insufficient permissions }
+        '404': { description: User not found }
+
+  /admin/rooms/:
+    get:
+      summary: Get all rooms (admin only)
+      responses:
+        '200':
+          description: Rooms returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomData'
+        '204': { description: No content }
+        '403': { description: Insufficient permissions }
+
+  /admin/users/:
+    get:
+      summary: Get all users (admin only)
+      responses:
+        '200':
+          description: Users returned
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserData'
+        '204': { description: No content }
+        '403': { description: Insufficient permissions }
+
+  /user/authenticate:
+    post:
+      summary: Authenticate user login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserData'
+      responses:
+        '200':
+          description: Session token returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StringMessage'
+        '400': { description: Bad request format }
+        '401': { description: Unauthorized credentials or user not found }
+
+  /user/:
+    get:
+      summary: Get current user data
+      responses:
+        '200':
+          description: Successful user fetch
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserData'
+        '400':
+          description: Bad request format
+
+  /user/all:
+    get:
+      summary: Get all usernames
+      responses:
+        '200':
+          description: List of usernames
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '204':
+          description: No content
+        '400':
+          description: Bad request format
+
+  /user/update:
+    put:
+      summary: Update display name or password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateData'
+      responses:
+        '200':
+          description: Update successful
+        '400':
+          description: Bad request format
+
+  /user/rooms:
+    get:
+      summary: Get all rooms or stream updates
+      parameters:
+        - name: stream
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: If true, returns an SSE stream
+      responses:
+        '200':
+          description: Room list or SSE stream
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomData'
+            text/event-stream:
+              schema:
+                type: string
+        '204':
+          description: No content
+
+  /user/rooms/{roomID}/:
+    get:
+      summary: Get user-specific room data
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User room data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRoomData'
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    delete:
+      summary: Leave room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Room left
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /user/rooms/{roomID}/invitation:
+    put:
+      summary: Accept room invite
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation accepted
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    delete:
+      summary: Decline room invite
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Invitation declined
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /user/rooms/{roomID}/presence:
+    put:
+      summary: Add user to room presence, used for websockets
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User added to presence
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+        '409':
+          description: User already in presence
+
+  /user/rooms/presence:
+    delete:
+      summary: Remove user from presence map
+      responses:
+        '200':
+          description: User removed from presence
+        '404':
+          description: User presence not found
+
+  /rooms/:
+    put:
+      summary: Create a room
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StringMessage'
+      responses:
+        '200':
+          description: Room created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomData'
+        '400':
+          description: Bad request
+        '409':
+          description: Conflict
+
+  /rooms/{roomID}:
+    put:
+      summary: Update room name or ownership
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomUpdateData'
+      responses:
+        '200':
+          description: Room updated
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    delete:
+      summary: Delete a room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Room deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /rooms/{roomID}/users/:
+    get:
+      summary: List all users in a room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomsUserData'
+        '400':
+          description: Bad Request
+        '404':
+          description: Room or User not found
+    put:
+      summary: Invite user to room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteData'
+      responses:
+        '200':
+          description: User invited
+        '400':
+          description: Bad request
+        '409':
+          description: Conflict
+
+  /rooms/{roomID}/users/{username}:
+    delete:
+      summary: Remove user from room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User removed
+        '403':
+          description: Forbidden
+        '404':
+          description: Room or user not found
+    put:
+      summary: Update user metadata for room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomPermissions'
+      responses:
+        '200':
+          description: Permissions updated
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /rooms/{roomID}/media/:
+    get:
+      summary: Get metadata of room media or stream updates
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - name: stream
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: If true, returns an SSE stream
+      responses:
+        '200':
+          description: Media metadata or SSE stream
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MediaData'
+            text/event-stream:
+              schema:
+                type: string
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    put:
+      summary: Upload new media to room
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaData'
+      responses:
+        '200':
+          description: Media created
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /rooms/{roomID}/media/{mediaID}:
+    get:
+      summary: Get specific media metadata
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mediaID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaData'
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    put:
+      summary: Update media metadata
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mediaID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MediaDataUpdate'
+      responses:
+        '200':
+          description: Media updated
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+    delete:
+      summary: Delete media
+      parameters:
+        - in: path
+          name: roomID
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: mediaID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Media deleted
+        '403':
+          description: Forbidden
+        '404':
+          description: Room not found
+
+  /echo:
+    post:
+      summary: Ping-pong UUID echo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StringMessage'
+      responses:
+        '200':
+          description: Echoed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StringMessage'
+    
+
+components:
+  schemas:
+    StringMessage:
+      type: object
+      properties:
+        msg:
+          type: string
+      required:
+        - msg
+        
+    UserData:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        admin:
+          type: boolean
+        displayname:
+          type: string
+      required:
+        - username
+        
+    RoomsUserData:
+      allOf:
+        - $ref: "#/components/schemas/UserData"
+        - type: object
+          properties:
+            isMember: 
+              type: boolean
+          required:
+            - isMember
+        
+    UserUpdateData:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        displayName:
+          type: string
+
+    RoomPermissions:
+      type: object
+      properties:
+        admin:
+          type: boolean
+        canInviteUser:
+          type: boolean
+        canRemoveUser:
+          type: boolean
+      required:
+        - admin
+        - canInviteUser
+        - canRemoveUser
+        
+    InviteData:
+      type: object
+      properties:
+        username:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/RoomPermissions'
+      required:
+        - username
+  
+    RoomData:
+      type: object
+      properties:
+        roomName:
+          type: string
+        roomOwner:
+          type: string
+        roomID:
+          type: string
+        isMember:
+          type: boolean
+      required:
+        - roomName
+  
+    UserRoomData:
+      type: object
+      properties:
+        roomData:
+          $ref: '#/components/schemas/RoomData'
+        userPermissions:
+          $ref: '#/components/schemas/RoomPermissions'
+      required:
+        - roomData
+        - userPermissions
+        
+    RoomUpdateData:
+      type: object
+      properties:
+        newRoomName:
+          type: string
+        newOwnerID: 
+          type: string
+          
+    UpdateType:
+      type: string
+      enum: [create, update, delete]
+        
+    RoomBroadcastUpdate:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          enum: [room, media, user]
+        type:
+          $ref: '#/components/schemas/UpdateType'
+        data:
+          type: object
+          enum: [MediaData, UserRoomData, RoomUpdateData]
+      required:
+        - endpoint
+        - type
+        - data
+        
+    UserBroadcastUpdate:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/UpdateType'
+        data:
+          $ref: '#/components/schemas/RoomData'
+      required:
+        - type
+        - data
+
+    MediaPermissions:
+      type: object
+      properties:
+        canEdit:
+          type: boolean
+      required:
+        - canEdit
+        
+    MediaData:
+      type: object
+      properties:
+        mediaID:
+          type: string
+        mediaName:
+          type: string
+        mediaType:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/MediaPermissions'
+      required:
+        - mediaName
+        - mediaType
+        - permissions
+
+    MediaDataUpdate:
+      type: object
+      properties:
+        mediaName:
+          type: string
+        mediaType:
+          type: string
+        permissions:
+          $ref: '#/components/schemas/MediaPermissions'
