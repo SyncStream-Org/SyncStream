@@ -6,4 +6,5 @@ export interface SessionCache {
   serverURL: string;
   darkMode: boolean;
   language: Language;
+  audioDeviceID?: string;
 }

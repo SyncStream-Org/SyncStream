@@ -1,7 +1,7 @@
 import './room-settings.css';
 import React from 'react';
-import Localize from '@/utilities/localize';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import PrimaryInput from '@/components/inputs/primary-input';
 import PrimaryButton from '@/components/buttons/primary-button';
 import {
@@ -13,6 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  getLocalInputDevice,
+  setLocalInputDevice,
+} from '@/api/routes/useWebRTCAudio';
+import SessionState from '@/utilities/session-state';
 import * as api from '../../../api';
 
 interface Props {
@@ -23,6 +28,8 @@ interface State {
   allUsers: string[];
   usersInRoom: string[];
   currentUserToModify: string;
+  audioInputList: MediaDeviceInfo[];
+  currentAudioInput: string | undefined;
 }
 
 // TODO: localize
@@ -34,7 +41,25 @@ export default class RoomSettings extends React.Component<Props, State> {
       allUsers: [],
       usersInRoom: [],
       currentUserToModify: '',
+      audioInputList: [],
+      currentAudioInput: undefined,
     };
+
+    // Grab audio devices (and label of current audio device)
+    navigator.mediaDevices.enumerateDevices().then((res) => {
+      // Get local device label
+      const localDevice = getLocalInputDevice();
+      let newLabel: string | undefined;
+
+      if (localDevice !== undefined) {
+        newLabel = localDevice.getTracks()[0].label;
+      }
+
+      this.setState({
+        audioInputList: res.filter((device) => device.kind === 'audioinput'),
+        currentAudioInput: newLabel,
+      });
+    });
 
     api.User.getAllUsers().then(async (res) => {
       if (
@@ -100,8 +125,28 @@ export default class RoomSettings extends React.Component<Props, State> {
       });
     };
 
-    const handleSelectChange = (value: string) => {
+    const handleUserSelectChange = (value: string) => {
       this.setState({ currentUserToModify: value });
+    };
+
+    const handleAudioInputSelect = (value: string) => {
+      const deviceInfo = this.state.audioInputList.filter(
+        (info) => info.label === value,
+      )[0];
+
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: {
+            deviceId: deviceInfo.deviceId,
+          },
+        })
+        .then((stream) => {
+          this.setState({ currentAudioInput: deviceInfo.label });
+          setLocalInputDevice(stream);
+        });
+
+      // Save the selection in cache
+      SessionState.getInstance().audioDeviceID = deviceInfo.deviceId;
     };
 
     const handleInvite = () => {
@@ -178,7 +223,7 @@ export default class RoomSettings extends React.Component<Props, State> {
         <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
           Invite or Ban User
         </h2>
-        <Select onValueChange={handleSelectChange}>
+        <Select onValueChange={handleUserSelectChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="User to Modify" />
           </SelectTrigger>
@@ -205,6 +250,31 @@ export default class RoomSettings extends React.Component<Props, State> {
             onClick={handleBan}
           />
         </div>
+
+        <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+          Audio Input Device
+        </h1>
+        <Select onValueChange={handleAudioInputSelect}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue
+              placeholder={
+                this.state.currentAudioInput === undefined
+                  ? 'Audio Input'
+                  : this.state.currentAudioInput
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Inputs</SelectLabel>
+              {this.state.audioInputList.map((device) => (
+                <SelectItem key={device.label} value={device.label}>
+                  {device.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     );
   }
