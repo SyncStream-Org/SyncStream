@@ -6,13 +6,18 @@ import SessionState from '@/utilities/session-state';
 let localInput: MediaStream | undefined;
 const combinedOutput = new MediaStream();
 
+interface AudioMetadata {
+  isTalking: boolean;
+  closeCallback: () => void;
+}
+
 // Connection Variables
 let socket: WebSocket | undefined;
 let channel: string | undefined;
 let roomID: string | undefined;
 const peerConnections: Map<string, RTCPeerConnection> = new Map();
 const peerTracks: Map<string, MediaStreamTrack[]> = new Map();
-const channelMetadata: Map<string, boolean> = new Map();
+const channelMetadata: Map<string, AudioMetadata> = new Map();
 
 // If in a call (errors on impossible state)
 export function isInCall(): boolean {
@@ -73,15 +78,30 @@ const waitForAnswer = (username: string): Promise<boolean> => {
 function trackAudioLevels(username: string, stream: MediaStream) {
   const userStream = hark(stream);
 
+  channelMetadata.set(username, {
+    isTalking: false,
+    closeCallback: () => {
+      userStream.stop();
+    },
+  });
+
   userStream.on('speaking', () => {
     if (channelMetadata.has(username)) {
-      channelMetadata.set(username, true);
+      const metadata = channelMetadata.get(username);
+      if (metadata) {
+        metadata.isTalking = true;
+        channelMetadata.set(username, metadata);
+      }
     }
   });
 
   userStream.on('stopped_speaking', () => {
     if (channelMetadata.has(username)) {
-      channelMetadata.set(username, false);
+      const metadata = channelMetadata.get(username);
+      if (metadata) {
+        metadata.isTalking = false;
+        channelMetadata.set(username, metadata);
+      }
     }
   });
 }
@@ -94,11 +114,7 @@ function createPeerConnection(username: string) {
       'Tried to create a new peer connection when not connected to a call.',
     );
   }
-  // track the current user's audio level
-  trackAudioLevels(
-    SessionState.getInstance().currentUser.username,
-    localInput!,
-  );
+
   // ICE servers for NAT problems (google free servers)
   const configuration = {
     iceServers: [
@@ -150,7 +166,6 @@ function createPeerConnection(username: string) {
   // Setup output track handling
   peerTracks.set(username, []); // Make sure tracks can be placed in map
   pc.ontrack = (event) => {
-    channelMetadata.set(username, false);
     trackAudioLevels(username, event.streams[0]);
     event.streams[0].getTracks().forEach((track) => {
       // Place in combined output and in peerTracks
@@ -192,7 +207,11 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
     }&userid=${SessionState.getInstance().currentUser.username}`,
   );
 
-  channelMetadata.set(SessionState.getInstance().currentUser.username, false);
+  // track the current user's audio level
+  trackAudioLevels(
+    SessionState.getInstance().currentUser.username,
+    localInput!,
+  );
 
   // Handle events from server
   newSocket.onmessage = async (event) => {
@@ -226,6 +245,7 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         combinedOutput.removeTrack(val);
       });
       peerTracks.delete(message.username);
+      channelMetadata.get(message.username)?.closeCallback();
       channelMetadata.delete(message.username);
     } else if (message.type === 'offer') {
       // On offer from other peer, create peer connection and send answer
@@ -322,6 +342,10 @@ export async function closeAudioCall() {
   // Clear peer connections and tracks
   peerConnections.clear();
   peerTracks.clear();
+
+  channelMetadata.forEach((val) => {
+    val.closeCallback();
+  });
   channelMetadata.clear();
 
   // Clear remote media streams
@@ -402,7 +426,7 @@ export function useWebRTCAudio() {
     const pollAudio = setInterval(() => {
       const dataArray = Array.from(channelMetadata.entries()).map(
         ([key, val]) => {
-          return { name: key, isTalking: val };
+          return { name: key, isTalking: val.isTalking };
         },
       );
       setAudioData(dataArray);
