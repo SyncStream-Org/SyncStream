@@ -194,7 +194,9 @@ export default class RoomSettings extends React.Component<Props, State> {
       });
     };
 
-    const isRoomOwner = this.props.room.roomOwner! === SessionState.getInstance().currentUser.username;
+    const isRoomOwner =
+      this.props.room.roomOwner! ===
+      SessionState.getInstance().currentUser.username;
     // ---- RENDER BLOCK ----
     return (
       <div className="p-6">
