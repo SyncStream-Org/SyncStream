@@ -4,12 +4,19 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { Separator } from '@/components/ui/separator';
 import { useRoomSSE } from '@/api/routes/useRoomSse';
+import {
+  closeAudioCall,
+  initiateAudioCall,
+  useWebRTCAudio,
+  toggleMute,
+} from '@/api/routes/useWebRTCAudio';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
 import { AppSidebar } from './sidebar/app-sidebar';
 import { RoomHeader } from './room-header';
 import { RoomHome } from './room-home/room-home';
+import { VoiceChannelCard } from './voiceChannelCard';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 
@@ -30,6 +37,9 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
+
+  // Get webRTC connections
+  const userAudioData = useWebRTCAudio();
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -84,7 +94,15 @@ function RoomPage(props: Props) {
   useEffect(() => {
     handleRoomFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [room]);
+
+  useEffect(() => {
+    if (activeVoice) {
+      initiateAudioCall(room?.roomID!, activeVoice.mediaID!);
+    } else {
+      closeAudioCall();
+    }
+  }, [activeVoice, room?.roomID]);
 
   return (
     <div className="flex h-screen">
@@ -145,7 +163,18 @@ function RoomPage(props: Props) {
             {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
           </div>
         </SidebarInset>
+        <VoiceChannelCard
+          callActive={!!activeVoice}
+          channelName={activeVoice?.mediaName!}
+          users={userAudioData}
+          onMuteToggle={toggleMute}
+          onLeaveCall={() => {
+            closeAudioCall();
+            setActiveVoice(null);
+          }}
+        />
       </SidebarProvider>
+      <audio id="remoteAudioPlayer" autoPlay hidden />
     </div>
   );
 }

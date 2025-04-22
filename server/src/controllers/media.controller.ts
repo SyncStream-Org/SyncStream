@@ -72,7 +72,7 @@ export const getRoomMedia = async (req: Request, res: Response) => {
 
 export const updateRoomMedia = async (req: Request, res: Response) => {
     const { roomID, mediaID } = req.params;
-    const roomMedia = await mediaService.getMediaByID(mediaID);
+    const roomMedia = await mediaService.getMediaByID(roomID, mediaID);
     if (!roomMedia) {
         res.status(404).json({ error: "Not Found: file" });
         return;
@@ -106,7 +106,7 @@ export const updateRoomMedia = async (req: Request, res: Response) => {
 export const deleteRoomMedia = async (req: Request, res: Response) => {
     const { roomID, mediaID } = req.params;
 
-    const roomMedia = await mediaService.getMediaByID(mediaID);
+    const roomMedia = await mediaService.getMediaByID(roomID, mediaID);
     if (!roomMedia) {
         res.status(404).json({ error: "Not Found: file" });
         return;

@@ -27,7 +27,6 @@ export function createRoom(roomName: string): Promise<{
     .then(async (res) => {
       if (res.ok) {
         const body = await res.json();
-        console.log('Create room response:', body);
         // Validate
         if (!Validation.isRoomDataNoUserData(body))
           return { success: SuccessState.ERROR };
