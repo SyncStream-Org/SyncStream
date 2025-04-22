@@ -154,7 +154,7 @@ export function deleteRoom(roomId: string): Promise<SuccessState> {
 
 export function listMembers(roomId: string): Promise<{
   success: SuccessState;
-  data?: Types.UserData[];
+  data?: Types.RoomsUserData[];
 }> {
   const headers: Headers = generateDefaultHeaders();
 
@@ -183,7 +183,7 @@ export function listMembers(roomId: string): Promise<{
 
         return {
           success: SuccessState.SUCCESS,
-          data: body as Types.UserData[],
+          data: body as Types.RoomsUserData[],
         };
       }
 
