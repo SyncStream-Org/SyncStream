@@ -63,7 +63,9 @@ export default function DocumentEditor({
       return () => {};
     }
     const webSocketPrefix = serverURL.includes('https') ? 'wss' : 'ws';
-    const wsURL = `${webSocketPrefix}://${serverURL.split('//')[1]}/rooms/${roomID}/doc`;
+    const wsURL = `${webSocketPrefix}://${
+      serverURL.split('//')[1]
+    }/rooms/${roomID}/doc`;
 
     const doc = new Y.Doc();
     setYdoc(doc);
@@ -190,21 +192,27 @@ export default function DocumentEditor({
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleBold().run()}
-                  className={`p-1 rounded ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${
+                    editor.isActive('bold') ? 'bg-gray-200' : ''
+                  }`}
                 >
                   <span className="font-bold">B</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleItalic().run()}
-                  className={`p-1 rounded ${editor.isActive('italic') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${
+                    editor.isActive('italic') ? 'bg-gray-200' : ''
+                  }`}
                 >
                   <span className="italic">I</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => editor.chain().focus().toggleCode().run()}
-                  className={`p-1 rounded ${editor.isActive('code') ? 'bg-gray-200' : ''}`}
+                  className={`p-1 rounded ${
+                    editor.isActive('code') ? 'bg-gray-200' : ''
+                  }`}
                 >
                   <span className="font-mono">{'<>'}</span>
                 </button>

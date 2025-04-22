@@ -66,7 +66,6 @@ class Launch extends React.Component<Props, State> {
             });
           }
 
-
           SessionState.getInstance().serverURL = serverURLCache;
         } else {
           api.User.authenticate(
