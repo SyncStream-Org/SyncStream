@@ -160,7 +160,7 @@ function RoomPage(props: Props) {
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
+            {settingsOpen === true && <RoomSettings room={room!} />}
           </div>
         </SidebarInset>
         <VoiceChannelCard

@@ -21,7 +21,7 @@ import SessionState from '@/utilities/session-state';
 import * as api from '../../../api';
 
 interface Props {
-  roomID: string;
+  room: Types.RoomData;
 }
 
 interface State {
@@ -62,10 +62,7 @@ export default class RoomSettings extends React.Component<Props, State> {
     });
 
     api.User.getAllUsers().then(async (res) => {
-      if (
-        res.success === api.SuccessState.ERROR ||
-        res.success === api.SuccessState.FAIL
-      ) {
+      if (res.success !== api.SuccessState.SUCCESS) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
           title: 'Error',
           message:
@@ -78,11 +75,8 @@ export default class RoomSettings extends React.Component<Props, State> {
       }
     });
 
-    api.Rooms.listMembers(this.props.roomID).then(async (res) => {
-      if (
-        res.success === api.SuccessState.ERROR ||
-        res.success === api.SuccessState.FAIL
-      ) {
+    api.Rooms.listMembers(this.props.room.roomID!).then(async (res) => {
+      if (res.success !== api.SuccessState.SUCCESS) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
           title: 'Error',
           message:
@@ -114,15 +108,17 @@ export default class RoomSettings extends React.Component<Props, State> {
       if (target.newOwner.value !== '')
         updateObj.newOwnerID = target.newOwner.value;
 
-      api.Rooms.updateRoom(this.props.roomID, updateObj).then(async (res) => {
-        if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Something went wrong with the server and we could not update the room.',
-          });
-        }
-      });
+      api.Rooms.updateRoom(this.props.room.roomID!, updateObj).then(
+        async (res) => {
+          if (res !== api.SuccessState.SUCCESS) {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: 'Error',
+              message:
+                'Something went wrong with the server and we could not update the room.',
+            });
+          }
+        },
+      );
     };
 
     const handleUserSelectChange = (value: string) => {
@@ -158,10 +154,10 @@ export default class RoomSettings extends React.Component<Props, State> {
         return;
       }
 
-      api.Rooms.inviteUser(this.props.roomID, {
+      api.Rooms.inviteUser(this.props.room.roomID!, {
         username: this.state.currentUserToModify,
       }).then(async (res) => {
-        if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
+        if (res !== api.SuccessState.SUCCESS) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
@@ -185,10 +181,10 @@ export default class RoomSettings extends React.Component<Props, State> {
       }
 
       api.Rooms.removeUser(
-        this.props.roomID,
+        this.props.room.roomID!,
         this.state.currentUserToModify,
       ).then(async (res) => {
-        if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
+        if (res !== api.SuccessState.SUCCESS) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: 'Error',
             message:
@@ -198,59 +194,64 @@ export default class RoomSettings extends React.Component<Props, State> {
       });
     };
 
+    const isRoomOwner =
+      this.props.room.roomOwner! ===
+      SessionState.getInstance().currentUser.username;
     // ---- RENDER BLOCK ----
     return (
       <div className="p-6">
-        <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
-          Update Room
-        </h2>
-        <form onSubmit={updateRoom}>
-          <PrimaryInput
-            labelClassName="mt-1"
-            label="New Room Name"
-            id="roomName"
-            type="text"
-          />
-          <PrimaryInput
-            labelClassName="mt-1"
-            label="New Room Owner"
-            id="newOwner"
-            type="text"
-          />
-          <PrimaryButton className="mt-3" text="Submit" type="submit" />
-        </form>
-
-        <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
-          Invite or Ban User
-        </h2>
-        <Select onValueChange={handleUserSelectChange}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="User to Modify" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>Users</SelectLabel>
-              {this.state.allUsers.map((username) => (
-                <SelectItem value={username}>{username}</SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-        <div className="flex flex-row">
-          <PrimaryButton
-            className="mt-3"
-            text="Invite"
-            type="button"
-            onClick={handleInvite}
-          />
-          <PrimaryButton
-            className="mt-3 ml-1"
-            text="Ban"
-            type="button"
-            onClick={handleBan}
-          />
-        </div>
-
+        {isRoomOwner && (
+          <>
+            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+              Update Room
+            </h2>
+            <form onSubmit={updateRoom}>
+              <PrimaryInput
+                labelClassName="mt-1"
+                label="New Room Name"
+                id="roomName"
+                type="text"
+              />
+              <PrimaryInput
+                labelClassName="mt-1"
+                label="New Room Owner"
+                id="newOwner"
+                type="text"
+              />
+              <PrimaryButton className="mt-3" text="Submit" type="submit" />
+            </form>
+            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+              Invite or Ban User
+            </h2>
+            <Select onValueChange={handleUserSelectChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="User to Modify" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Users</SelectLabel>
+                  {this.state.allUsers.map((username) => (
+                    <SelectItem value={username}>{username}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <div className="flex flex-row">
+              <PrimaryButton
+                className="mt-3"
+                text="Invite"
+                type="button"
+                onClick={handleInvite}
+              />
+              <PrimaryButton
+                className="mt-3 ml-1"
+                text="Ban"
+                type="button"
+                onClick={handleBan}
+              />
+            </div>
+          </>
+        )}
         <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
           Audio Input Device
         </h1>
