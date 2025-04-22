@@ -4,24 +4,33 @@ import SessionState from '@/utilities/session-state';
 
 // Audio Streams
 let localInput: MediaStream | undefined;
-const combinedOutput = new MediaStream();
+const remoteOutput = new MediaStream();
 
 // Connection Variables
 let socket: WebSocket | undefined;
 let channel: string | undefined;
 let roomID: string | undefined;
-const peerConnections: Map<string, RTCPeerConnection> = new Map();
-const peerTracks: Map<string, MediaStreamTrack[]> = new Map();
-const channelMetadata: Map<string, boolean> = new Map();
+const peerConnections: Map<string, RTCPeerConnection> = new Map(); // Could only be one if in client mode
+let isClient: boolean | undefined;
 
 // If in a call (errors on impossible state)
 export function isInCall(): boolean {
-  if (socket !== undefined && channel !== undefined && roomID !== undefined) {
+  if (
+    socket !== undefined &&
+    channel !== undefined &&
+    roomID !== undefined &&
+    isClient !== undefined
+  ) {
     // In Call
     return true;
   }
 
-  if (socket === undefined && channel === undefined && roomID === undefined) {
+  if (
+    socket === undefined &&
+    channel === undefined &&
+    roomID === undefined &&
+    isClient === undefined
+  ) {
     // Not In Call
     return false;
   }
@@ -70,24 +79,8 @@ const waitForAnswer = (username: string): Promise<boolean> => {
   });
 };
 
-function trackAudioLevels(username: string, stream: MediaStream) {
-  const userStream = hark(stream);
-
-  userStream.on('speaking', () => {
-    if (channelMetadata.has(username)) {
-      channelMetadata.set(username, true);
-    }
-  });
-
-  userStream.on('stopped_speaking', () => {
-    if (channelMetadata.has(username)) {
-      channelMetadata.set(username, false);
-    }
-  });
-}
-
 // Create a peerConnection
-function createPeerConnection(username: string) {
+function createPeerConnection() {
   // Sanity check to make sure you are in a call
   if (!isInCall()) {
     throw Error(
@@ -99,12 +92,6 @@ function createPeerConnection(username: string) {
     throw Error(
       'Initiated a peer connection before a local audio input was set.',
     );
-
-  // track the current user's audio level
-  trackAudioLevels(
-    SessionState.getInstance().currentUser.username,
-    localInput!,
-  );
 
   // ICE servers for NAT problems (google free servers)
   const configuration = {
@@ -154,29 +141,30 @@ function createPeerConnection(username: string) {
     socket?.send(JSON.stringify(message));
   };
 
-  // Setup output track handling
-  peerTracks.set(username, []); // Make sure tracks can be placed in map
-  pc.ontrack = (event) => {
-    channelMetadata.set(username, false);
-    trackAudioLevels(username, event.streams[0]);
-    event.streams[0].getTracks().forEach((track) => {
-      // Place in combined output and in peerTracks
-      console.log(track);
-      combinedOutput.addTrack(track);
-      peerTracks.get(username)?.push(track);
+  // Setup output track handling for client connections
+  if (isClient) {
+    pc.ontrack = (event) => {
+      event.streams[0].getTracks().forEach((track) => {
+        // Place in remote output
+        remoteOutput.addTrack(track);
+      });
+    };
+  } else {
+    // Add local audio input to the peer connection if not client
+    localInput.getTracks().forEach((track) => {
+      pc.addTrack(track, localInput as MediaStream);
     });
-  };
-
-  // Add local audio input to the peer connection
-  localInput.getTracks().forEach((track) => {
-    pc.addTrack(track, localInput as MediaStream);
-  });
+  }
 
   return pc;
 }
 
-// Function for initiating an audio call
-export async function initiateAudioCall(newRoomID: string, newChannel: string) {
+// Function for initiating an video call
+export async function initiateVideoCall(
+  newRoomID: string,
+  newChannel: string,
+  newIsClient: boolean,
+) {
   // Sanity checks
   if (isInCall()) {
     throw Error("Can't get in new call, already in call.");
@@ -189,12 +177,12 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
   const newSocket = new WebSocket(
     `${webSocketPrefix}://${
       SessionState.getInstance().serverURL.split('//')[1]
-    }/rooms/${newRoomID}/voice/${newChannel}?token=${
+    }/rooms/${newRoomID}/stream/${newChannel}?token=${
       SessionState.getInstance().sessionToken
-    }&userid=${SessionState.getInstance().currentUser.username}`,
+    }&userid=${
+      SessionState.getInstance().currentUser.username
+    }&isClient=${newIsClient}`,
   );
-
-  channelMetadata.set(SessionState.getInstance().currentUser.username, false);
 
   // Handle events from server
   newSocket.onmessage = async (event) => {
@@ -209,7 +197,26 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         return;
       }
 
-      const pc = createPeerConnection(message.username);
+      // Sanity checks for clients
+      if (newIsClient && !message.isServer) {
+        return;
+      }
+
+      if (!newIsClient && message.isServer) {
+        console.error(
+          'Someone tried to send a message as a server when you are are the server.',
+        );
+        return;
+      }
+
+      if (newIsClient && message.isServer && peerConnections.size >= 1) {
+        console.error(
+          'Someone tried to send a join message as a server when you are already connected to a server.',
+        );
+        return;
+      }
+
+      const pc = createPeerConnection();
       const offer = await pc.createOffer();
       newSocket.send(
         JSON.stringify({
@@ -222,13 +229,34 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
 
       peerConnections.set(message.username, pc);
     } else if (message.type === 'leave') {
+      // Sanity checks for clients
+      if (newIsClient && !message.isServer) {
+        return;
+      }
+
+      if (!newIsClient && message.isServer) {
+        console.error(
+          'Someone tried to send a message as a server when you are are the server.',
+        );
+        return;
+      }
+
+      if (newIsClient && message.isServer && peerConnections.size === 0) {
+        console.error(
+          'Someone tried to send a leave message as a server when you are not connected to a server.',
+        );
+        return;
+      }
+
       // Delete user peer connection and tracks from combined output
       peerConnections.delete(message.username);
-      peerTracks.get(message.username)?.forEach((val) => {
-        combinedOutput.removeTrack(val);
-      });
-      peerTracks.delete(message.username);
-      channelMetadata.delete(message.username);
+
+      // Remove stream if server leaves for client
+      if (newIsClient) {
+        remoteOutput.getTracks().forEach((val) => {
+          remoteOutput.removeTrack(val);
+        });
+      }
     } else if (message.type === 'offer') {
       // On offer from other peer, create peer connection and send answer
       if (peerConnections.has(message.username)) {
@@ -238,7 +266,26 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         return;
       }
 
-      const pc = createPeerConnection(message.username);
+      // Sanity checks for clients
+      if (newIsClient && !message.isServer) {
+        return;
+      }
+
+      if (!newIsClient && message.isServer) {
+        console.error(
+          'Someone tried to send a message as a server when you are are the server.',
+        );
+        return;
+      }
+
+      if (newIsClient && message.isServer && peerConnections.size >= 1) {
+        console.error(
+          'Someone tried to send an offer message as a server when you are already connected to a server.',
+        );
+        return;
+      }
+
+      const pc = createPeerConnection();
       await pc.setRemoteDescription(message);
 
       const answer = await pc.createAnswer();
@@ -258,10 +305,34 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
         return;
       }
 
+      // Sanity checks
+      if (newIsClient && !message.isServer) {
+        return;
+      }
+
+      if (!newIsClient && message.isServer) {
+        console.error(
+          'Someone tried to send a message as a server when you are are the server.',
+        );
+        return;
+      }
+
       const pc = peerConnections.get(message.username);
       if (pc === undefined) throw Error('Unreachable');
       await pc.setRemoteDescription(message);
     } else if (message.type === 'candidate') {
+      // Sanity checks
+      if (newIsClient && !message.isServer) {
+        return;
+      }
+
+      if (!newIsClient && message.isServer) {
+        console.error(
+          'Someone tried to send a message as a server when you are are the server.',
+        );
+        return;
+      }
+
       // Handle candidates from other peers
       const res = await waitForAnswer(message.username);
       if (!res) {
@@ -309,10 +380,11 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
   channel = newChannel;
   roomID = newRoomID;
   socket = newSocket;
+  isClient = newIsClient;
 }
 
 // Close and clean up an audio call
-export async function closeAudioCall() {
+export async function closeVideoCall() {
   // Sanity check. If not in call, no need to run the rest, but not an error as this is called on unload
   if (!isInCall()) return;
 
@@ -323,35 +395,29 @@ export async function closeAudioCall() {
 
   // Clear peer connections and tracks
   peerConnections.clear();
-  peerTracks.clear();
-  channelMetadata.clear();
 
   // Clear remote media streams
-  combinedOutput.getAudioTracks().forEach((track) => {
-    track.stop();
-    combinedOutput.removeTrack(track);
-  });
+  if (isClient) {
+    remoteOutput.getAudioTracks().forEach((track) => {
+      track.stop();
+      remoteOutput.removeTrack(track);
+    });
+  }
 
   // Stop local tracks
-  localInput?.getTracks().forEach((track) => {
-    if (track.readyState === 'live') {
-      track.stop();
-    }
-  });
+  if (!isClient) {
+    localInput?.getTracks().forEach((track) => {
+      if (track.readyState === 'live') {
+        track.stop();
+      }
+    });
+  }
 
   // Set channel as undefined
   localInput = undefined;
   channel = undefined;
   roomID = undefined;
-}
-
-export function toggleMute() {
-  if (localInput === undefined) return;
-  localInput.getTracks().forEach((track) => {
-    if (track.kind === 'audio') {
-      track.enabled = !track.enabled;
-    }
-  });
+  isClient = undefined;
 }
 
 // Get current local input device
@@ -368,57 +434,30 @@ export function setLocalInputDevice(stream: MediaStream) {
   if (isInCall()) {
     const channelCache = channel as string;
     const roomCache = roomID as string;
-    closeAudioCall();
-    initiateAudioCall(roomCache, channelCache);
+    const isClientCache = isClient as boolean;
+    closeVideoCall();
+    initiateVideoCall(roomCache, channelCache, isClientCache);
   }
 }
 
 // Build and contain the WebRTC instance for Audio
 export function useWebRTCAudio() {
-  const [audioData, setAudioData] = useState<
-    Array<{ name: string; isTalking: boolean }>
-  >([]);
-
   // Initialize audio devices
   useEffect(() => {
-    // Grab default local microphone (if not set yet)
-    const audioID = SessionState.getInstance().audioDeviceID;
-    if (audioID) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: {
-            deviceId: audioID,
-          },
-        })
-        .then((stream) => {
-          localInput = stream;
-        });
-    } else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then((stream) => {
-          localInput = stream;
-        });
-    }
+    // Grab default local video (if not set yet)
+    navigator.mediaDevices
+      .getUserMedia({ audio: false, video: true })
+      .then((stream) => {
+        localInput = stream;
+      });
 
-    const pollAudio = setInterval(() => {
-      const dataArray = Array.from(channelMetadata.entries()).map(
-        ([key, val]) => {
-          return { name: key, isTalking: val };
-        },
-      );
-      setAudioData(dataArray);
-    }, 100);
     // Link remote output to audio elemnt
-    if (document.getElementById('remoteAudioPlayer') !== null) {
-      document!.getElementById('remoteAudioPlayer')!.srcObject = combinedOutput;
+    if (document.getElementById('remoteVideoPlayer') !== null) {
+      document!.getElementById('remoteVideoPlayer')!.srcObject = remoteOutput;
     }
     // Call on unload to close any call that exists
     return () => {
-      closeAudioCall();
-      clearInterval(pollAudio);
+      closeVideoCall();
     };
   }, []);
-
-  return audioData;
 }
