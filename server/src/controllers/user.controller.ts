@@ -147,6 +147,12 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
     return;
   }
   await userService.removeRoomUser(roomUserObj);
+  // broadcast to room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "delete",
+    data: { username: user.username, isMember: false },
+  });
   res.sendStatus(200);
 };
 

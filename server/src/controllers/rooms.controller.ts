@@ -150,7 +150,10 @@ export const deleteRoom = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: Room" });
     return;
   }
-  
+  if (room.roomOwner !== user.username) {
+    res.status(403).json({ error: "Forbidden: Permissions Denied" });
+    return;
+  }
   // get all of the users
   const users = await roomService.getAllRoomUsers(room.roomID);
   const members = users.filter((user) => user.isMember).map((user) => user.username);
