@@ -7,6 +7,8 @@ export function useRoomSSE(
   roomID: string,
   token: string,
   onMediaUpdate: (type: Types.UpdateType, update: Types.MediaData) => void,
+  onRoomUpdate: (type: Types.UpdateType, update: Types.RoomUpdateData) => void,
+  onUserUpdate: (type: Types.UpdateType, update: Types.RoomUserUpdateData) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -30,6 +32,12 @@ export function useRoomSSE(
             switch (data.endpoint) {
               case 'media':
                 onMediaUpdate(data.type, data.data);
+                break;
+              case 'room':
+                onRoomUpdate(data.type, data.data);
+                break;
+              case 'user':
+                onUserUpdate(data.type, data.data);
                 break;
               default:
                 console.warn(`Unknown endpoint: ${data.endpoint}`);

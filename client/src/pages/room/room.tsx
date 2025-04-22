@@ -85,10 +85,41 @@ function RoomPage(props: Props) {
     [],
   );
 
+  const onRoomUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.RoomUpdateData) => {
+      if (type === 'update') {
+        if (update.newRoomName) {
+          room!.roomName = update.newRoomName;
+        }
+        if (update.newOwnerID) {
+          room!.roomOwner = update.newOwnerID;
+        }
+      } else if (type === 'delete') {
+        api.User.leaveRoomPresence();
+        props.navigate('/home');
+      }
+    },
+    [],
+  );
+
+  const onUserUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.RoomUserUpdateData) => {
+      if (type === 'update') {
+        // keep master list of room users. update here.
+      } else if (type === 'delete' && SessionState.getInstance().currentUser.username === update.username) {
+        api.User.leaveRoomPresence();
+        props.navigate('/home');
+      }
+    },
+    [],
+  );
+
   useRoomSSE(
     room?.roomID!,
     SessionState.getInstance().sessionToken,
     onMediaUpdate,
+    onRoomUpdate,
+    onUserUpdate,
   );
 
   useEffect(() => {
@@ -123,7 +154,6 @@ function RoomPage(props: Props) {
             props.navigate('/home');
           }}
           goToSettings={() => {
-            api.User.leaveRoomPresence();
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}
