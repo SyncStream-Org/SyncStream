@@ -8,7 +8,10 @@ export function useRoomSSE(
   token: string,
   onMediaUpdate: (type: Types.UpdateType, update: Types.MediaData) => void,
   onRoomUpdate: (type: Types.UpdateType, update: Types.RoomUpdateData) => void,
-  onUserUpdate: (type: Types.UpdateType, update: Types.RoomUserUpdateData) => void,
+  onUserUpdate: (
+    type: Types.UpdateType,
+    update: Types.RoomUserUpdateData,
+  ) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -67,7 +70,7 @@ export function useRoomSSE(
       );
       return () => {};
     }
-  }, [roomID, token, onMediaUpdate]);
+  }, [roomID, token, onMediaUpdate, onRoomUpdate, onUserUpdate]);
 
   useEffect(() => {
     const cleanup = connect();
