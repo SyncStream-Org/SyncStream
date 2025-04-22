@@ -59,7 +59,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
   const userData: Types.UserData[] = [];
   for (let i = 0; i < users.length; i++) {
     const username = users[i].username;
-    const temp: Types.UserData = { username };
+    const email = users[i].email;
+    const displayName = users[i].displayName;
+    const temp: Types.UserData = { username, email, displayName };
     userData[i] = temp;
   }
 
