@@ -27,6 +27,7 @@ export type LanguageDict = {
       errorTitle: string;
       invalidServer: string;
       invalidAuth: string;
+      incompatibleClient: string;
     };
   };
   settingsPage: {
