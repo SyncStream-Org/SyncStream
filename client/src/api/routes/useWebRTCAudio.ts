@@ -195,6 +195,12 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
     throw Error("Can't get in new call, already in call.");
   }
 
+  // start all tracks
+  localInput?.getTracks().forEach((track) => {
+    if (track.kind === 'audio') {
+      track.enabled = true;
+    }
+  });
   // Initiate web socket for signal server
   const webSocketPrefix = SessionState.getInstance().serverURL.includes('https')
     ? 'wss'
@@ -356,13 +362,12 @@ export async function closeAudioCall() {
 
   // Stop local tracks
   localInput?.getTracks().forEach((track) => {
-    if (track.readyState === 'live') {
-      track.stop();
+    if (track.kind === 'audio') {
+      track.enabled = false;
     }
   });
 
   // Set channel as undefined
-  localInput = undefined;
   channel = undefined;
   roomID = undefined;
 }
