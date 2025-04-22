@@ -147,7 +147,6 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
     return;
   }
   await userService.removeRoomUser(roomUserObj);
-
   res.sendStatus(200);
 };
 
@@ -170,6 +169,12 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
   const isMember = true;
   await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
 
+  // tell the room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "update",
+    data: { username: user.username, isMember },
+  });
   res.sendStatus(200);
 };
 

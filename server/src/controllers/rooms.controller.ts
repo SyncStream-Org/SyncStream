@@ -64,15 +64,17 @@ export const createRoom = async (req: Request, res: Response) => {
 };
 
 export const updateRoom = async (req: Request, res: Response) => {
-  const roomUser: RoomUser = (req as any).roomUser;
-  let room: Room = (req as any).room;
-
-  if (!roomUser.permissions.canEdit) {
-    res
-      .status(403)
-      .json({
-        error: "Permissions: User is not allowed to edit state of room",
-      });
+  let room: Room | null;
+  const roomID = req.params.roomID;
+  const user = (req as any).user;
+  // check if owner
+  room = await roomService.getRoomById(roomID);
+  if (!room) {
+    res.status(404).json({ error: "Not Found: Room" });
+    return;
+  }
+  if (room.roomOwner !== user.username) {
+    res.status(403).json({ error: "Forbidden: Permissions Denied" });
     return;
   }
 
@@ -83,24 +85,14 @@ export const updateRoom = async (req: Request, res: Response) => {
   }
 
   if (roomUpdateData.newOwnerID) {
-    // ensure user exists, and is part of room
-    const newOwnerUser = await userService.getUserByUsername(
-      roomUpdateData.newOwnerID,
-    );
-    if (!newOwnerUser) {
-      res
-        .status(404)
-        .json({ error: "Not Found: New owner username does not exist" });
-      return;
-    }
     const newOwnerRoomUser = await userService.getRoomUser(
       room.roomID,
       roomUpdateData.newOwnerID,
     );
-    if (!roomUser) {
+    if (!newOwnerRoomUser || !newOwnerRoomUser.isMember) {
       res
         .status(404)
-        .json({ error: "Bad Request: new owner user does not exist in room" });
+        .json({ error: "Bad Request: new owner not a member of room" });
       return;
     }
 
@@ -137,6 +129,15 @@ export const updateRoom = async (req: Request, res: Response) => {
     },
   );
 
+  // broadcast the update to everyone in the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "room",
+      type: "update",
+      data: { newOwnerID: room.roomOwner, newRoomName: room.roomName },
+    },
+  )
   res.sendStatus(204);
 }
 
@@ -174,6 +175,15 @@ export const deleteRoom = async (req: Request, res: Response) => {
     {
       type: "delete",
       data: { isMember: false, ...roomDataResponse },
+    },
+  );
+  // broadcast to everyone in the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "room",
+      type: "delete",
+      data: {},
     },
   );
   res.sendStatus(200);
@@ -271,6 +281,15 @@ export const inviteUser = async (req: Request, res: Response) => {
     },
   );
 
+  // broadcast the update to the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "user",
+      type: "create",
+      data: { isMember: false, username },
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -320,6 +339,15 @@ export const removeUser = async (req: Request, res: Response) => {
     },
   );
 
+  // broadcast the update to the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "user",
+      type: "delete",
+      data: { isMember: member, username },
+    },
+  );
   res.sendStatus(200);
 };
 
