@@ -51,7 +51,7 @@ export const confirmUserInRoom = async (req: Request, res: Response, next: NextF
   }
 
   const roomUser = await userService.getRoomUser(roomID, user.username);
-  if (!roomUser) {
+  if (!roomUser || !roomUser.isMember) {
     res.status(404).json({ error: "Bad Request: user does not exist in room" });
     return;
   }

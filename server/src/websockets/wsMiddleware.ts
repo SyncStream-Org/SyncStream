@@ -69,7 +69,7 @@ export async function wsPresence(
 
   // check if they belong to the room or are an admin
   const roomUser = await userService.getRoomUser(roomID, username);
-  if (!roomUser && !(req as any).user.admin) {
+  if ((!roomUser || !roomUser.isMember) && !(req as any).user.admin) {
     ws.close(1008, "User not found in room");
     return;
   }
