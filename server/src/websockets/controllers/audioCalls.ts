@@ -53,12 +53,9 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   const call = calls.get(callID_str);
   if (call === undefined) throw Error("Unreachable");
 
+  // Clear call of user if still in
   if (call.has(username)) {
-    console.error(
-      `Tried to connect with a user that already is in call. ${callID_str} / ${username}`,
-    );
-    ws.close();
-    return;
+    call.delete(username);
   }
   call.set(username, ws);
 
