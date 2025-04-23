@@ -88,9 +88,9 @@ function createPeerConnection() {
     );
   }
 
-  if (localInput === undefined)
+  if (!isClient && localInput === undefined)
     throw Error(
-      'Initiated a peer connection before a local audio input was set.',
+      'Initiated a peer connection before a local video input was set.',
     );
 
   // ICE servers for NAT problems (google free servers)
@@ -151,6 +151,7 @@ function createPeerConnection() {
     };
   } else {
     // Add local audio input to the peer connection if not client
+    if (localInput === undefined) throw Error('unreachable');
     localInput.getTracks().forEach((track) => {
       pc.addTrack(track, localInput as MediaStream);
     });
@@ -441,7 +442,7 @@ export function setLocalInputDevice(stream: MediaStream) {
 }
 
 // Build and contain the WebRTC instance for Audio
-export function useWebRTCAudio() {
+export function useWebRTCVideo() {
   // Initialize audio devices
   useEffect(() => {
     // Grab default local video (if not set yet)

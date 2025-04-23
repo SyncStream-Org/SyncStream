@@ -10,7 +10,11 @@ import {
   useWebRTCAudio,
   toggleMute,
 } from '@/api/routes/useWebRTCAudio';
-import { closeVideoCall, initiateVideoCall } from '@/api/routes/useWebRTCVideo';
+import {
+  closeVideoCall,
+  initiateVideoCall,
+  useWebRTCVideo,
+} from '@/api/routes/useWebRTCVideo';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -42,6 +46,7 @@ function RoomPage(props: Props) {
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
+  useWebRTCVideo();
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
@@ -185,7 +190,8 @@ function RoomPage(props: Props) {
         />
         <button
           onClick={() => {
-            setisClient(isClient);
+            setisClient(!isClient);
+            console.log(isClient);
           }}
         >
           TOGGLE IS CLIENT
