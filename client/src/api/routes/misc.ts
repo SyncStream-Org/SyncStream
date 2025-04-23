@@ -30,7 +30,7 @@ export function echo(): Promise<SuccessState> {
     body: JSON.stringify(uuid),
   });
 
-  return fetch(request, { signal: AbortSignal.timeout(1500) })
+  return fetch(request)
     .then(async (res) => {
       clearTimeout(timeout);
       if (res.ok) {
