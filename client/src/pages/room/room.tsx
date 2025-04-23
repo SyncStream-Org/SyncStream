@@ -42,7 +42,7 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
-  const [isClient, setisClient] = useState<boolean>(false);
+  const [isClient, setisClient] = useState<boolean>(true);
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();

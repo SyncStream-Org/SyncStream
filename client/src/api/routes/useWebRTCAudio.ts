@@ -195,12 +195,39 @@ export async function initiateAudioCall(newRoomID: string, newChannel: string) {
     throw Error("Can't get in new call, already in call.");
   }
 
-  // start all tracks
-  localInput?.getTracks().forEach((track) => {
-    if (track.kind === 'audio') {
-      track.enabled = true;
+  // Grab default local microphone (if not set yet)
+  const audioID = SessionState.getInstance().audioDeviceID;
+  if (audioID) {
+    try {
+      localInput = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: audioID,
+        },
+      });
+    } catch {
+      window.electron.ipcRenderer.invokeFunction('show-message-box', {
+        title: 'Error',
+        message:
+          'Could not get specified audio device. Defaulting to system default.',
+      });
     }
-  });
+  }
+
+  if (!localInput) {
+    try {
+      localInput = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false,
+      });
+    } catch {
+      window.electron.ipcRenderer.invokeFunction('show-message-box', {
+        title: 'Error',
+        message: 'Could not get any audio device.',
+      });
+      return;
+    }
+  }
+
   // Initiate web socket for signal server
   const webSocketPrefix = SessionState.getInstance().serverURL.includes('https')
     ? 'wss'
@@ -363,11 +390,12 @@ export async function closeAudioCall() {
   // Stop local tracks
   localInput?.getTracks().forEach((track) => {
     if (track.kind === 'audio') {
-      track.enabled = false;
+      track.stop();
     }
   });
 
   // Set channel as undefined
+  localInput = undefined;
   channel = undefined;
   roomID = undefined;
 }
@@ -408,25 +436,7 @@ export function useWebRTCAudio() {
 
   // Initialize audio devices
   useEffect(() => {
-    // Grab default local microphone (if not set yet)
-    const audioID = SessionState.getInstance().audioDeviceID;
-    if (audioID) {
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: {
-            deviceId: audioID,
-          },
-        })
-        .then((stream) => {
-          localInput = stream;
-        });
-    } else {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true, video: false })
-        .then((stream) => {
-          localInput = stream;
-        });
-    }
+    // Set up listener for audio devices
 
     const pollAudio = setInterval(() => {
       const dataArray = Array.from(channelMetadata.entries()).map(
