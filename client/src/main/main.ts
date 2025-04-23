@@ -10,7 +10,15 @@
  */
 import path from 'path';
 import { readFileSync, writeFileSync } from 'fs';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  dialog,
+  Menu,
+  desktopCapturer,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -92,7 +100,7 @@ const createWindow = async () => {
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
-      // webSecurity: false,
+      nodeIntegration: true,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -226,4 +234,21 @@ ipcMain.handle('show-message-box', (event, args) => {
 // listen the 'app-quit' event to manually quit from browser space
 ipcMain.on('app-quit', (event, info) => {
   mainWindow?.close();
+});
+
+ipcMain.handle('get-video-sources', async (event, args) => {
+  const inputSources = await desktopCapturer.getSources({
+    types: ['window', 'screen'],
+  });
+
+  const videoOptionsMenu = Menu.buildFromTemplate(
+    inputSources.map((source) => {
+      return {
+        label: source.name,
+        click: undefined,
+      };
+    }),
+  );
+
+  videoOptionsMenu.popup();
 });

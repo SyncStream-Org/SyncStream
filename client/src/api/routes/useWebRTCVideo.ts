@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import hark from 'hark';
+import { useEffect } from 'react';
 import SessionState from '@/utilities/session-state';
-import { Navigate } from 'react-router-dom';
+import { desktopCapturer, Menu } from 'electron';
 
 // Audio Streams
 let localInput: MediaStream | undefined;
@@ -174,6 +173,7 @@ export async function initiateVideoCall(
 
   // Grab default local video (if not set yet)
   if (!isClient) {
+    window.electron.ipcRenderer.invokeFunction('get-video-sources');
     try {
       localInput = await navigator.mediaDevices.getDisplayMedia();
     } catch {
