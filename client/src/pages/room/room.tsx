@@ -10,6 +10,7 @@ import {
   useWebRTCAudio,
   toggleMute,
 } from '@/api/routes/useWebRTCAudio';
+import { closeVideoCall, initiateVideoCall } from '@/api/routes/useWebRTCVideo';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -37,6 +38,7 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
+  const [isClient, setisClient] = useState<boolean>(false);
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
@@ -103,6 +105,14 @@ function RoomPage(props: Props) {
       closeAudioCall();
     }
   }, [activeVoice, room?.roomID]);
+
+  useEffect(() => {
+    if (activeStream) {
+      initiateVideoCall(room?.roomID!, activeStream.mediaID!, isClient);
+    } else {
+      closeVideoCall();
+    }
+  }, [activeStream, room?.roomID, isClient]);
 
   return (
     <div className="flex h-screen">
@@ -173,8 +183,16 @@ function RoomPage(props: Props) {
             setActiveVoice(null);
           }}
         />
+        <button
+          onClick={() => {
+            setisClient(isClient);
+          }}
+        >
+          TOGGLE IS CLIENT
+        </button>
       </SidebarProvider>
       <audio id="remoteAudioPlayer" autoPlay hidden />
+      <video id="remoteVideoPlayer" autoPlay />
     </div>
   );
 }
