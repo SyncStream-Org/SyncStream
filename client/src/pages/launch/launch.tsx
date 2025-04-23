@@ -54,7 +54,7 @@ class Launch extends React.Component<Props, State> {
 
       api.echo().then((res) => {
         if (res !== api.SuccessState.SUCCESS) {
-          if (res == api.SuccessState.ERROR) {
+          if (res === api.SuccessState.ERROR) {
             window.electron.ipcRenderer.invokeFunction('show-message-box', {
               title: localize.launchPage.messageBox.errorTitle,
               message: localize.launchPage.messageBox.invalidServer,

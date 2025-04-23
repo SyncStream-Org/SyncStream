@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import hark from 'hark';
 import SessionState from '@/utilities/session-state';
+import { Navigate } from 'react-router-dom';
 
 // Audio Streams
 let localInput: MediaStream | undefined;
@@ -171,6 +172,19 @@ export async function initiateVideoCall(
     throw Error("Can't get in new call, already in call.");
   }
 
+  // Grab default local video (if not set yet)
+  if (!isClient) {
+    try {
+      localInput = await navigator.mediaDevices.getDisplayMedia();
+    } catch {
+      window.electron.ipcRenderer.invokeFunction('show-message-box', {
+        title: 'Error',
+        message: 'Could not get any video device.',
+      });
+      return;
+    }
+  }
+
   // Initiate web socket for signal server
   const webSocketPrefix = SessionState.getInstance().serverURL.includes('https')
     ? 'wss'
@@ -318,6 +332,8 @@ export async function initiateVideoCall(
         return;
       }
 
+      console.log('YES');
+
       const pc = peerConnections.get(message.username);
       if (pc === undefined) throw Error('Unreachable');
       await pc.setRemoteDescription(message);
@@ -399,7 +415,7 @@ export async function closeVideoCall() {
 
   // Clear remote media streams
   if (isClient) {
-    remoteOutput.getAudioTracks().forEach((track) => {
+    remoteOutput.getTracks().forEach((track) => {
       track.stop();
       remoteOutput.removeTrack(track);
     });
@@ -445,17 +461,11 @@ export function setLocalInputDevice(stream: MediaStream) {
 export function useWebRTCVideo() {
   // Initialize audio devices
   useEffect(() => {
-    // Grab default local video (if not set yet)
-    navigator.mediaDevices
-      .getUserMedia({ audio: false, video: true })
-      .then((stream) => {
-        localInput = stream;
-      });
-
     // Link remote output to audio elemnt
     if (document.getElementById('remoteVideoPlayer') !== null) {
       document!.getElementById('remoteVideoPlayer')!.srcObject = remoteOutput;
     }
+
     // Call on unload to close any call that exists
     return () => {
       closeVideoCall();
