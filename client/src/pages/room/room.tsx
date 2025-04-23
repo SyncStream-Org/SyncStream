@@ -65,6 +65,18 @@ function RoomPage(props: Props) {
     setSettingsOpen(true);
   };
 
+  const handleActiveDoc = (doc: Types.MediaData | null) => {
+    setActiveDoc(doc);
+    setActiveStream(null);
+    setSettingsOpen(false);
+  }
+
+  const handleActiveStream = (stream: Types.MediaData | null) => {
+    setActiveStream(stream);
+    setActiveDoc(null);
+    setSettingsOpen(false);
+  };
+
   const onMediaUpdate = useCallback(
     (type: Types.UpdateType, update: Types.MediaData) => {
       setMedia((prevMedia) => {
@@ -144,9 +156,9 @@ function RoomPage(props: Props) {
           username={SessionState.getInstance().currentUser.username}
           media={media}
           activeDoc={activeDoc}
-          setActiveDoc={setActiveDoc}
+          setActiveDoc={handleActiveDoc}
           activeStream={activeStream}
-          setActiveStream={setActiveStream}
+          setActiveStream={handleActiveStream}
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
           goToHome={() => {
@@ -163,13 +175,13 @@ function RoomPage(props: Props) {
         {/* Text Editor */}
         <SidebarInset>
           <RoomHeader
-            roomHome={activeDoc === null && activeStream === null}
+            roomHome={activeDoc === null && activeStream === null && settingsOpen === false}
             activeDoc={activeDoc}
             activeStream={activeStream}
           />
           <Separator />
           <div className="flex flex-1 flex-col pt-0 overflow-hidden">
-            {activeDoc !== null && settingsOpen !== true && (
+            {activeDoc !== null && (
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
@@ -185,8 +197,8 @@ function RoomPage(props: Props) {
                   media={media}
                   roomID={room?.roomID!}
                   refresh={handleRoomFetch}
-                  setActiveDoc={setActiveDoc}
-                  setActiveStream={setActiveStream}
+                  setActiveDoc={handleActiveDoc}
+                  setActiveStream={handleActiveStream}
                   setActiveVoice={setActiveVoice}
                 />
               )}
