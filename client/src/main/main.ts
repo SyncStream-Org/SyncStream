@@ -241,14 +241,5 @@ ipcMain.handle('get-video-sources', async (event, args) => {
     types: ['window', 'screen'],
   });
 
-  const videoOptionsMenu = Menu.buildFromTemplate(
-    inputSources.map((source) => {
-      return {
-        label: source.name,
-        click: undefined,
-      };
-    }),
-  );
-
-  videoOptionsMenu.popup();
+  return inputSources;
 });

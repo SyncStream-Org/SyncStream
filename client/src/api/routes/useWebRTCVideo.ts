@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import SessionState from '@/utilities/session-state';
-import { desktopCapturer, Menu } from 'electron';
 
 // Audio Streams
 let localInput: MediaStream | undefined;
@@ -172,10 +171,20 @@ export async function initiateVideoCall(
   }
 
   // Grab default local video (if not set yet)
-  if (!isClient) {
-    window.electron.ipcRenderer.invokeFunction('get-video-sources');
+  if (!newIsClient) {
+    const sources =
+      await window.electron.ipcRenderer.invokeFunction('get-video-sources');
+    console.log(sources);
     try {
-      localInput = await navigator.mediaDevices.getDisplayMedia();
+      localInput = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          mandatory: {
+            chromeMediaSource: 'desktop',
+            chromeMediaSourceId: sources[2].id,
+          },
+        },
+      });
     } catch {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
         title: 'Error',

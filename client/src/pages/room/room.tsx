@@ -191,10 +191,9 @@ function RoomPage(props: Props) {
         <button
           onClick={() => {
             setisClient(!isClient);
-            console.log(isClient);
           }}
         >
-          TOGGLE IS CLIENT
+          {isClient ? 'CLIENT' : 'SERVER'}
         </button>
       </SidebarProvider>
       <audio id="remoteAudioPlayer" autoPlay hidden />
