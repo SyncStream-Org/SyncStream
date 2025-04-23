@@ -70,28 +70,34 @@ function RoomPage(props: Props) {
                 'Something went wrong with the server and we could not grab room member data.',
             });
           } else {
-            if (res1 === undefined || res1.data === undefined || res2 === undefined || res2.data === undefined)
+            if (
+              res1 === undefined ||
+              res1.data === undefined ||
+              res2 === undefined ||
+              res2.data === undefined
+            )
               throw Error('Unreachable');
-            const usersInRoom = res2.data;
-            const usersNotInRoom = res1.data.filter(
+            const usersInRoomRes = res2.data;
+            const usersNotInRoomRes = res1.data.filter(
               (user) =>
-                !usersInRoom.map((roomUser) => roomUser.username).includes(
-                  user.username,
-                ),
+                !usersInRoomRes
+                  .map((roomUser) => roomUser.username)
+                  .includes(user.username),
             );
-            const usersInRoomFiltered = usersInRoom.filter((user) => {
+            const usersInRoomFiltered = usersInRoomRes.filter((user) => {
               // Check if the user is in the room and not the current user
               return (
-                user.username !== SessionState.getInstance().currentUser.username
+                user.username !==
+                SessionState.getInstance().currentUser.username
               );
             });
             setUsersInRoom(usersInRoomFiltered);
-            setUsersNotInRoom(usersNotInRoom);
+            setUsersNotInRoom(usersNotInRoomRes);
           }
         });
       }
     });
-  }
+  };
 
   const handleHomeClick = () => {
     // clear active stream and active doc
@@ -141,13 +147,16 @@ function RoomPage(props: Props) {
         props.navigate('/home');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
   const onUserUpdate = useCallback(
     (type: Types.UpdateType, update: Types.RoomUserUpdateData) => {
       if (type === 'delete') {
-        if (SessionState.getInstance().currentUser.username === update.username) {
+        if (
+          SessionState.getInstance().currentUser.username === update.username
+        ) {
           api.User.leaveRoomPresence();
           props.navigate('/home');
         }
@@ -157,6 +166,7 @@ function RoomPage(props: Props) {
         handleUserFetch();
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -174,9 +184,13 @@ function RoomPage(props: Props) {
   }, [room]);
 
   useEffect(() => {
-    if (room && room.roomOwner! == SessionState.getInstance().currentUser.username) {
+    if (
+      room &&
+      room.roomOwner! === SessionState.getInstance().currentUser.username
+    ) {
       handleUserFetch();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room, settingsOpen]);
 
   useEffect(() => {
@@ -242,12 +256,13 @@ function RoomPage(props: Props) {
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && 
-            <RoomSettings 
-              room={room!} 
-              usersInRoom={usersInRoom}
-              usersNotInRoom={usersNotInRoom}
-            />}
+            {settingsOpen === true && (
+              <RoomSettings
+                room={room!}
+                usersInRoom={usersInRoom}
+                usersNotInRoom={usersNotInRoom}
+              />
+            )}
           </div>
         </SidebarInset>
         <VoiceChannelCard

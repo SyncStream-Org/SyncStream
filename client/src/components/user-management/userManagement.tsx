@@ -14,12 +14,18 @@ interface UserManagementProps {
   usersNotInRoom: Types.UserData[];
 }
 
-export function UserManagementSection({ room, usersInRoom, usersNotInRoom }: UserManagementProps) {
+export function UserManagementSection({
+  room,
+  usersInRoom,
+  usersNotInRoom,
+}: UserManagementProps) {
   const [activeTab, setActiveTab] = useState('invite');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [allUsers, setAllUsers] = useState<(Types.UserData | Types.RoomsUserData)[]>([]);
+  const [allUsers, setAllUsers] = useState<
+    (Types.UserData | Types.RoomsUserData)[]
+  >([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -34,7 +40,6 @@ export function UserManagementSection({ room, usersInRoom, usersNotInRoom }: Use
       setAllUsers(usersInRoom);
     }
   }, [activeTab, usersInRoom, usersNotInRoom]);
-
 
   // Pagination settings
   const usersPerPage = 5;

@@ -18,11 +18,11 @@ import {
   setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
 import SessionState from '@/utilities/session-state';
-import * as api from '../../../api';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { UserManagementSection } from '@/components/user-management/userManagement';
+import * as api from '../../../api';
 import { RoomDelete } from './room-delete';
 import { RoomLeave } from './room-leave';
-import { UserManagementSection } from '@/components/user-management/userManagement';
 
 interface Props {
   room: Types.RoomData;
@@ -31,7 +31,6 @@ interface Props {
 }
 
 interface State {
-  currentUserToModify: string;
   audioInputList: MediaDeviceInfo[];
   currentAudioInput: string | undefined;
   openDelete: boolean;
@@ -43,7 +42,6 @@ export default class RoomSettings extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      currentUserToModify: '',
       audioInputList: [],
       currentAudioInput: undefined,
       openDelete: false,
@@ -97,10 +95,6 @@ export default class RoomSettings extends React.Component<Props, State> {
       );
     };
 
-    const handleUserSelectChange = (value: string) => {
-      this.setState({ currentUserToModify: value });
-    };
-
     const handleAudioInputSelect = (value: string) => {
       const deviceInfo = this.state.audioInputList.filter(
         (info) => info.label === value,
@@ -120,10 +114,10 @@ export default class RoomSettings extends React.Component<Props, State> {
       // Save the selection in cache
       SessionState.getInstance().audioDeviceID = deviceInfo.deviceId;
     };
-    
+
     const setOpenDelete = (open: boolean) => {
       this.setState({ openDelete: open });
-    }
+    };
 
     const isRoomOwner =
       this.props.room.roomOwner! ===
@@ -167,10 +161,7 @@ export default class RoomSettings extends React.Component<Props, State> {
                   type="button"
                 />
               </DialogTrigger>
-              <RoomDelete
-                room={this.props.room}
-                setOpen={setOpenDelete}
-              />
+              <RoomDelete room={this.props.room} setOpen={setOpenDelete} />
             </Dialog>
           </>
         )}
@@ -187,10 +178,7 @@ export default class RoomSettings extends React.Component<Props, State> {
                   type="button"
                 />
               </DialogTrigger>
-              <RoomLeave
-                room={this.props.room}
-                setOpen={setOpenDelete}
-              />
+              <RoomLeave room={this.props.room} setOpen={setOpenDelete} />
             </Dialog>
           </>
         )}
