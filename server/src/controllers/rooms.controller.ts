@@ -50,10 +50,12 @@ export const createRoom = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Unkown Server Error has Occurred" }); // shouldn't happen, this was user/member exists in invite member, leaving in for consistency
     return;
   }
-
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
   // broadcast the update to the room owner
   Broadcaster.pushUpdateToUsers(
-    [username],
+    [username, ...adminsUsernames],
     {
       type: "create",
       data: {isMember: true, ...roomDataResponse},
@@ -113,9 +115,12 @@ export const updateRoom = async (req: Request, res: Response) => {
   const members = users.filter((user) => user.isMember).map((user) => user.username);
   const invited = users.filter((user) => !user.isMember).map((user) => user.username);
 
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
   // broadcast the update to all users
   Broadcaster.pushUpdateToUsers(
-    members,
+    [...members, ...adminsUsernames],
     {
       type: "update",
       data: { isMember: true, ...roomDataResponse },
@@ -165,9 +170,12 @@ export const deleteRoom = async (req: Request, res: Response) => {
     roomOwner: room.roomOwner,
     roomID: room.roomID,
   };
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
   // broadcast the update to all users
   Broadcaster.pushUpdateToUsers(
-    members,
+    [...members, ...adminsUsernames],
     {
       type: "delete",
       data: { isMember: true, ...roomDataResponse },
