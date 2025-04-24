@@ -65,6 +65,18 @@ function RoomPage(props: Props) {
     setSettingsOpen(true);
   };
 
+  const handleActiveDoc = (doc: Types.MediaData | null) => {
+    setActiveDoc(doc);
+    setActiveStream(null);
+    setSettingsOpen(false);
+  };
+
+  const handleActiveStream = (stream: Types.MediaData | null) => {
+    setActiveStream(stream);
+    setActiveDoc(null);
+    setSettingsOpen(false);
+  };
+
   const onMediaUpdate = useCallback(
     (type: Types.UpdateType, update: Types.MediaData) => {
       setMedia((prevMedia) => {
@@ -85,10 +97,46 @@ function RoomPage(props: Props) {
     [],
   );
 
+  const onRoomUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.RoomUpdateData) => {
+      if (type === 'update') {
+        if (update.newRoomName) {
+          room!.roomName = update.newRoomName;
+        }
+        if (update.newOwnerID) {
+          room!.roomOwner = update.newOwnerID;
+        }
+      } else if (type === 'delete') {
+        api.User.leaveRoomPresence();
+        props.navigate('/home');
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const onUserUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.RoomUserUpdateData) => {
+      if (type === 'update') {
+        // keep master list of room users. update here.
+      } else if (
+        type === 'delete' &&
+        SessionState.getInstance().currentUser.username === update.username
+      ) {
+        api.User.leaveRoomPresence();
+        props.navigate('/home');
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
   useRoomSSE(
     room?.roomID!,
     SessionState.getInstance().sessionToken,
     onMediaUpdate,
+    onRoomUpdate,
+    onUserUpdate,
   );
 
   useEffect(() => {
@@ -113,9 +161,9 @@ function RoomPage(props: Props) {
           username={SessionState.getInstance().currentUser.username}
           media={media}
           activeDoc={activeDoc}
-          setActiveDoc={setActiveDoc}
+          setActiveDoc={handleActiveDoc}
           activeStream={activeStream}
-          setActiveStream={setActiveStream}
+          setActiveStream={handleActiveStream}
           activeVoice={activeVoice}
           setActiveVoice={setActiveVoice}
           goToHome={() => {
@@ -123,7 +171,6 @@ function RoomPage(props: Props) {
             props.navigate('/home');
           }}
           goToSettings={() => {
-            api.User.leaveRoomPresence();
             props.navigate('/settings');
           }}
           setRoomHome={handleHomeClick}
@@ -133,13 +180,17 @@ function RoomPage(props: Props) {
         {/* Text Editor */}
         <SidebarInset>
           <RoomHeader
-            roomHome={activeDoc === null && activeStream === null}
+            roomHome={
+              activeDoc === null &&
+              activeStream === null &&
+              settingsOpen === false
+            }
             activeDoc={activeDoc}
             activeStream={activeStream}
           />
           <Separator />
           <div className="flex flex-1 flex-col pt-0 overflow-hidden">
-            {activeDoc !== null && settingsOpen !== true && (
+            {activeDoc !== null && (
               <DocEditor
                 activeDoc={activeDoc}
                 username={SessionState.getInstance().currentUser.username}
@@ -155,12 +206,12 @@ function RoomPage(props: Props) {
                   media={media}
                   roomID={room?.roomID!}
                   refresh={handleRoomFetch}
-                  setActiveDoc={setActiveDoc}
-                  setActiveStream={setActiveStream}
+                  setActiveDoc={handleActiveDoc}
+                  setActiveStream={handleActiveStream}
                   setActiveVoice={setActiveVoice}
                 />
               )}
-            {settingsOpen === true && <RoomSettings roomID={room?.roomID!} />}
+            {settingsOpen === true && <RoomSettings room={room!} />}
           </div>
         </SidebarInset>
         <VoiceChannelCard
@@ -174,7 +225,9 @@ function RoomPage(props: Props) {
           }}
         />
       </SidebarProvider>
-      <audio id="remoteAudioPlayer" autoPlay hidden />
+      <audio id="remoteAudioPlayer" autoPlay hidden>
+        <track kind="captions" src="" label="English captions" hidden />
+      </audio>
     </div>
   );
 }

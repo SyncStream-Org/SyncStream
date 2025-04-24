@@ -1,3 +1,4 @@
+import { Types } from 'syncstream-sharedlib';
 import { MediaNav } from '@/pages/room/sidebar/media-nav';
 import { ManageNav } from '@/pages/room/sidebar/manage-nav';
 import { UserNav } from '@/pages/room/sidebar/user-nav';
@@ -9,7 +10,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { Types } from 'syncstream-sharedlib';
 
 interface RoomSidebarProps {
   room: Types.RoomData | null;

@@ -11,7 +11,7 @@ export function RoomHeader({ roomName }: { roomName: string }) {
       <SidebarMenuItem>
         <SidebarMenuButton
           size="lg"
-          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground pointer-events-none"
         >
           <Avatar className="h-8 w-8 rounded-lg bg-blue-500">
             <AvatarFallback className="rounded-lg bg-blue-500 text-white">

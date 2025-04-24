@@ -38,7 +38,7 @@ export function authenticate(
         return SuccessState.SUCCESS;
       }
 
-      if (res.status === 401) {
+      if (res.status === 401 || res.status === 404) {
         const body = await res.json();
         console.error(`Authentication Failed: ${body.error}`);
         return SuccessState.FAIL;
