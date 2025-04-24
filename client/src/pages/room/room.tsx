@@ -24,6 +24,7 @@ import { RoomHome } from './room-home/room-home';
 import { VoiceChannelCard } from './voiceChannelCard';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
+import { StreamViewer } from './stream-viewer/streamViewer';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -42,7 +43,6 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
-  const [isClient, setisClient] = useState<boolean>(true);
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
@@ -111,14 +111,6 @@ function RoomPage(props: Props) {
     }
   }, [activeVoice, room?.roomID]);
 
-  useEffect(() => {
-    if (activeStream) {
-      initiateVideoCall(room?.roomID!, activeStream.mediaID!, isClient);
-    } else {
-      closeVideoCall();
-    }
-  }, [activeStream, room?.roomID, isClient]);
-
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
@@ -163,6 +155,12 @@ function RoomPage(props: Props) {
                 serverURL={SessionState.getInstance().serverURL}
               />
             )}
+            {activeStream !== null && settingsOpen !== true && (
+              <StreamViewer
+                activeStream={activeStream}
+                roomID={room?.roomID!}
+              />
+            )}
             {activeDoc === null &&
               activeStream === null &&
               settingsOpen === false && (
@@ -188,16 +186,8 @@ function RoomPage(props: Props) {
             setActiveVoice(null);
           }}
         />
-        <button
-          onClick={() => {
-            setisClient(!isClient);
-          }}
-        >
-          {isClient ? 'CLIENT' : 'SERVER'}
-        </button>
       </SidebarProvider>
       <audio id="remoteAudioPlayer" autoPlay hidden />
-      <video id="remoteVideoPlayer" autoPlay />
     </div>
   );
 }

@@ -145,6 +145,7 @@ function createPeerConnection() {
     pc.ontrack = (event) => {
       event.streams[0].getTracks().forEach((track) => {
         // Place in remote output
+        console.log(track);
         remoteOutput.addTrack(track);
       });
     };
@@ -152,6 +153,7 @@ function createPeerConnection() {
     // Add local audio input to the peer connection if not client
     if (localInput === undefined) throw Error('unreachable');
     localInput.getTracks().forEach((track) => {
+      console.log(track);
       pc.addTrack(track, localInput as MediaStream);
     });
   }
@@ -164,26 +166,30 @@ export async function initiateVideoCall(
   newRoomID: string,
   newChannel: string,
   newIsClient: boolean,
+  sourceID?: string,
 ) {
   // Sanity checks
   if (isInCall()) {
     throw Error("Can't get in new call, already in call.");
   }
-
+  console.log(newRoomID, newChannel, newIsClient, sourceID);
   // Grab default local video (if not set yet)
   if (!newIsClient) {
-    const sources =
-      await window.electron.ipcRenderer.invokeFunction('get-video-sources');
-    console.log(sources);
+    if (!sourceID) {
+      throw new Error('Need a sourceID to start a video call.');
+    }
     try {
       localInput = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
           mandatory: {
             chromeMediaSource: 'desktop',
-            chromeMediaSourceId: sources[2].id,
+            chromeMediaSourceId: sourceID,
           },
         },
+      });
+      localInput.getTracks().forEach((track) => {
+        remoteOutput.addTrack(track);
       });
     } catch {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
@@ -255,6 +261,9 @@ export async function initiateVideoCall(
     } else if (message.type === 'leave') {
       // Sanity checks for clients
       if (newIsClient && !message.isServer) {
+        console.error(
+          'Someone tried to send a message as a client when you are are the client.',
+        );
         return;
       }
 
@@ -423,16 +432,15 @@ export async function closeVideoCall() {
   peerConnections.clear();
 
   // Clear remote media streams
-  if (isClient) {
-    remoteOutput.getTracks().forEach((track) => {
-      track.stop();
-      remoteOutput.removeTrack(track);
-    });
-  }
+  remoteOutput.getTracks().forEach((track) => {
+    track.stop();
+    remoteOutput.removeTrack(track);
+  });
 
   // Stop local tracks
   if (!isClient) {
     localInput?.getTracks().forEach((track) => {
+      console.log(track);
       if (track.readyState === 'live') {
         track.stop();
       }
