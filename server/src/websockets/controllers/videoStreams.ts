@@ -6,8 +6,13 @@ interface CallID {
   channel: string;
 }
 
+interface Call {
+  leader: string | undefined;
+  sockets: Map<string, WebSocket>;
+}
+
 // Map of callIDs to User websockets
-const calls: Map<string, Map<string, WebSocket>> = new Map();
+const calls: Map<string, Call> = new Map();
 
 // Broadcast a message to clients in a specific channel (if to is specified, only that client gets the message.)
 const broadcast = (message: any, callID: CallID, from: string, to?: string) => {
@@ -22,26 +27,26 @@ const broadcast = (message: any, callID: CallID, from: string, to?: string) => {
   if (call === undefined) throw Error("Unreachable");
 
   if (to === undefined) {
-    call.forEach((ws, username, map) => {
+    call.sockets.forEach((ws, username, map) => {
       if (username !== from) {
         console.log(`Sent to ${username}`);
         ws.send(JSON.stringify(message));
       }
     });
   } else {
-    if (!call.has(to)) {
+    if (!call.sockets.has(to)) {
       console.error(`Tried to broadcast to a non existent user. ${to}`);
       return;
     }
 
-    const ws = call.get(to);
+    const ws = call.sockets.get(to);
     if (ws === undefined) throw Error("Unreachable");
 
     ws.send(JSON.stringify(message));
   }
 };
 
-export default function wsAudioCalls(ws: WebSocket, req: Request) {
+export default function wsVideoStreams(ws: WebSocket, req: Request) {
   const username = req.query.userid as string;
   const callID = { channel: req.params.channel, room: req.params.roomID };
   const isServer = !((req.query.isClient as string) === "true");
@@ -49,19 +54,29 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
   // Add to map
   const callID_str = JSON.stringify(callID);
   if (!calls.has(callID_str)) {
-    calls.set(callID_str, new Map());
+    calls.set(callID_str, { leader: undefined, sockets: new Map() });
   }
+
   const call = calls.get(callID_str);
   if (call === undefined) throw Error("Unreachable");
 
-  if (call.has(username)) {
+  // Check for leader
+  if (call.leader === undefined && isServer) {
+    call.leader = username;
+    calls.set(callID_str, call);
+  } else if (call.leader !== undefined && isServer) {
+    ws.close(1008, "FUCK OFF");
+    return;
+  }
+
+  if (call.sockets.has(username)) {
     console.error(
       `Tried to connect with a user that already is in call. ${callID_str} / ${username}`,
     );
     ws.close();
     return;
   }
-  call.set(username, ws);
+  call.sockets.set(username, ws);
 
   console.log(
     `Client [${username}] in room [${callID.room}] has connected to video channel [${callID.channel}]`,
@@ -154,7 +169,13 @@ export default function wsAudioCalls(ws: WebSocket, req: Request) {
 
   ws.on("close", () => {
     // Remove the client on disconnection
-    call.delete(username);
+    call.sockets.delete(username);
+
+    if (isServer) {
+      call.leader = undefined;
+      calls.set(callID_str, call);
+    }
+
     console.log(
       `Client [${username}] in room [${callID.room}] has disconnected from video channel [${callID.channel}]`,
     );
