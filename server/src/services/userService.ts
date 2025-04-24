@@ -173,11 +173,8 @@ class UserService {
   }
 
   public async listAllUsers(noAdmin?: boolean): Promise<User[]> {
-    if (noAdmin === undefined) {
-      noAdmin = false;
-    }
     return await User.findAll({
-      where: noAdmin ? { admin: false } : {}
+      where: noAdmin !== undefined ? { admin: !noAdmin } : {}
     });
   }
 }

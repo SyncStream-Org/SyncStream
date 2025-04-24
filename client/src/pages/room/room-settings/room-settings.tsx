@@ -18,7 +18,10 @@ import {
   setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
 import SessionState from '@/utilities/session-state';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import * as api from '../../../api';
+import { RoomDelete } from './room-delete';
+import { RoomLeave } from './room-leave';
 
 interface Props {
   room: Types.RoomData;
@@ -30,6 +33,7 @@ interface State {
   currentUserToModify: string;
   audioInputList: MediaDeviceInfo[];
   currentAudioInput: string | undefined;
+  openDelete: boolean;
 }
 
 // TODO: localize
@@ -43,6 +47,7 @@ export default class RoomSettings extends React.Component<Props, State> {
       currentUserToModify: '',
       audioInputList: [],
       currentAudioInput: undefined,
+      openDelete: false,
     };
 
     // Grab audio devices (and label of current audio device)
@@ -194,6 +199,10 @@ export default class RoomSettings extends React.Component<Props, State> {
       });
     };
 
+    const setOpenDelete = (open: boolean) => {
+      this.setState({ openDelete: open });
+    };
+
     const isRoomOwner =
       this.props.room.roomOwner! ===
       SessionState.getInstance().currentUser.username;
@@ -250,6 +259,36 @@ export default class RoomSettings extends React.Component<Props, State> {
                 onClick={handleBan}
               />
             </div>
+            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+              Delete Room
+            </h2>
+            <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
+              <DialogTrigger asChild>
+                <PrimaryButton
+                  className="mt-3"
+                  text="Delete Room"
+                  type="button"
+                />
+              </DialogTrigger>
+              <RoomDelete room={this.props.room} setOpen={setOpenDelete} />
+            </Dialog>
+          </>
+        )}
+        {!isRoomOwner && (
+          <>
+            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+              Leave Room
+            </h2>
+            <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
+              <DialogTrigger asChild>
+                <PrimaryButton
+                  className="mt-3"
+                  text="Leave Room"
+                  type="button"
+                />
+              </DialogTrigger>
+              <RoomLeave room={this.props.room} setOpen={setOpenDelete} />
+            </Dialog>
           </>
         )}
         <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">

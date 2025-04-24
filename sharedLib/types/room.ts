@@ -29,12 +29,17 @@ export interface RoomUpdateData {
     newOwnerID?: string;
 }
 
+export interface RoomUserUpdateData {
+    username: string;
+    isMember: boolean;
+}
+
 export type UpdateType = 'create' | 'update' | 'delete';
 
 export interface RoomBroadcastUpdate {
   endpoint: 'room' | 'media' | 'user'; // lets the client know what is being updated
   type: UpdateType;    
-  data: MediaData | UserRoomData | RoomUpdateData;
+  data: MediaData | RoomUpdateData | RoomUserUpdateData;
 }
 
 export interface UserBroadcastUpdate {

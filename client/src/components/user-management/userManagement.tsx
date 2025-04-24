@@ -27,6 +27,7 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
 
     // Load relevant users based on active tab
     loadUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const loadUsers = async () => {
@@ -34,11 +35,11 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
     try {
       if (activeTab === 'invite') {
         // Get users NOT in room
-        const allUsers = await api.User.getAllUsers();
-        if (allUsers.success !== api.SuccessState.SUCCESS) {
+        const allUsersRes = await api.User.getAllUsers();
+        if (allUsersRes.success !== api.SuccessState.SUCCESS) {
           throw new Error('Failed to fetch all users');
         }
-        setAllUsers(allUsers.data!.map((user) => user.username));
+        setAllUsers(allUsersRes.data!.map((user) => user.username));
       } else {
         // Get users IN room
         const roomUsers = await api.Rooms.listMembers(room.roomID!);

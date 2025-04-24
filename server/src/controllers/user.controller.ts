@@ -147,7 +147,12 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
     return;
   }
   await userService.removeRoomUser(roomUserObj);
-
+  // broadcast to room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "delete",
+    data: { username: user.username, isMember: false },
+  });
   res.sendStatus(200);
 };
 
@@ -170,6 +175,12 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
   const isMember = true;
   await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
 
+  // tell the room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "update",
+    data: { username: user.username, isMember },
+  });
   res.sendStatus(200);
 };
 
@@ -184,7 +195,8 @@ export const joinRoom = async (req: Request, res: Response) => {
 
   // check if room exists, and if the user is part of it
   try {
-    if ((await userService.getRoomUser(roomID, user.username)) === null) {
+    const roomUser = await userService.getRoomUser(roomID, user.username);
+    if ((!roomUser || !roomUser.isMember) && !user.admin) {
       res.status(403).json({ error: "Forbidden: User not part of Room" });
       return;
     }

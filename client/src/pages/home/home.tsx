@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
@@ -161,11 +162,11 @@ function Home(props: Props) {
             >
               <Settings className="max-h-7 " />
             </button>
-            <img
-              src="https://placehold.co/40x40"
-              alt="Profile"
-              className="rounded-full"
-            />
+            <Avatar className="w-10 h-10 bg-gray-200">
+              <AvatarFallback className="w-10 h-10 bg-gray-200">
+                {SessionState.getInstance().currentUser.username[0]}
+              </AvatarFallback>
+            </Avatar>
           </div>
         </header>
 
