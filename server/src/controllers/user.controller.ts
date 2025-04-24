@@ -197,7 +197,8 @@ export const joinRoom = async (req: Request, res: Response) => {
 
   // check if room exists, and if the user is part of it
   try {
-    if ((await userService.getRoomUser(roomID, user.username)) === null) {
+    const roomUser = await userService.getRoomUser(roomID, user.username);
+    if ((!roomUser || !roomUser.isMember) && !user.admin) {
       res.status(403).json({ error: "Forbidden: User not part of Room" });
       return;
     }

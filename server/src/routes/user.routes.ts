@@ -4,12 +4,20 @@ import * as controller from "../controllers/user.controller";
 import { authMiddleware } from "../middleware/setup"
 import { ErrorCatcher } from "../middleware/errorCatcher";
 
+import rateLimit from "express-rate-limit";
+
+// rate limit to 1000 rq per 15min
+const limiter = rateLimit({
+    windowMs: 15*60*1000,
+    max: 1000
+}); 
 
 const router = Router();
 
 router.post("/authenticate", ErrorCatcher(controller.authenticate));
 
 router.use(ErrorCatcher(authMiddleware));
+router.use(limiter, authMiddleware);
 
 router.get("/", ErrorCatcher(controller.getUserDetails));
 router.get("/all", ErrorCatcher(controller.getAllUsers));
