@@ -58,9 +58,11 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
       <video
         id="remoteVideoPlayer"
         autoPlay
-        playsInline
-        hidden={isClient !== null}
-        style={{ width: '100%', height: 'auto' }}
+        style={{ 
+          width: '100%', 
+          height: 'auto',
+          display: isClient !== null ? 'block' : 'none',
+        }}
       />
       {isClient === null && (
         <div className="flex flex-row">

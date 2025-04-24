@@ -86,7 +86,7 @@ function createPeerConnection() {
       'Tried to create a new peer connection when not connected to a call.',
     );
   }
-
+  console.log('Creating peer connection');
   if (!isClient && localInput === undefined)
     throw Error(
       'Initiated a peer connection before a local video input was set.',
@@ -150,7 +150,7 @@ function createPeerConnection() {
       });
     };
   } else {
-    // Add local audio input to the peer connection if not client
+    // Add local video input to the peer connection if not client
     if (localInput === undefined) throw Error('unreachable');
     localInput.getTracks().forEach((track) => {
       console.log(track);
@@ -188,9 +188,6 @@ export async function initiateVideoCall(
           },
         },
       });
-      localInput.getTracks().forEach((track) => {
-        remoteOutput.addTrack(track);
-      });
     } catch {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
         title: 'Error',
@@ -198,6 +195,10 @@ export async function initiateVideoCall(
       });
       return;
     }
+    // add the local input to the remote output so the streamer can see
+    localInput.getTracks().forEach((track) => {
+      remoteOutput.addTrack(track);
+    });
   }
 
   // Initiate web socket for signal server
@@ -229,6 +230,9 @@ export async function initiateVideoCall(
 
       // Sanity checks for clients
       if (newIsClient && !message.isServer) {
+        console.error(
+          'Someone tried to send a message as a client when you are are the client.',
+        );
         return;
       }
 
@@ -245,9 +249,11 @@ export async function initiateVideoCall(
         );
         return;
       }
-
       const pc = createPeerConnection();
-      const offer = await pc.createOffer();
+      const options = newIsClient
+        ? { offerToReceiveAudio: true, offerToReceiveVideo: true }
+        : {};
+      const offer = await pc.createOffer(options);
       newSocket.send(
         JSON.stringify({
           type: 'offer',
@@ -317,7 +323,6 @@ export async function initiateVideoCall(
         );
         return;
       }
-
       const pc = createPeerConnection();
       await pc.setRemoteDescription(message);
 
@@ -349,8 +354,6 @@ export async function initiateVideoCall(
         );
         return;
       }
-
-      console.log('YES');
 
       const pc = peerConnections.get(message.username);
       if (pc === undefined) throw Error('Unreachable');
@@ -481,6 +484,8 @@ export function useWebRTCVideo() {
     // Link remote output to audio elemnt
     if (document.getElementById('remoteVideoPlayer') !== null) {
       document!.getElementById('remoteVideoPlayer')!.srcObject = remoteOutput;
+    } else {
+      console.error('No remote video player found.');
     }
 
     // Call on unload to close any call that exists
