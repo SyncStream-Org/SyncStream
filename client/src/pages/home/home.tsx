@@ -14,10 +14,10 @@ import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types

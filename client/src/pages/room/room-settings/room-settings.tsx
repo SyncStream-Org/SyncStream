@@ -18,8 +18,8 @@ import {
   setLocalInputDevice,
 } from '@/api/routes/useWebRTCAudio';
 import SessionState from '@/utilities/session-state';
-import * as api from '../../../api';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import * as api from '../../../api';
 import { RoomDelete } from './room-delete';
 import { RoomLeave } from './room-leave';
 
@@ -198,10 +198,10 @@ export default class RoomSettings extends React.Component<Props, State> {
         }
       });
     };
-    
+
     const setOpenDelete = (open: boolean) => {
       this.setState({ openDelete: open });
-    }
+    };
 
     const isRoomOwner =
       this.props.room.roomOwner! ===
@@ -270,10 +270,7 @@ export default class RoomSettings extends React.Component<Props, State> {
                   type="button"
                 />
               </DialogTrigger>
-              <RoomDelete
-                room={this.props.room}
-                setOpen={setOpenDelete}
-              />
+              <RoomDelete room={this.props.room} setOpen={setOpenDelete} />
             </Dialog>
           </>
         )}
@@ -290,10 +287,7 @@ export default class RoomSettings extends React.Component<Props, State> {
                   type="button"
                 />
               </DialogTrigger>
-              <RoomLeave
-                room={this.props.room}
-                setOpen={setOpenDelete}
-              />
+              <RoomLeave room={this.props.room} setOpen={setOpenDelete} />
             </Dialog>
           </>
         )}

@@ -69,7 +69,7 @@ function RoomPage(props: Props) {
     setActiveDoc(doc);
     setActiveStream(null);
     setSettingsOpen(false);
-  }
+  };
 
   const handleActiveStream = (stream: Types.MediaData | null) => {
     setActiveStream(stream);
@@ -111,6 +111,7 @@ function RoomPage(props: Props) {
         props.navigate('/home');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -118,11 +119,15 @@ function RoomPage(props: Props) {
     (type: Types.UpdateType, update: Types.RoomUserUpdateData) => {
       if (type === 'update') {
         // keep master list of room users. update here.
-      } else if (type === 'delete' && SessionState.getInstance().currentUser.username === update.username) {
+      } else if (
+        type === 'delete' &&
+        SessionState.getInstance().currentUser.username === update.username
+      ) {
         api.User.leaveRoomPresence();
         props.navigate('/home');
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -175,7 +180,11 @@ function RoomPage(props: Props) {
         {/* Text Editor */}
         <SidebarInset>
           <RoomHeader
-            roomHome={activeDoc === null && activeStream === null && settingsOpen === false}
+            roomHome={
+              activeDoc === null &&
+              activeStream === null &&
+              settingsOpen === false
+            }
             activeDoc={activeDoc}
             activeStream={activeStream}
           />
@@ -216,7 +225,9 @@ function RoomPage(props: Props) {
           }}
         />
       </SidebarProvider>
-      <audio id="remoteAudioPlayer" autoPlay hidden />
+      <audio id="remoteAudioPlayer" autoPlay hidden>
+        <track kind="captions" src="" label="English captions" hidden />
+      </audio>
     </div>
   );
 }
