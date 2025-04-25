@@ -26,6 +26,11 @@ import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 import { StreamViewer } from './stream-viewer/streamViewer';
 
+interface PresenceData {
+  users: string[];
+  isServerSet?: boolean;
+}
+
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
@@ -43,6 +48,9 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
+  const [presenceMap, setPresenceMap] = useState<Map<string, PresenceData>>(
+    new Map<string, PresenceData>(),
+  );
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
@@ -137,12 +145,58 @@ function RoomPage(props: Props) {
     [],
   );
 
+  const onPresenceUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.PresenceData) => {
+      if (type === 'create') {
+        setPresenceMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          const prevEntry = newMap.get(update.mediaID);
+          if (prevEntry) {
+            newMap.set(update.mediaID, {
+              users: [
+                ...prevEntry.users,
+                update.username,
+              ],
+              isServerSet: update.isServer === true ? true : prevEntry.isServerSet,
+            });
+          } else {
+            newMap.set(update.mediaID, {
+              users: [update.username],
+              isServerSet: update.isServer,
+            });
+          }
+          return newMap;
+        });
+      } else if (type === 'delete') {
+        setPresenceMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          const prevEntry = newMap.get(update.mediaID);
+          if (prevEntry) {
+            newMap.set(update.mediaID, {
+              users: prevEntry.users.filter((user) => user !== update.username),
+              isServerSet: update.isServer === true ? false : prevEntry.isServerSet,
+            });
+          }
+          if (newMap.get(update.mediaID)?.users.length === 0) {
+            newMap.delete(update.mediaID);
+          }
+          if (update.isServer === true && activeVoice?.mediaID === update.mediaID) {
+            setActiveVoice(null);
+          }
+          return newMap;
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  , []);
+
   useRoomSSE(
     room?.roomID!,
     SessionState.getInstance().sessionToken,
     onMediaUpdate,
     onRoomUpdate,
     onUserUpdate,
+    onPresenceUpdate,
   );
 
   useEffect(() => {
@@ -208,6 +262,7 @@ function RoomPage(props: Props) {
             {activeStream !== null && settingsOpen !== true && (
               <StreamViewer
                 activeStream={activeStream}
+                presenceData={presenceMap.get(activeStream.mediaID!)}
                 roomID={room?.roomID!}
               />
             )}

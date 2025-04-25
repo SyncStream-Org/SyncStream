@@ -23,12 +23,22 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface PresenceData {
+  users: string[];
+  isServerSet?: boolean;
+}
+
 interface StreamViewerProps {
   activeStream: Types.MediaData | null;
+  presenceData?: PresenceData;
   roomID: string;
 }
 
-export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
+export function StreamViewer({
+  activeStream,
+  presenceData,
+  roomID,
+}: StreamViewerProps) {
   const [sourceID, setSourceID] = useState<string | null>(null);
   const [isClient, setIsClient] = useState<boolean | null>(null);
   const [sources, setSources] = useState<any[]>([]);
@@ -72,6 +82,7 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
                       );
                     setSources(ret);
                   }}
+                  disabled={presenceData?.isServerSet}
                 >
                   Start a Video Stream
                 </Button>
@@ -107,6 +118,7 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
               onClick={() => {
                 setIsClient(true);
               }}
+              disabled={!presenceData?.isServerSet}
             >
               Join Stream
             </Button>

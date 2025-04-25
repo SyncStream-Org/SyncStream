@@ -169,11 +169,19 @@ export default function wsVideoStreams(ws: WebSocket, req: Request) {
 
   ws.on("close", () => {
     // Remove the client on disconnection
+    const call = calls.get(callID_str);
+    if (call === undefined) throw Error("Unreachable");
+
     call.sockets.delete(username);
 
     if (isServer) {
       call.leader = undefined;
+    }
+    
+    if (call.sockets.size !== 0) {
       calls.set(callID_str, call);
+    } else {
+      calls.delete(callID_str);
     }
 
     console.log(

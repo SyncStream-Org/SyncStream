@@ -39,6 +39,7 @@ export function VoiceChannelCard({
   };
 
   const handleLeaveCall = () => {
+    setIsMuted(false);
     onLeaveCall();
   };
 
