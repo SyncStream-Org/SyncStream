@@ -136,9 +136,6 @@ export default class GeneralSettings extends React.Component<Props, State> {
 
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
 
-        <h2 className="text-xl text-gray-800 dark:text-gray-100">
-          {localize.settingsPage.general.dangerZone.title}
-        </h2>
         <PrimaryButton
           className="mt-2"
           text={localize.settingsPage.general.dangerZone.logOut}
