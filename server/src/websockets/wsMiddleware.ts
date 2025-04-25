@@ -75,7 +75,7 @@ export async function wsPresence(
     return;
   }
   
-  const isServer = req.params.isClient !== undefined ? !req.params.isClient : undefined;
+  const isServer = req.query.isClient ? !((req.query.isClient as string) === "true") : undefined;
 
   // broadcast the presence update
   Broadcaster.pushUpdateToRoom(roomID, {
