@@ -59,52 +59,59 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
         <track kind="captions" hidden />
       </video>
       {isClient === null && (
-        <div className="flex flex-row">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                onClick={async () => {
-                  const ret =
-                    await window.electron.ipcRenderer.invokeFunction(
-                      'get-video-sources',
-                    );
-                  setSources(ret);
-                }}
-              >
-                Start a Video Stream
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Select a Window or Screen to Share</DialogTitle>
-              </DialogHeader>
-              <Select
-                onValueChange={(sourceIDSelect) => {
-                  setSourceID(sourceIDSelect);
-                  setIsClient(false);
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Source to Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Sources</SelectLabel>
-                    {sources.map((source: any) => (
-                      <SelectItem value={source.id}>{source.name}</SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </DialogContent>
-          </Dialog>
-          <Button
-            onClick={() => {
-              setIsClient(true);
-            }}
-          >
-            Join Stream
-          </Button>
+        <div className="w-full h-full content-center">
+          <div className="flex flex-row">
+            <div className="flex-auto" />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  onClick={async () => {
+                    const ret =
+                      await window.electron.ipcRenderer.invokeFunction(
+                        'get-video-sources',
+                      );
+                    setSources(ret);
+                  }}
+                >
+                  Start a Video Stream
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Select a Window or Screen to Share</DialogTitle>
+                </DialogHeader>
+                <Select
+                  onValueChange={(sourceIDSelect) => {
+                    setSourceID(sourceIDSelect);
+                    setIsClient(false);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Source to Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Sources</SelectLabel>
+                      {sources.map((source: any) => (
+                        <SelectItem key={source.id} value={source.id}>
+                          {source.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </DialogContent>
+            </Dialog>
+            <Button
+              className="ml-6"
+              onClick={() => {
+                setIsClient(true);
+              }}
+            >
+              Join Stream
+            </Button>
+            <div className="flex-auto" />
+          </div>
         </div>
       )}
     </>
