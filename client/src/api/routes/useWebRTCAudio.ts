@@ -437,6 +437,25 @@ export function useWebRTCAudio() {
   // Initialize audio devices
   useEffect(() => {
     // Set up listener for audio devices
+    navigator.mediaDevices.ondevicechange = async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      // if the local input is not in the devices, leave the call and rejoin
+      if (localInput && isInCall()) {
+        const deviceIDs = devices
+          .filter((device) => device.kind === 'audioinput')
+          .map((device) => device.deviceId);
+        if (!deviceIDs.includes(localInput.id)) {
+          // if the device was cached, remove it from the cache
+          if (localInput.id === SessionState.getInstance().audioDeviceID) {
+            SessionState.getInstance().audioDeviceID = undefined;
+          }
+          const channelCache = channel as string;
+          const roomCache = roomID as string;
+          closeAudioCall();
+          initiateAudioCall(roomCache, channelCache);
+        }
+      }
+    };
 
     const pollAudio = setInterval(() => {
       const dataArray = Array.from(channelMetadata.entries()).map(

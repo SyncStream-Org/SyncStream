@@ -101,7 +101,11 @@ function Home(props: Props) {
           case 'delete':
             return prevRooms.filter((room) => room.roomID !== update.roomID);
           case 'create':
-            return [...prevRooms, update];
+            // check if the room already exists
+            return prevRooms.find((room) => room.roomID === update.roomID) !==
+              undefined
+              ? prevRooms
+              : [...prevRooms, update];
           default:
             return prevRooms;
         }
