@@ -180,7 +180,10 @@ function RoomPage(props: Props) {
           if (newMap.get(update.mediaID)?.users.length === 0) {
             newMap.delete(update.mediaID);
           }
+          console.log(update);
+          console.log(activeStream);
           if (update.isServer === true && activeStream?.mediaID === update.mediaID) {
+            console.log('Server left stream');
             setActiveStream(null);
           }
           return newMap;
@@ -188,7 +191,7 @@ function RoomPage(props: Props) {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  , []);
+  , [activeStream]);
 
   useRoomSSE(
     room?.roomID!,
