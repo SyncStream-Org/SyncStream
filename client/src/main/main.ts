@@ -237,9 +237,18 @@ ipcMain.on('app-quit', (event, info) => {
 });
 
 ipcMain.handle('get-video-sources', async (event, args) => {
-  const inputSources = await desktopCapturer.getSources({
-    types: ['window', 'screen'],
-  });
+  try {
+    const inputSources = await desktopCapturer.getSources({
+      types: ['window', 'screen'],
+    });
 
-  return inputSources;
+    return inputSources;
+  } catch {
+    dialog.showMessageBox({
+      title: 'Error',
+      message:
+        'Unable to get any video stream sources. Maybe you need to give the app permision to stream video.',
+    });
+    return [];
+  }
 });

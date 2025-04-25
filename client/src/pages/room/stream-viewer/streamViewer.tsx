@@ -36,14 +36,6 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
   useWebRTCVideo();
 
   useEffect(() => {
-    window.electron.ipcRenderer
-      .invokeFunction('get-video-sources')
-      .then((res) => {
-        setSources(res);
-      });
-  }, []);
-
-  useEffect(() => {
     if (isClient === false && sourceID !== null) {
       initiateVideoCall(roomID, activeStream?.mediaID!, false, sourceID);
     } else if (isClient === true) {
@@ -70,7 +62,17 @@ export function StreamViewer({ activeStream, roomID }: StreamViewerProps) {
         <div className="flex flex-row">
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Start a Video Stream</Button>
+              <Button
+                onClick={async () => {
+                  const ret =
+                    await window.electron.ipcRenderer.invokeFunction(
+                      'get-video-sources',
+                    );
+                  setSources(ret);
+                }}
+              >
+                Start a Video Stream
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
