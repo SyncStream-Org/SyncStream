@@ -33,14 +33,14 @@ jobs:
       - name: Upload AppImage to Github
         uses: actions/upload-artifact@v4
         with:
-          name: "linux-appimage-x64-${{ github.ref_name }}"
+          name: "EXPERIMENTAL-linux-appimage-x64-${{ github.ref_name }}"
           path: ./client/release/build/*.AppImage
           if-no-files-found: error
 
       - name: Upload linux-raw to Github
         uses: actions/upload-artifact@v4
         with:
-          name: "linux-generic-x64-${{ github.ref_name }}"
+          name: "EXPERIMENTAL-linux-generic-x64-${{ github.ref_name }}"
           path: ./client/release/build/linux-unpacked
           if-no-files-found: error
 
