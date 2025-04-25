@@ -58,7 +58,7 @@ Start working on SyncStream locally:
 ## Releases
 
 Client builds are available on the [Releases page](https://github.com/SyncStream-Org/SyncStream/releases). Use the version recommended by your server admin for compatibility.
-**We officially support Mac and Windows ONLY. Linux is an experimental build where features are not guranteed to work (though we still provide the builds for you).**
+**We officially support Mac and Windows ONLY. Linux is an experimental build where features are not guaranteed to work (though we still provide the builds for you).**
 
 ---
 
