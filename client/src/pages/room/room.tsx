@@ -46,7 +46,6 @@ function RoomPage(props: Props) {
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
-  useWebRTCVideo();
 
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
