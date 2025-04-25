@@ -180,8 +180,8 @@ function RoomPage(props: Props) {
           if (newMap.get(update.mediaID)?.users.length === 0) {
             newMap.delete(update.mediaID);
           }
-          if (update.isServer === true && activeVoice?.mediaID === update.mediaID) {
-            setActiveVoice(null);
+          if (update.isServer === true && activeStream?.mediaID === update.mediaID) {
+            setActiveStream(null);
           }
           return newMap;
         });
@@ -215,7 +215,7 @@ function RoomPage(props: Props) {
   useEffect(() => {
     console.log(presenceMap);
   }, [presenceMap]);
-  
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
