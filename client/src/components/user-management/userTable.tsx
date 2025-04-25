@@ -1,3 +1,4 @@
+import { Types } from 'syncstream-sharedlib';
 import {
   Table,
   TableHeader,
@@ -6,10 +7,12 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 
 interface UserTableProps {
-  users: string[];
+  users: (Types.RoomsUserData | Types.UserData)[];
+  member?: boolean;
   selectedUsers: string[];
   toggleUserSelection: (username: string) => void;
   toggleSelectAll: () => void;
@@ -18,13 +21,15 @@ interface UserTableProps {
 
 export function UserTable({
   users,
+  member,
   selectedUsers,
   toggleUserSelection,
   toggleSelectAll,
   loading,
 }: UserTableProps) {
   const allSelected =
-    users.length > 0 && users.every((user) => selectedUsers.includes(user));
+    users.length > 0 &&
+    users.every((user) => selectedUsers.includes(user.username));
 
   return (
     <div className="border rounded-md">
@@ -39,6 +44,9 @@ export function UserTable({
               />
             </TableHead>
             <TableHead>Username</TableHead>
+            <TableHead>Display Name</TableHead>
+            <TableHead>Email</TableHead>
+            {member && <TableHead>Member</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -49,16 +57,31 @@ export function UserTable({
               </TableCell>
             </TableRow>
           ) : (
-            users.map((username) => (
-              <TableRow key={username}>
+            users.map((user) => (
+              <TableRow key={user.username}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedUsers.includes(username)}
-                    onCheckedChange={() => toggleUserSelection(username)}
+                    checked={selectedUsers.includes(user.username)}
+                    onCheckedChange={() => toggleUserSelection(user.username)}
                     disabled={loading}
                   />
                 </TableCell>
-                <TableCell>{username}</TableCell>
+                <TableCell className="font-medium">{user.username}</TableCell>
+                <TableCell>{user.displayName || '-'}</TableCell>
+                <TableCell>{user.email || '-'}</TableCell>
+                {member && (
+                  <TableCell>
+                    {(user as Types.RoomsUserData).isMember ? (
+                      <Badge className="bg-green-500 hover:bg-green-600">
+                        Member
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-gray-500">
+                        Not Member
+                      </Badge>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             ))
           )}

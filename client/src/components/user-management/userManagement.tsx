@@ -8,16 +8,25 @@ import * as api from '@/api';
 import { TablePagination } from './userPagination';
 import { UserTable } from './userTable';
 
-export function UserManagementSection({ room }: { room: Types.RoomData }) {
+interface UserManagementProps {
+  room: Types.RoomData;
+  usersInRoom: Types.RoomsUserData[];
+  usersNotInRoom: Types.UserData[];
+}
+
+export function UserManagementSection({
+  room,
+  usersInRoom,
+  usersNotInRoom,
+}: UserManagementProps) {
   const [activeTab, setActiveTab] = useState('invite');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [allUsers, setAllUsers] = useState<string[]>([]);
+  const [allUsers, setAllUsers] = useState<
+    (Types.UserData | Types.RoomsUserData)[]
+  >([]);
   const [loading, setLoading] = useState(false);
-
-  // Pagination settings
-  const usersPerPage = 5;
 
   useEffect(() => {
     // Reset selections when tab changes
@@ -25,39 +34,19 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
     setCurrentPage(1);
     setSearchQuery('');
 
-    // Load relevant users based on active tab
-    loadUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
-
-  const loadUsers = async () => {
-    setLoading(true);
-    try {
-      if (activeTab === 'invite') {
-        // Get users NOT in room
-        const allUsersRes = await api.User.getAllUsers();
-        if (allUsersRes.success !== api.SuccessState.SUCCESS) {
-          throw new Error('Failed to fetch all users');
-        }
-        setAllUsers(allUsersRes.data!.map((user) => user.username));
-      } else {
-        // Get users IN room
-        const roomUsers = await api.Rooms.listMembers(room.roomID!);
-        if (roomUsers.success !== api.SuccessState.SUCCESS) {
-          throw new Error('Failed to fetch room members');
-        }
-        setAllUsers(roomUsers.data!.map((user) => user.username));
-      }
-    } catch (error) {
-      console.error('Failed to load users:', error);
-    } finally {
-      setLoading(false);
+    if (activeTab === 'invite') {
+      setAllUsers(usersNotInRoom);
+    } else {
+      setAllUsers(usersInRoom);
     }
-  };
+  }, [activeTab, usersInRoom, usersNotInRoom]);
+
+  // Pagination settings
+  const usersPerPage = 5;
 
   // Filter users based on search
-  const filteredUsers = allUsers.filter((username) =>
-    username.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredUsers = allUsers.filter((user) =>
+    user.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // Get current page users
@@ -80,7 +69,7 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
     if (selectedUsers.length === currentUsers.length) {
       setSelectedUsers([]);
     } else {
-      setSelectedUsers(currentUsers);
+      setSelectedUsers(currentUsers.map((user) => user.username));
     }
   };
 
@@ -112,7 +101,6 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
 
       // Reset selection and refresh list
       setSelectedUsers([]);
-      loadUsers();
     } catch (error) {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
         title: 'Error',
@@ -197,6 +185,7 @@ export function UserManagementSection({ room }: { room: Types.RoomData }) {
 
           <UserTable
             users={currentUsers}
+            member
             selectedUsers={selectedUsers}
             toggleUserSelection={toggleUserSelection}
             toggleSelectAll={toggleSelectAll}
