@@ -83,7 +83,6 @@ export async function wsPresence(
     type: "create",
     data: {
       username,
-      mediaType,
       mediaID,
       isServer,
     },
@@ -99,6 +98,7 @@ export async function wsPresence(
       data: {
         username,
         mediaID,
+        isServer,
       },
     });
   });

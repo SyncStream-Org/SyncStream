@@ -212,6 +212,10 @@ function RoomPage(props: Props) {
     }
   }, [activeVoice, room?.roomID]);
 
+  useEffect(() => {
+    console.log(presenceMap);
+  }, [presenceMap]);
+  
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
