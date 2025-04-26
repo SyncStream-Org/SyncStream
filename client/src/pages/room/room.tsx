@@ -21,11 +21,6 @@ import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 import { StreamViewer } from './stream-viewer/streamViewer';
 
-interface PresenceData {
-  users: string[];
-  isServerSet?: boolean;
-}
-
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
   toggleDarkMode: () => void;
@@ -43,8 +38,8 @@ function RoomPage(props: Props) {
   );
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
-  const [presenceMap, setPresenceMap] = useState<Map<string, PresenceData>>(
-    new Map<string, PresenceData>(),
+  const [presenceMap, setPresenceMap] = useState<Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>>(
+    new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>(),
   );
 
   // Get webRTC connections
@@ -56,6 +51,20 @@ function RoomPage(props: Props) {
         setMedia(data!);
       } else {
         console.error('Error fetching files:', data);
+      }
+    });
+    api.Media.getRoomMediaPresence(room?.roomID!).then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        const newMap = new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>();
+        data!.forEach((entry) => {
+          newMap.set(entry.mediaID, {
+            users: entry.users,
+            isServerSet: entry.isServerSet,
+          });
+        });
+        setPresenceMap(newMap);
+      } else {
+        console.error('Error fetching media presence:', data);
       }
     });
   };
