@@ -88,7 +88,7 @@ export async function wsPresence(
     },
   });
 
-  PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);
+  PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`], isServer);
 
   ws.on("close", () => {
     PresenceState.clearUserMedia(username, mediaType);

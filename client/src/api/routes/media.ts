@@ -226,3 +226,51 @@ export function deleteRoomMedia(
       return SuccessState.ERROR;
     });
 }
+
+export function getRoomMediaPresence(roomID: string): Promise<{
+  success: SuccessState;
+  data?: Types.MediaPresenceData[];
+}> {
+  const headers: Headers = generateDefaultHeaders();
+
+  // eslint-disable-next-line no-undef
+  const request: RequestInfo = new Request(
+    generateRoute(`rooms/${roomID}/media/presence`),
+    {
+      method: 'GET',
+      headers,
+    },
+  );
+
+  return fetch(request)
+    .then(async (res) => {
+      if (res.status === 200) {
+        const body = await res.json();
+
+        for (let i = 0; i < body.length; i += 1) {
+          if (!Validation.isMediaPresenceData(body[i])) {
+            return { success: SuccessState.ERROR };
+          }
+        }
+
+        return {
+          success: SuccessState.SUCCESS,
+          data: body as Types.MediaPresenceData[],
+        };
+      }
+
+      if (res.status === 204) {
+        return {
+          success: SuccessState.SUCCESS,
+          data: [],
+        };
+      }
+
+      printUnexpectedError('rooms/{roomID}/media/presence failed', res);
+      return { success: SuccessState.ERROR };
+    })
+    .catch((error) => {
+      console.error(`Fetch Encountered an Error:\n${error}`);
+      return { success: SuccessState.ERROR };
+    });
+}

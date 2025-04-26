@@ -42,3 +42,14 @@ export function isMediaDataUpdate(mediaDataUpdate: any):
     (typeof mediaDataUpdate.permissions === "object" && typeof mediaDataUpdate.permissions.canEdit === "boolean"))
   );
 }
+
+export function isMediaPresenceData(mediaPresenceData: any): 
+  mediaPresenceData is MediaTypes.MediaPresenceData {
+  return (
+    !!mediaPresenceData &&
+    typeof mediaPresenceData.mediaID === "string" &&
+    Array.isArray(mediaPresenceData.users) &&
+    mediaPresenceData.users.every((user: any) => typeof user === "string") &&
+    (typeof mediaPresenceData.isServerSet === "boolean" || mediaPresenceData.isServerSet === undefined)
+  );
+}

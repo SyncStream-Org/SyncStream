@@ -10,11 +10,6 @@ import {
   useWebRTCAudio,
   toggleMute,
 } from '@/api/routes/useWebRTCAudio';
-import {
-  closeVideoCall,
-  initiateVideoCall,
-  useWebRTCVideo,
-} from '@/api/routes/useWebRTCVideo';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
