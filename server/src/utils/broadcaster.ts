@@ -39,11 +39,10 @@ class Broadcaster {
   public pushUpdateToRoom(roomID: string, update: Types.RoomBroadcastUpdate): void {
     const userResList = this.roomMap.get(roomID);
 
-    // assertion, should never happen
     if (!userResList) {
-      throw Error("userResList empty, should not happen");
+      return;
     }
-
+    
     for (const res of userResList) {
       res.write(`data: ${JSON.stringify(update)}\n\n`);
     }

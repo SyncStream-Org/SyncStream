@@ -55,6 +55,7 @@ function RoomPage(props: Props) {
     });
     api.Media.getRoomMediaPresence(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
+        console.log('Media presence data:', data);
         const newMap = new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>();
         data!.forEach((entry) => {
           newMap.set(entry.mediaID, {
