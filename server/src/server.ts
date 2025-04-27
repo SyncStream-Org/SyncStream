@@ -42,6 +42,7 @@ sequelize.sync({ force: false }).then(() => {
     email: ADMIN_EMAIL,
     displayName: "Admin",
     admin: true,
+    isPasswordAuto: false,
   })
     .then(async () => {
       console.log("Admin user created");
