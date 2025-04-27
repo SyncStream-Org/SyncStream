@@ -80,7 +80,7 @@ export async function wsPresence(
   if (PresenceState.checkIfServer(mediaID)) {
     Broadcaster.pushUpdateToRoom(roomID, {
       endpoint: "presence",
-      type: "create",
+      type: "delete",
       data: {
         username,
         mediaID,
@@ -90,7 +90,7 @@ export async function wsPresence(
     ws.close(1008, "FUCK OFF");
     return;
   }
-  
+
   // broadcast the presence update
   Broadcaster.pushUpdateToRoom(roomID, {
     endpoint: "presence",
