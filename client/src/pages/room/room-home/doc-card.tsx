@@ -1,10 +1,15 @@
 import { FileText, Monitor, Mic, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Types } from 'syncstream-sharedlib';
-import { FileItem } from '../file-item/file-item';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { FileItem } from '../file-item/file-item';
 
 interface DocCardProps {
   roomID: string;
@@ -58,7 +63,10 @@ export function DocCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="absolute top-2 right-2">
-                  <Badge variant="secondary" className="flex items-center gap-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
                     <User className="h-3 w-3" />
                     {activeUsers.length}
                   </Badge>
@@ -68,8 +76,10 @@ export function DocCard({
                 <p className="font-semibold">Active users:</p>
                 <ScrollArea className="h-full max-h-[100px]">
                   <ul className="list-disc pl-4">
-                    {activeUsers.map(username => (
-                      <li key={username} className="text-sm">{username}</li>
+                    {activeUsers.map((username) => (
+                      <li key={username} className="text-sm">
+                        {username}
+                      </li>
                     ))}
                   </ul>
                 </ScrollArea>

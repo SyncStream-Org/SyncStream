@@ -78,8 +78,7 @@ export function useRoomSSE(
       );
       return () => {};
     }
-  }, 
-  [
+  }, [
     roomID,
     token,
     onMediaUpdate,

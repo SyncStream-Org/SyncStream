@@ -92,10 +92,7 @@ export default class UserManagementSettings extends React.Component<
         target.isAdmin.checked,
         target.displayName.value,
       ).then(async (res) => {
-        if (
-          res === api.SuccessState.ERROR ||
-          res === api.SuccessState.FAIL
-        ) {
+        if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: localize.settingsPage.userManagement.messageBox.errorTitle,
             message:
