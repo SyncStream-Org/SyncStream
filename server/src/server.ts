@@ -33,17 +33,22 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync({ force: false }).then(() => {
   console.log("Database synced");
+
   UserService.createUser({
     username: ADMIN_USERNAME,
     password: ADMIN_PASSWORD,
     email: ADMIN_EMAIL,
     displayName: "Admin",
     admin: true,
-  }).then(async () => {
-    console.log("Admin user created");
-  });
+  })
+    .then(async () => {
+      console.log("Admin user created");
+    })
+    .catch(() => {
+      console.log("Admin user is already exists");
+    });
 });
 
 if (USER_FILES) {
