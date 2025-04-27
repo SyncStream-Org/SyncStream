@@ -55,6 +55,7 @@ class UserService {
 
     if (update.password) {
       user.password = await auth.hashPassword(update.password);
+      user.isPasswordAuto = false;
     }
     if (update.displayName) {
       user.displayName = update.displayName;

@@ -265,6 +265,7 @@ function RoomPage(props: Props) {
             setActiveStream(null);
             setStreamID(null);
           } else if (update.username === SessionState.getInstance().currentUser.username && update.mediaID === streamID?.mediaID) {
+            setActiveStream(null);
             setStreamID(null);
           }
 

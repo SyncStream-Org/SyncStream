@@ -89,13 +89,12 @@ export default class UserManagementSettings extends React.Component<
       api.Admin.createUser(
         target.username.value,
         target.email.value,
-        target.password.value,
         target.isAdmin.checked,
         target.displayName.value,
       ).then(async (res) => {
         if (
-          res.success === api.SuccessState.ERROR ||
-          res.success === api.SuccessState.FAIL
+          res === api.SuccessState.ERROR ||
+          res === api.SuccessState.FAIL
         ) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
             title: localize.settingsPage.userManagement.messageBox.errorTitle,
@@ -103,14 +102,6 @@ export default class UserManagementSettings extends React.Component<
               localize.settingsPage.userManagement.messageBox.userCreateError,
           });
         } else {
-          if (res.data !== undefined) {
-            window.electron.ipcRenderer.invokeFunction('show-message-box', {
-              title:
-                localize.settingsPage.userManagement.messageBox.successTitle,
-              message: `${localize.settingsPage.userManagement.messageBox.userCreateAutogenPass} ${res.data}`,
-            });
-          }
-
           await Time.delay(100);
           api.Admin.getAllUsers().then((userData) => {
             if (
@@ -197,12 +188,6 @@ export default class UserManagementSettings extends React.Component<
             label={localize.settingsPage.userManagement.createUser.email}
             id="email"
             type="email"
-          />
-          <PrimaryInput
-            labelClassName="mt-3"
-            label={localize.settingsPage.userManagement.createUser.password}
-            id="password"
-            type="password"
           />
           <PrimaryInput
             labelClassName="mt-3"

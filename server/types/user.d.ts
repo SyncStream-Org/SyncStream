@@ -5,5 +5,6 @@ declare module 'user-types' {
     admin: boolean;
     displayName: string;
     email: string;
+    isPasswordAuto: boolean;
   }
 }

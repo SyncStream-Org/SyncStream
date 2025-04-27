@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
-import User from "src/models/users";
-//import * as service from "../services/admin.service";
+import { generateUUID } from "syncstream-sharedlib/dist/utilities/random";
 
 export const getRooms = async (req: Request, res: Response) => {
   const rooms = await roomService.listAllRooms();
@@ -48,7 +47,7 @@ export const listUsers = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   const userData: Types.UserData = req.body;
-  if (!Validation.isUserDataFull(userData)) {
+  if (!Validation.isUserDataNoPass(userData)) {
     res.status(400).json({ error: "Bad Request: invalid format" });
     return;
   }
@@ -58,9 +57,16 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(409).json({ error: "Conflict: User already exists" });
     return;
   }
-  const newUser = await userService.createUser(userData);
 
-  res.sendStatus(200);
+  const autoPassword = generateUUID();
+
+  const newUser = await userService.createUser({
+    ...userData,
+    password: autoPassword,
+    isPasswordAuto: true,
+  });
+
+  res.json({ msg: autoPassword });
 };
 
 export const deleteUser = async (req: Request, res: Response) => {

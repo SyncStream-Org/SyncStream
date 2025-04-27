@@ -8,6 +8,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
   declare admin: boolean;
   declare displayName: string;
   declare email: string;
+  declare isPasswordAuto: boolean;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
@@ -36,6 +37,10 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+  },
+  isPasswordAuto: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 },
 {

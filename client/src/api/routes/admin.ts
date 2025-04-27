@@ -11,20 +11,15 @@ import { SuccessState } from '../types';
 export function createUser(
   username: string,
   email: string,
-  password: string,
   admin: boolean,
   displayName: string,
-): Promise<{
-  success: SuccessState;
-  data?: string;
-}> {
+): Promise<SuccessState> {
   const headers: Headers = generateDefaultHeaders();
 
   // Define message to send
   const data: Types.UserData = {
     username,
     email,
-    password,
     admin,
     displayName,
   };
@@ -39,36 +34,33 @@ export function createUser(
   return fetch(request)
     .then(async (res) => {
       if (res.ok) {
-        if (res.bodyUsed) {
-          const body = await res.json();
-          if (!Validation.isStringMessage(body))
-            return { success: SuccessState.ERROR };
+        const body = await res.json();
+        if (!Validation.isStringMessage(body)) return SuccessState.ERROR;
 
-          return {
-            success: SuccessState.SUCCESS,
-            data: (body as Types.StringMessage).msg,
-          };
-        }
+        window.electron.ipcRenderer.invokeFunction('show-message-box', {
+          title: `New User [${username}] Created`,
+          message: `New Password is: ${body.msg}`,
+        });
 
-        return { success: SuccessState.SUCCESS };
+        return SuccessState.SUCCESS;
       }
 
       if (res.status === 403) {
         console.error('Creating user failed: Not admin.');
-        return { success: SuccessState.FAIL };
+        return SuccessState.FAIL;
       }
 
       if (res.status === 409) {
         console.error('Creating user failed: User already exists.');
-        return { success: SuccessState.FAIL };
+        return SuccessState.FAIL;
       }
 
       printUnexpectedError('admin/user API Call Failed', res);
-      return { success: SuccessState.ERROR };
+      return SuccessState.ERROR;
     })
     .catch((error) => {
       console.error(`Fetch Encountered an Error:\n${error}`);
-      return { success: SuccessState.ERROR };
+      return SuccessState.ERROR;
     });
 }
 

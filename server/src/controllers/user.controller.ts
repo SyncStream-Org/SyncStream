@@ -32,7 +32,7 @@ export const authenticate = async (req: Request, res: Response) => {
 
   PresenceState.removeUserEntry(userData.username);
   const token = Auth.generateToken(userData.username);
-  const response: Types.StringMessage = { msg: token };
+  const response: Types.StringMessage = { msg: `${token}+${user.isPasswordAuto}` };
   res.json(response);
 };
 

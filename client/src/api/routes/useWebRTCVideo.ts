@@ -400,6 +400,21 @@ export async function initiateVideoCall(
       throw Error('Tried to join a call that does not exist.');
     }
 
+    if (e.code === 1008 && e.reason.includes('FUCK OFF')) {
+      window.electron.ipcRenderer.invokeFunction('show-message-box', {
+        title: 'error',
+        message: 'Tried to start a stream when someone already started one.',
+      });
+    }
+
+    localInput?.getTracks().forEach((track) => {
+      track.stop();
+    });
+    remoteOutput.getTracks().forEach((track) => {
+      track.stop();
+      remoteOutput.removeTrack(track);
+    });
+
     // Set socket and channel as undefined
     socket = undefined;
     channel = undefined;
