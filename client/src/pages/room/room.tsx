@@ -20,6 +20,8 @@ import { VoiceChannelCard } from './voiceChannelCard';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 import { StreamViewer } from './stream-viewer/streamViewer';
+import { StreamDialog } from './stream-viewer/stream-dialog';
+import { Stream } from 'stream';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -43,7 +45,10 @@ function RoomPage(props: Props) {
   const [presenceMap, setPresenceMap] = useState<
     Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>
   >(new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>());
-
+  const [streamID, setStreamID] = useState<Types.MediaData | null>(null);
+  const [openStreamSelect, setOpenStreamSelect] = useState(false);
+  const [streamSourceID, setStreamSourceID] = useState<string>('');
+  const [isStreamClient, setIsStreamClient] = useState<boolean>(false);
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
 
@@ -142,7 +147,22 @@ function RoomPage(props: Props) {
   };
 
   const handleActiveStream = (stream: Types.MediaData | null) => {
-    setActiveStream(stream);
+    setStreamID(stream);
+    if (presenceMap.get(stream?.mediaID!)?.isServerSet === true) {
+      setStreamSourceID('');
+      setIsStreamClient(true);
+      setActiveStream(stream);
+      setActiveDoc(null);
+      setSettingsOpen(false);
+    } else {
+      setOpenStreamSelect(true);
+    }
+  };
+
+  const handleStreamSelect = (sourceID: string) => {
+    setStreamSourceID(sourceID);
+    setIsStreamClient(false);
+    setActiveStream(streamID);
     setActiveDoc(null);
     setSettingsOpen(false);
   };
@@ -238,21 +258,22 @@ function RoomPage(props: Props) {
           if (newMap.get(update.mediaID)?.users.length === 0) {
             newMap.delete(update.mediaID);
           }
-          console.log(update);
-          console.log(activeStream);
           if (
             update.isServer === true &&
-            activeStream?.mediaID === update.mediaID
+            streamID?.mediaID === update.mediaID
           ) {
-            console.log('Server left stream');
             setActiveStream(null);
+            setStreamID(null);
+          } else if (update.username === SessionState.getInstance().currentUser.username && update.mediaID === streamID?.mediaID) {
+            setStreamID(null);
           }
+
           return newMap;
         });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [activeStream],
+    [streamID],
   );
 
   useRoomSSE(
@@ -341,8 +362,9 @@ function RoomPage(props: Props) {
             {activeStream !== null && settingsOpen !== true && (
               <StreamViewer
                 activeStream={activeStream}
-                presenceData={presenceMap.get(activeStream.mediaID!)}
                 roomID={room?.roomID!}
+                sourceID={streamSourceID}
+                isClient={isStreamClient}
               />
             )}
             {activeDoc === null &&
@@ -375,6 +397,11 @@ function RoomPage(props: Props) {
             closeAudioCall();
             setActiveVoice(null);
           }}
+        />
+        <StreamDialog
+          open={openStreamSelect}
+          setOpen={setOpenStreamSelect}
+          onSelectStream={handleStreamSelect}
         />
       </SidebarProvider>
       <audio id="remoteAudioPlayer" autoPlay hidden>

@@ -67,11 +67,6 @@ export const LinkEditBlock = React.forwardRef<HTMLDivElement, LinkEditorProps>(
             />
           </div>
 
-          <div className="flex items-center space-x-2">
-            <Label>Open in New Tab</Label>
-            <Switch checked={isNewTab} onCheckedChange={setIsNewTab} />
-          </div>
-
           <div className="flex justify-end space-x-2">
             <Button type="button" onClick={handleSave}>
               Save
