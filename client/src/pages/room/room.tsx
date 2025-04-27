@@ -19,6 +19,7 @@ import { RoomHome } from './room-home/room-home';
 import { VoiceChannelCard } from './voiceChannelCard';
 import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
+import { StreamViewer } from './stream-viewer/streamViewer';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -39,6 +40,9 @@ function RoomPage(props: Props) {
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
   const [usersInRoom, setUsersInRoom] = useState<Types.RoomsUserData[]>([]);
   const [usersNotInRoom, setUsersNotInRoom] = useState<Types.UserData[]>([]);
+  const [presenceMap, setPresenceMap] = useState<
+    Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>
+  >(new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>());
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
@@ -49,6 +53,24 @@ function RoomPage(props: Props) {
         setMedia(data!);
       } else {
         console.error('Error fetching files:', data);
+      }
+    });
+    api.Media.getRoomMediaPresence(room?.roomID!).then(({ success, data }) => {
+      if (success === api.SuccessState.SUCCESS) {
+        console.log('Media presence data:', data);
+        const newMap = new Map<
+          string,
+          Omit<Types.MediaPresenceData, 'mediaID'>
+        >();
+        data!.forEach((entry) => {
+          newMap.set(entry.mediaID, {
+            users: entry.users,
+            isServerSet: entry.isServerSet,
+          });
+        });
+        setPresenceMap(newMap);
+      } else {
+        console.error('Error fetching media presence:', data);
       }
     });
   };
@@ -182,12 +204,64 @@ function RoomPage(props: Props) {
     [],
   );
 
+  const onPresenceUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.PresenceData) => {
+      if (type === 'create') {
+        setPresenceMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          const prevEntry = newMap.get(update.mediaID);
+          if (prevEntry) {
+            newMap.set(update.mediaID, {
+              users: [...prevEntry.users, update.username],
+              isServerSet:
+                update.isServer === true ? true : prevEntry.isServerSet,
+            });
+          } else {
+            newMap.set(update.mediaID, {
+              users: [update.username],
+              isServerSet: update.isServer,
+            });
+          }
+          return newMap;
+        });
+      } else if (type === 'delete') {
+        setPresenceMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          const prevEntry = newMap.get(update.mediaID);
+          if (prevEntry) {
+            newMap.set(update.mediaID, {
+              users: prevEntry.users.filter((user) => user !== update.username),
+              isServerSet:
+                update.isServer === true ? false : prevEntry.isServerSet,
+            });
+          }
+          if (newMap.get(update.mediaID)?.users.length === 0) {
+            newMap.delete(update.mediaID);
+          }
+          console.log(update);
+          console.log(activeStream);
+          if (
+            update.isServer === true &&
+            activeStream?.mediaID === update.mediaID
+          ) {
+            console.log('Server left stream');
+            setActiveStream(null);
+          }
+          return newMap;
+        });
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [activeStream],
+  );
+
   useRoomSSE(
     room?.roomID!,
     SessionState.getInstance().sessionToken,
     onMediaUpdate,
     onRoomUpdate,
     onUserUpdate,
+    onPresenceUpdate,
   );
 
   useEffect(() => {
@@ -212,6 +286,10 @@ function RoomPage(props: Props) {
       closeAudioCall();
     }
   }, [activeVoice, room?.roomID]);
+
+  useEffect(() => {
+    console.log(presenceMap);
+  }, [presenceMap]);
 
   return (
     <div className="flex h-screen">
@@ -258,6 +336,13 @@ function RoomPage(props: Props) {
                 sessionToken={SessionState.getInstance().sessionToken}
                 roomID={room?.roomID!}
                 serverURL={SessionState.getInstance().serverURL}
+              />
+            )}
+            {activeStream !== null && settingsOpen !== true && (
+              <StreamViewer
+                activeStream={activeStream}
+                presenceData={presenceMap.get(activeStream.mediaID!)}
+                roomID={room?.roomID!}
               />
             )}
             {activeDoc === null &&

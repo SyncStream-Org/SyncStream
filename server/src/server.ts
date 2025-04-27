@@ -1,19 +1,19 @@
-import express from 'express';
-import expressWs from 'express-ws';
-import sequelize from './db';
-import routerWs from './websockets/routes';
+import express from "express";
+import expressWs from "express-ws";
+import sequelize from "./db";
+import routerWs from "./websockets/routes";
 import routes from "./routes";
-import UserService from './services/userService';
-import fs from 'fs';
-import cleanup from './utils/cleanup';
+import UserService from "./services/userService";
+import fs from "fs";
+import cleanup from "./utils/cleanup";
 
-import { ErrorHandler } from './middleware/errorCatcher';
-import cors from 'cors';
+import { ErrorHandler } from "./middleware/errorCatcher";
+import cors from "cors";
 
 const port: number = 3000;
-const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD || 'admin';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin';
+const ADMIN_USERNAME = process.env.ADMIN_USER || "admin";
+const ADMIN_PASSWORD = process.env.INITIAL_ADMIN_PASSWORD || "admin";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin";
 const USER_FILES = process.env.USER_FILES;
 
 // Create an Express application
@@ -26,20 +26,23 @@ app.use(routes);
 
 app.use(ErrorHandler);
 
+/* number of proxies between user and server, needed for https proxy */
+app.set("trust proxy", 1);
+
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);  
+  console.log(`Server is running on http://localhost:${port}`);
 });
 
 sequelize.sync({ force: true }).then(() => {
-  console.log('Database synced');
+  console.log("Database synced");
   UserService.createUser({
     username: ADMIN_USERNAME,
     password: ADMIN_PASSWORD,
     email: ADMIN_EMAIL,
-    displayName: 'Admin',
+    displayName: "Admin",
     admin: true,
   }).then(async () => {
-    console.log('Admin user created');
+    console.log("Admin user created");
   });
 });
 

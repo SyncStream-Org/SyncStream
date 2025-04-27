@@ -3,6 +3,7 @@ import { Types, Validation } from "syncstream-sharedlib"
 import mediaService from "../services/mediaService";
 import RoomMedia from "src/models/roomMedia";
 import Broadcaster from "../utils/broadcaster";
+import PresenceState from "../utils/state";
 
 export const getAllRoomMedia = async (req: Request, res: Response) => {
     const { roomID } = req.params;
@@ -123,4 +124,12 @@ export const deleteRoomMedia = async (req: Request, res: Response) => {
         }
     );
     res.sendStatus(204);    
+};
+
+export const getRoomMediaPresence = async (req: Request, res: Response) => {
+    const { roomID } = req.params;
+
+    const mediaPresence = PresenceState.getPresenceForRoom(roomID);
+
+    res.json(mediaPresence);
 };

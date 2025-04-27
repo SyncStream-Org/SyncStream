@@ -101,7 +101,11 @@ function Home(props: Props) {
           case 'delete':
             return prevRooms.filter((room) => room.roomID !== update.roomID);
           case 'create':
-            return [...prevRooms, update];
+            // check if the room already exists
+            return prevRooms.find((room) => room.roomID === update.roomID) !==
+              undefined
+              ? prevRooms
+              : [...prevRooms, update];
           default:
             return prevRooms;
         }
@@ -163,7 +167,7 @@ function Home(props: Props) {
               <Settings className="max-h-7 " />
             </button>
             <Avatar className="w-10 h-10 bg-gray-200">
-              <AvatarFallback className="w-10 h-10 bg-gray-200">
+              <AvatarFallback className="w-10 h-10 bg-gray-200 dark:text-gray-700">
                 {SessionState.getInstance().currentUser.username[0]}
               </AvatarFallback>
             </Avatar>

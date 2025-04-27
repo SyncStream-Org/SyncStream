@@ -6,7 +6,8 @@ export type Channels = 'app-quit';
 export type Functions =
   | 'save-session-cache'
   | 'get-session-cache'
-  | 'show-message-box';
+  | 'show-message-box'
+  | 'get-video-sources';
 
 const electronHandler = {
   ipcRenderer: {

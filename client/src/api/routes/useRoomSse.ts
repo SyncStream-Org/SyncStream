@@ -12,6 +12,10 @@ export function useRoomSSE(
     type: Types.UpdateType,
     update: Types.RoomUserUpdateData,
   ) => void,
+  onPresenceUpdate: (
+    type: Types.UpdateType,
+    update: Types.PresenceData,
+  ) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -42,6 +46,9 @@ export function useRoomSSE(
               case 'user':
                 onUserUpdate(data.type, data.data);
                 break;
+              case 'presence':
+                onPresenceUpdate(data.type, data.data);
+                break;
               default:
                 console.warn(`Unknown endpoint: ${data.endpoint}`);
                 break;
@@ -70,7 +77,14 @@ export function useRoomSSE(
       );
       return () => {};
     }
-  }, [roomID, token, onMediaUpdate, onRoomUpdate, onUserUpdate]);
+  }, [
+    roomID,
+    token,
+    onMediaUpdate,
+    onRoomUpdate,
+    onUserUpdate,
+    onPresenceUpdate,
+  ]);
 
   useEffect(() => {
     const cleanup = connect();

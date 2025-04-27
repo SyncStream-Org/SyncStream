@@ -7,6 +7,7 @@ const router = Router({ mergeParams: true });
 // TODO: any future permissions decisions to be implemented in middleware
 
 router.get("/", ErrorCatcher(controller.getAllRoomMedia));
+router.get("/presence", ErrorCatcher(controller.getRoomMediaPresence));
 router.put("/", ErrorCatcher(controller.createMedia));
 
 router.get("/:mediaID", ErrorCatcher(controller.getRoomMedia));

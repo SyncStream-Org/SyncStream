@@ -21,3 +21,9 @@ export interface MediaDataUpdate {
   mediaType?: string;
   permissions?: MediaPermissions;
 }
+
+export interface MediaPresenceData {
+  mediaID: string;
+  users: string[];
+  isServerSet?: boolean;
+}

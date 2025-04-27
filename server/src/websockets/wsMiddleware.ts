@@ -5,6 +5,7 @@ import userService from "../services/userService";
 import PresenceState from "../utils/state";
 import { Validation } from "syncstream-sharedlib";
 import mediaService from "../services/mediaService";
+import Broadcaster from "../utils/broadcaster";
 
 export async function wsAuth(ws: WebSocket, req: Request, next: () => void) {
   const token = req.query.token as string;
@@ -73,11 +74,33 @@ export async function wsPresence(
     ws.close(1008, "User not found in room");
     return;
   }
+  
+  const isServer = req.query.isClient ? !((req.query.isClient as string) === "true") : undefined;
 
-  PresenceState.setUserMedia(username, mediaType, req.params[`${mediaType}ID`]);
+  // broadcast the presence update
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "presence",
+    type: "create",
+    data: {
+      username,
+      mediaID,
+      isServer,
+    },
+  });
+
+  PresenceState.setUserMedia(username, mediaType, mediaID, isServer);
 
   ws.on("close", () => {
     PresenceState.clearUserMedia(username, mediaType);
+    Broadcaster.pushUpdateToRoom(roomID, {
+      endpoint: "presence",
+      type: "delete",
+      data: {
+        username,
+        mediaID,
+        isServer,
+      },
+    });
   });
   next();
 }
