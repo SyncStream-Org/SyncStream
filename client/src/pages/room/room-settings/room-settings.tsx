@@ -19,18 +19,18 @@ import {
 } from '@/api/routes/useWebRTCAudio';
 import SessionState from '@/utilities/session-state';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { UserManagementSection } from '@/components/user-management/userManagement';
 import * as api from '../../../api';
 import { RoomDelete } from './room-delete';
 import { RoomLeave } from './room-leave';
 
 interface Props {
   room: Types.RoomData;
+  usersInRoom: Types.RoomsUserData[];
+  usersNotInRoom: Types.UserData[];
 }
 
 interface State {
-  allUsers: string[];
-  usersInRoom: string[];
-  currentUserToModify: string;
   audioInputList: MediaDeviceInfo[];
   currentAudioInput: string | undefined;
   openDelete: boolean;
@@ -42,9 +42,6 @@ export default class RoomSettings extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      allUsers: [],
-      usersInRoom: [],
-      currentUserToModify: '',
       audioInputList: [],
       currentAudioInput: undefined,
       openDelete: false,
@@ -64,34 +61,6 @@ export default class RoomSettings extends React.Component<Props, State> {
         audioInputList: res.filter((device) => device.kind === 'audioinput'),
         currentAudioInput: newLabel,
       });
-    });
-
-    api.User.getAllUsers().then(async (res) => {
-      if (res.success !== api.SuccessState.SUCCESS) {
-        window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message:
-            'Something went wrong with the server and we could not grab username data.',
-        });
-      } else {
-        if (res === undefined || res.data === undefined)
-          throw Error('Unreachable');
-        this.setState({ allUsers: res.data.map((data) => data.username) });
-      }
-    });
-
-    api.Rooms.listMembers(this.props.room.roomID!).then(async (res) => {
-      if (res.success !== api.SuccessState.SUCCESS) {
-        window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message:
-            'Something went wrong with the server and we could not grab room member data.',
-        });
-      } else {
-        if (res === undefined || res.data === undefined)
-          throw Error('Unreachable');
-        this.setState({ usersInRoom: res.data.map((data) => data.username) });
-      }
     });
   }
 
@@ -126,10 +95,6 @@ export default class RoomSettings extends React.Component<Props, State> {
       );
     };
 
-    const handleUserSelectChange = (value: string) => {
-      this.setState({ currentUserToModify: value });
-    };
-
     const handleAudioInputSelect = (value: string) => {
       const deviceInfo = this.state.audioInputList.filter(
         (info) => info.label === value,
@@ -150,55 +115,6 @@ export default class RoomSettings extends React.Component<Props, State> {
       SessionState.getInstance().audioDeviceID = deviceInfo.deviceId;
     };
 
-    const handleInvite = () => {
-      if (this.state.usersInRoom.includes(this.state.currentUserToModify)) {
-        window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message: 'Can not invite a user that is already in the room.',
-        });
-        return;
-      }
-
-      api.Rooms.inviteUser(this.props.room.roomID!, {
-        username: this.state.currentUserToModify,
-      }).then(async (res) => {
-        if (res !== api.SuccessState.SUCCESS) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Something went wrong with the server and we could not invite the user.',
-          });
-        }
-      });
-    };
-
-    const handleBan = () => {
-      if (
-        this.state.allUsers
-          .filter((val) => !this.state.usersInRoom.includes(val))
-          .includes(this.state.currentUserToModify)
-      ) {
-        window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message: 'Can not ban a user that is not in the room.',
-        });
-        return;
-      }
-
-      api.Rooms.removeUser(
-        this.props.room.roomID!,
-        this.state.currentUserToModify,
-      ).then(async (res) => {
-        if (res !== api.SuccessState.SUCCESS) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Something went wrong with the server and we could not invite the user.',
-          });
-        }
-      });
-    };
-
     const setOpenDelete = (open: boolean) => {
       this.setState({ openDelete: open });
     };
@@ -208,10 +124,10 @@ export default class RoomSettings extends React.Component<Props, State> {
       SessionState.getInstance().currentUser.username;
     // ---- RENDER BLOCK ----
     return (
-      <div className="p-6">
+      <div className="p-6 overflow-y-auto">
         {isRoomOwner && (
           <>
-            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
               Update Room
             </h2>
             <form onSubmit={updateRoom}>
@@ -229,37 +145,12 @@ export default class RoomSettings extends React.Component<Props, State> {
               />
               <PrimaryButton className="mt-3" text="Submit" type="submit" />
             </form>
-            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
-              Invite or Ban User
-            </h2>
-            <Select onValueChange={handleUserSelectChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="User to Modify" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Users</SelectLabel>
-                  {this.state.allUsers.map((username) => (
-                    <SelectItem value={username}>{username}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <div className="flex flex-row">
-              <PrimaryButton
-                className="mt-3"
-                text="Invite"
-                type="button"
-                onClick={handleInvite}
-              />
-              <PrimaryButton
-                className="mt-3 ml-1"
-                text="Ban"
-                type="button"
-                onClick={handleBan}
-              />
-            </div>
-            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+            <UserManagementSection
+              usersInRoom={this.props.usersInRoom}
+              usersNotInRoom={this.props.usersNotInRoom}
+              room={this.props.room}
+            />
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
               Delete Room
             </h2>
             <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
@@ -276,7 +167,7 @@ export default class RoomSettings extends React.Component<Props, State> {
         )}
         {!isRoomOwner && (
           <>
-            <h2 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
               Leave Room
             </h2>
             <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
@@ -291,9 +182,9 @@ export default class RoomSettings extends React.Component<Props, State> {
             </Dialog>
           </>
         )}
-        <h1 className="text-xl mt-3 text-gray-800 dark:text-gray-100">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
           Audio Input Device
-        </h1>
+        </h2>
         <Select onValueChange={handleAudioInputSelect}>
           <SelectTrigger className="w-[180px]">
             <SelectValue
