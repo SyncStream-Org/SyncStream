@@ -76,7 +76,21 @@ export async function wsPresence(
   }
   
   const isServer = req.query.isClient ? !((req.query.isClient as string) === "true") : undefined;
-
+  
+  if (PresenceState.checkIfServer(mediaID)) {
+    Broadcaster.pushUpdateToRoom(roomID, {
+      endpoint: "presence",
+      type: "create",
+      data: {
+        username,
+        mediaID,
+        isServer: false,
+      },
+    });
+    ws.close(1008, "FUCK OFF");
+    return;
+  }
+  
   // broadcast the presence update
   Broadcaster.pushUpdateToRoom(roomID, {
     endpoint: "presence",

@@ -36,6 +36,7 @@ export function useRoomSSE(
             if (!Validation.isRoomBroadcastUpdate(data)) {
               throw new Error('Invalid media update data');
             }
+            console.log('Got SSE');
             switch (data.endpoint) {
               case 'media':
                 onMediaUpdate(data.type, data.data);
@@ -77,7 +78,8 @@ export function useRoomSSE(
       );
       return () => {};
     }
-  }, [
+  }, 
+  [
     roomID,
     token,
     onMediaUpdate,

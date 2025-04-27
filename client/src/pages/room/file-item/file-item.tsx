@@ -29,10 +29,6 @@ export function FileItem({ roomID, mediaObject, children }: FileItemProps) {
           <ContextMenuItem inset onClick={() => setOpenUpdate(true)}>
             Rename
           </ContextMenuItem>
-          <ContextMenuItem inset>Duplicate</ContextMenuItem>
-          <ContextMenuSeparator />
-          <ContextMenuItem inset>Export as PDF</ContextMenuItem>
-          <ContextMenuSeparator />
           <ContextMenuItem inset onClick={() => setOpenDelete(true)}>
             Delete
           </ContextMenuItem>

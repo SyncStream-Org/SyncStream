@@ -194,7 +194,7 @@ export default function DocumentEditor({
               maxWidth: '100%',
               width: '100%',
               overflowWrap: 'break-word',
-              wordBreak: 'break-word',
+              wordBreak: 'break-all',
               // Force horizontal constraints to match container
               boxSizing: 'border-box',
             }}

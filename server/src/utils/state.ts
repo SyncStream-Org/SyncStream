@@ -75,6 +75,15 @@ class PresenceState {
     }));
     return presence;
   }
+
+  public checkIfServer(mediaID: string): boolean {
+    Array.from(this.globalPresence.values()).forEach((userState) => {
+      if (userState.streamID === mediaID && userState.isServer) {
+        return true;
+      }
+    });
+    return false;
+  }
 }
 
 export default new PresenceState();
