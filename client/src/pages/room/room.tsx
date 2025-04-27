@@ -40,9 +40,9 @@ function RoomPage(props: Props) {
   const [activeVoice, setActiveVoice] = useState<Types.MediaData | null>(null);
   const [usersInRoom, setUsersInRoom] = useState<Types.RoomsUserData[]>([]);
   const [usersNotInRoom, setUsersNotInRoom] = useState<Types.UserData[]>([]);
-  const [presenceMap, setPresenceMap] = useState<Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>>(
-    new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>(),
-  );
+  const [presenceMap, setPresenceMap] = useState<
+    Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>
+  >(new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>());
 
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
@@ -58,7 +58,10 @@ function RoomPage(props: Props) {
     api.Media.getRoomMediaPresence(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
         console.log('Media presence data:', data);
-        const newMap = new Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>();
+        const newMap = new Map<
+          string,
+          Omit<Types.MediaPresenceData, 'mediaID'>
+        >();
         data!.forEach((entry) => {
           newMap.set(entry.mediaID, {
             users: entry.users,
@@ -209,11 +212,9 @@ function RoomPage(props: Props) {
           const prevEntry = newMap.get(update.mediaID);
           if (prevEntry) {
             newMap.set(update.mediaID, {
-              users: [
-                ...prevEntry.users,
-                update.username,
-              ],
-              isServerSet: update.isServer === true ? true : prevEntry.isServerSet,
+              users: [...prevEntry.users, update.username],
+              isServerSet:
+                update.isServer === true ? true : prevEntry.isServerSet,
             });
           } else {
             newMap.set(update.mediaID, {
@@ -230,7 +231,8 @@ function RoomPage(props: Props) {
           if (prevEntry) {
             newMap.set(update.mediaID, {
               users: prevEntry.users.filter((user) => user !== update.username),
-              isServerSet: update.isServer === true ? false : prevEntry.isServerSet,
+              isServerSet:
+                update.isServer === true ? false : prevEntry.isServerSet,
             });
           }
           if (newMap.get(update.mediaID)?.users.length === 0) {
@@ -238,16 +240,20 @@ function RoomPage(props: Props) {
           }
           console.log(update);
           console.log(activeStream);
-          if (update.isServer === true && activeStream?.mediaID === update.mediaID) {
+          if (
+            update.isServer === true &&
+            activeStream?.mediaID === update.mediaID
+          ) {
             console.log('Server left stream');
             setActiveStream(null);
           }
           return newMap;
         });
       }
-    }
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  , [activeStream]);
+    [activeStream],
+  );
 
   useRoomSSE(
     room?.roomID!,
