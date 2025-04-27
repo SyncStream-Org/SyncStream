@@ -1,7 +1,7 @@
 import { Model, DataTypes, literal } from 'sequelize';
 import sequelize from '../db';
 import { RoomAttributes, RoomCreationAttributes } from 'room-types';
-
+import User from './users';
 
 class Room extends Model<RoomAttributes, RoomCreationAttributes> implements RoomAttributes {
   declare roomID: string;
@@ -25,6 +25,12 @@ Room.init({
   roomOwner: {
     type: DataTypes.STRING,
     allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'username',
+    },
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   },
 },
 {
@@ -39,5 +45,10 @@ Room.init({
   ]
 }
 );
+
+export function setupRoomAssociations() {
+  Room.belongsTo(User, { foreignKey: 'roomOwner', targetKey: 'username' });
+  User.hasMany(Room, { foreignKey: 'roomOwner', sourceKey: 'username' });
+}
 
 export default Room;

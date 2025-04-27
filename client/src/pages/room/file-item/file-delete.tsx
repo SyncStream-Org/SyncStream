@@ -11,7 +11,7 @@ import * as api from '../../../api';
 
 interface FileUpdateProps {
   roomID: string;
-  mediaObject: Types.FileData;
+  mediaObject: Types.MediaData;
   setOpen: (open: boolean) => void;
 }
 
@@ -22,7 +22,7 @@ export function FileDelete({ roomID, mediaObject, setOpen }: FileUpdateProps) {
     e.preventDefault();
     setIsLoading(true);
 
-    api.Files.deleteRoomFile(roomID, mediaObject.fileName).then((success) => {
+    api.Media.deleteRoomMedia(roomID, mediaObject.mediaID!).then((success) => {
       if (success !== api.SuccessState.SUCCESS) {
         console.error('Error deleting file');
       }
@@ -35,7 +35,7 @@ export function FileDelete({ roomID, mediaObject, setOpen }: FileUpdateProps) {
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
-          Are you sure you want to delete {mediaObject.fileName}?
+          Are you sure you want to delete {mediaObject.mediaName}?
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit}>

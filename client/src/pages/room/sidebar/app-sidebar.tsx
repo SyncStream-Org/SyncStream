@@ -1,3 +1,4 @@
+import { Types } from 'syncstream-sharedlib';
 import { MediaNav } from '@/pages/room/sidebar/media-nav';
 import { ManageNav } from '@/pages/room/sidebar/manage-nav';
 import { UserNav } from '@/pages/room/sidebar/user-nav';
@@ -9,18 +10,17 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
-import { Types } from 'syncstream-sharedlib';
 
 interface RoomSidebarProps {
   room: Types.RoomData | null;
   username: string;
-  media: Types.FileData[];
-  activeDoc: Types.FileData | null;
-  activeStream: Types.FileData | null;
-  activeVoice: Types.FileData | null;
-  setActiveDoc: (doc: Types.FileData) => void;
-  setActiveStream: (stream: Types.FileData) => void;
-  setActiveVoice: (voice: Types.FileData) => void;
+  media: Types.MediaData[];
+  activeDoc: Types.MediaData | null;
+  activeStream: Types.MediaData | null;
+  activeVoice: Types.MediaData | null;
+  setActiveDoc: (doc: Types.MediaData) => void;
+  setActiveStream: (stream: Types.MediaData) => void;
+  setActiveVoice: (voice: Types.MediaData) => void;
   goToHome: () => void;
   goToSettings: () => void;
   setRoomHome: () => void;

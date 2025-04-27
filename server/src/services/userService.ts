@@ -1,6 +1,6 @@
-import User from "../models/users";
-import Room from "../models/rooms";
-import RoomUser from "../models/roomUsers";
+import { User } from "../models";
+import { Room } from "../models";
+import { RoomUser } from "../models";
 import { Types } from "syncstream-sharedlib";
 import { Op } from "sequelize";
 
@@ -172,8 +172,10 @@ class UserService {
     return await roomUser.save();
   }
 
-  public async listAllUsers(): Promise<User[]> {
-    return await User.findAll();
+  public async listAllUsers(noAdmin?: boolean): Promise<User[]> {
+    return await User.findAll({
+      where: noAdmin !== undefined ? { admin: !noAdmin } : {}
+    });
   }
 }
 

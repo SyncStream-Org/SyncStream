@@ -1,3 +1,5 @@
+import { MediaData } from './media';
+
 export interface RoomPermissions {
     admin: boolean; // NOTE: all permissions an owner has, EXCEPT deleting the room
     canInviteUser: boolean;
@@ -25,4 +27,22 @@ export interface UserRoomData {
 export interface RoomUpdateData {
     newRoomName?: string;
     newOwnerID?: string;
+}
+
+export interface RoomUserUpdateData {
+    username: string;
+    isMember: boolean;
+}
+
+export type UpdateType = 'create' | 'update' | 'delete';
+
+export interface RoomBroadcastUpdate {
+  endpoint: 'room' | 'media' | 'user'; // lets the client know what is being updated
+  type: UpdateType;    
+  data: MediaData | RoomUpdateData | RoomUserUpdateData;
+}
+
+export interface UserBroadcastUpdate {
+    type: UpdateType;
+    data: RoomData;
 }

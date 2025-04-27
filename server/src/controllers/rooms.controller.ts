@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { Types, Validation } from "syncstream-sharedlib";
-
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
@@ -11,7 +10,7 @@ import {
   RoomUserPermissions,
 } from "room-types";
 import Room from "../models/rooms";
-//import * as service from "../services/rooms.service";
+import Broadcaster from "../utils/broadcaster";
 
 export const createRoom = async (req: Request, res: Response) => {
   const roomNameSM: Types.StringMessage = req.body;
@@ -51,20 +50,33 @@ export const createRoom = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Unkown Server Error has Occurred" }); // shouldn't happen, this was user/member exists in invite member, leaving in for consistency
     return;
   }
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
+  // broadcast the update to the room owner
+  Broadcaster.pushUpdateToUsers(
+    [username, ...adminsUsernames],
+    {
+      type: "create",
+      data: {isMember: true, ...roomDataResponse},
+    },
+  );
 
   res.json(roomDataResponse);
 };
 
 export const updateRoom = async (req: Request, res: Response) => {
-  const roomUser: RoomUser = (req as any).roomUser;
-  const room: Room = (req as any).room;
-
-  if (!roomUser.permissions.canEdit) {
-    res
-      .status(403)
-      .json({
-        error: "Permissions: User is not allowed to edit state of room",
-      });
+  let room: Room | null;
+  const roomID = req.params.roomID;
+  const user = (req as any).user;
+  // check if owner
+  room = await roomService.getRoomById(roomID);
+  if (!room) {
+    res.status(404).json({ error: "Not Found: Room" });
+    return;
+  }
+  if (room.roomOwner !== user.username) {
+    res.status(403).json({ error: "Forbidden: Permissions Denied" });
     return;
   }
 
@@ -75,43 +87,64 @@ export const updateRoom = async (req: Request, res: Response) => {
   }
 
   if (roomUpdateData.newOwnerID) {
-    // ensure user exists, and is part of room
-    const newOwnerUser = await userService.getUserByUsername(
-      roomUpdateData.newOwnerID,
-    );
-    if (!newOwnerUser) {
-      res
-        .status(404)
-        .json({ error: "Not Found: New owner username does not exist" });
-      return;
-    }
     const newOwnerRoomUser = await userService.getRoomUser(
       room.roomID,
       roomUpdateData.newOwnerID,
     );
-    if (!roomUser) {
+    if (!newOwnerRoomUser || !newOwnerRoomUser.isMember) {
       res
         .status(404)
-        .json({ error: "Bad Request: new owner user does not exist in room" });
+        .json({ error: "Bad Request: new owner not a member of room" });
       return;
     }
 
-    await roomService.updateRoomOwner(room, roomUpdateData.newOwnerID);
+    room = await roomService.updateRoomOwner(room, roomUpdateData.newOwnerID);
   }
   if (roomUpdateData.newRoomName) {
-    await roomService.updateRoomName(room, roomUpdateData.newRoomName);
+    room = await roomService.updateRoomName(room, roomUpdateData.newRoomName);
   }
 
-  res.sendStatus(204);
-};
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
 
-export const joinRoom = async (req: Request, res: Response) => {
-  // TODO: requires further developing as a group on what it means to join room
-  res.status(501).json({ error: "Not yet implemented" });
-  return;
-  const user: User = (req as any).user;
-  const { roomID } = req.params;
-};
+  // get all of the users
+  const users = await roomService.getAllRoomUsers(room.roomID);
+  const members = users.filter((user) => user.isMember).map((user) => user.username);
+  const invited = users.filter((user) => !user.isMember).map((user) => user.username);
+
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
+  // broadcast the update to all users
+  Broadcaster.pushUpdateToUsers(
+    [...members, ...adminsUsernames],
+    {
+      type: "update",
+      data: { isMember: true, ...roomDataResponse },
+    },
+  );
+  Broadcaster.pushUpdateToUsers(
+    invited,
+    {
+      type: "update",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
+
+  // broadcast the update to everyone in the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "room",
+      type: "update",
+      data: { newOwnerID: room.roomOwner, newRoomName: room.roomName },
+    },
+  )
+  res.sendStatus(204);
+}
 
 export const deleteRoom = async (req: Request, res: Response) => {
   const user: User = (req as any).user;
@@ -122,9 +155,48 @@ export const deleteRoom = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: Room" });
     return;
   }
+  if (room.roomOwner !== user.username) {
+    res.status(403).json({ error: "Forbidden: Permissions Denied" });
+    return;
+  }
+  // get all of the users
+  const users = await roomService.getAllRoomUsers(room.roomID);
+  const members = users.filter((user) => user.isMember).map((user) => user.username);
+  const invited = users.filter((user) => !user.isMember).map((user) => user.username);
 
   await roomService.deleteRoom(room);
-
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+  // get the admins
+  const admins = await userService.listAllUsers(false);
+  const adminsUsernames = admins.map((admin) => admin.username);
+  // broadcast the update to all users
+  Broadcaster.pushUpdateToUsers(
+    [...members, ...adminsUsernames],
+    {
+      type: "delete",
+      data: { isMember: true, ...roomDataResponse },
+    },
+  );
+  Broadcaster.pushUpdateToUsers(
+    invited,
+    {
+      type: "delete",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
+  // broadcast to everyone in the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "room",
+      type: "delete",
+      data: {},
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -203,6 +275,32 @@ export const inviteUser = async (req: Request, res: Response) => {
     return;
   }
 
+  // get the room and send to the user
+  const room = (await roomService.getRoomById(roomID))!;
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
+
+  // broadcast the update to the invited user
+  Broadcaster.pushUpdateToUsers(
+    [username],
+    {
+      type: "create",
+      data: { isMember: false, ...roomDataResponse },
+    },
+  );
+
+  // broadcast the update to the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "user",
+      type: "create",
+      data: { isMember: false, username },
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -233,9 +331,34 @@ export const removeUser = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: User not part of Room" });
     return;
   }
+  const member = roomUser.isMember;
 
   await userService.removeRoomUser(roomUser);
+  const room = (await roomService.getRoomById(roomID))!;
+  const roomDataResponse: Types.RoomData = {
+    roomName: room.roomName,
+    roomOwner: room.roomOwner,
+    roomID: room.roomID,
+  };
 
+  // broadcast the update to the user
+  Broadcaster.pushUpdateToUsers(
+    [username],
+    {
+      type: "delete",
+      data: { isMember: member, ...roomDataResponse },
+    },
+  );
+
+  // broadcast the update to the room
+  Broadcaster.pushUpdateToRoom(
+    room.roomID,
+    {
+      endpoint: "user",
+      type: "delete",
+      data: { isMember: member, username },
+    },
+  );
   res.sendStatus(200);
 };
 

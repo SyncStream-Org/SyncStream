@@ -11,7 +11,8 @@
     "messageBox": {
       "errorTitle": "Error",
       "invalidServer": "Invalid server address. Please enter correct address or contact your administrator for help.",
-      "invalidAuth": "Invalid username or password."
+      "invalidAuth": "Invalid username or password.",
+      "incompatibleClient": "Client version is incompatible with Server version. Please use a more recent client version."
     }
   },
   "settingsPage": {

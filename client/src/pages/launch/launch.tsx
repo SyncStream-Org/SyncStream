@@ -53,11 +53,18 @@ class Launch extends React.Component<Props, State> {
       }
 
       api.echo().then((res) => {
-        if (res === api.SuccessState.FAIL || res === api.SuccessState.ERROR) {
-          window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: localize.launchPage.messageBox.errorTitle,
-            message: localize.launchPage.messageBox.invalidServer,
-          });
+        if (res !== api.SuccessState.SUCCESS) {
+          if (res === api.SuccessState.ERROR) {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: localize.launchPage.messageBox.errorTitle,
+              message: localize.launchPage.messageBox.invalidServer,
+            });
+          } else {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: localize.launchPage.messageBox.errorTitle,
+              message: localize.launchPage.messageBox.incompatibleClient,
+            });
+          }
 
           SessionState.getInstance().serverURL = serverURLCache;
         } else {

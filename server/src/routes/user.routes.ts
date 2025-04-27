@@ -1,21 +1,35 @@
 import { Router } from "express";
 import * as controller from "../controllers/user.controller";
 
-import { authMiddleware } from "../middleware/setup";
+import { authMiddleware } from "../middleware/setup"
+import { ErrorCatcher } from "../middleware/errorCatcher";
+
+import rateLimit from "express-rate-limit";
+
+// rate limit to 1000 rq per 15min
+const limiter = rateLimit({
+    windowMs: 15*60*1000,
+    max: 1000
+}); 
 
 const router = Router();
 
-router.post("/authenticate", controller.authenticate);
+router.post("/authenticate", ErrorCatcher(controller.authenticate));
 
-router.use(authMiddleware);
+router.use(ErrorCatcher(authMiddleware));
+router.use(limiter, authMiddleware);
 
-router.get("/", controller.getUserDetails);
-router.get("/all", controller.getAllUsers);
-router.put("/update", controller.update);
-router.get("/rooms", controller.listRooms);
-router.get("/rooms/:roomID", controller.getRoomDetails);
-router.delete("/rooms/:roomID", controller.removeRoomFromUser);
-router.put("/rooms/:roomID/invitation", controller.acceptRoomInvite);
-router.delete("/rooms/:roomID/invitation", controller.declineRoomInvite);
+router.get("/", ErrorCatcher(controller.getUserDetails));
+router.get("/all", ErrorCatcher(controller.getAllUsers));
+router.put("/update", ErrorCatcher(controller.update));
+router.get("/rooms", ErrorCatcher(controller.listRooms));
+router.put("/rooms/:roomID/presence", ErrorCatcher(controller.joinRoom));
+router.delete("/rooms/presence", ErrorCatcher(controller.leaveRoom));
+router.get("/rooms/:roomID", ErrorCatcher(controller.getRoomDetails));
+router.delete("/rooms/:roomID", ErrorCatcher(controller.removeRoomFromUser));
+router.put("/rooms/:roomID/invitation", ErrorCatcher(controller.acceptRoomInvite));
+router.delete("/rooms/:roomID/invitation", ErrorCatcher(controller.declineRoomInvite));
+router.get("/rooms/:roomID/broadcast", ErrorCatcher(controller.enterRoomBroadcast));
+router.get("/broadcast", ErrorCatcher(controller.enterUserBroadcast));
 
 export default router;

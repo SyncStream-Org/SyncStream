@@ -1,6 +1,8 @@
+import * as Types from "../types";
+
 // Misc type validation
 
-export function isStringMessage(stringMessage: any): boolean {
+export function isStringMessage(stringMessage: any): stringMessage is Types.StringMessage {
   return !!stringMessage && typeof stringMessage.msg === "string";
 }
 

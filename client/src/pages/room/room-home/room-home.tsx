@@ -4,12 +4,12 @@ import { DocCard } from './doc-card';
 import { HomeToolbar } from './home-toolbar';
 
 interface RoomHomeProps {
-  media: Types.FileData[];
+  media: Types.MediaData[];
   roomID: string;
   refresh: () => void;
-  setActiveDoc: (doc: Types.FileData | null) => void;
-  setActiveStream: (stream: Types.FileData | null) => void;
-  setActiveVoice: (voice: Types.FileData | null) => void;
+  setActiveDoc: (doc: Types.MediaData | null) => void;
+  setActiveStream: (stream: Types.MediaData | null) => void;
+  setActiveVoice: (voice: Types.MediaData | null) => void;
 }
 
 export function RoomHome({
@@ -26,10 +26,9 @@ export function RoomHome({
 
   const filteredMedia = media.filter((item) => {
     const matchesType =
-      mediaTypeFilter.length === 0 ||
-      mediaTypeFilter.includes(item.fileExtension);
+      mediaTypeFilter.length === 0 || mediaTypeFilter.includes(item.mediaType);
 
-    const matchesSearch = item.fileName
+    const matchesSearch = item.mediaName
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
@@ -38,10 +37,10 @@ export function RoomHome({
 
   const filteredAndSortedMedia = filteredMedia.sort((a, b) => {
     if (sortOption === 'type') {
-      return a.fileExtension.localeCompare(b.fileExtension);
+      return a.mediaType.localeCompare(b.mediaType);
     }
     if (sortOption === 'name') {
-      return a.fileName.localeCompare(b.fileName);
+      return a.mediaName.localeCompare(b.mediaName);
     }
     return 0;
   });
@@ -59,7 +58,7 @@ export function RoomHome({
         {filteredAndSortedMedia.length > 0 ? (
           filteredAndSortedMedia.map((item) => (
             <DocCard
-              key={item.fileID}
+              key={item.mediaID}
               item={item}
               setActiveDoc={setActiveDoc}
               setActiveStream={setActiveStream}

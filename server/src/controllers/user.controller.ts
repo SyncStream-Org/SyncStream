@@ -5,7 +5,8 @@ import * as Auth from "../utils/auth";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
-//import * as service from "../services/user.service";
+import PresenceState from "../utils/state";
+import Broadcaster from "../utils/broadcaster";
 
 export const authenticate = async (req: Request, res: Response) => {
   const userData: Types.UserData = req.body;
@@ -29,6 +30,7 @@ export const authenticate = async (req: Request, res: Response) => {
     return;
   }
 
+  PresenceState.removeUserEntry(userData.username);
   const token = Auth.generateToken(userData.username);
   const response: Types.StringMessage = { msg: token };
   res.json(response);
@@ -47,7 +49,7 @@ export const getUserDetails = async (req: Request, res: Response) => {
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await userService.listAllUsers();
+  const users = await userService.listAllUsers(true);
 
   if (!users.length) {
     res.sendStatus(204);
@@ -57,7 +59,9 @@ export const getAllUsers = async (req: Request, res: Response) => {
   const userData: Types.UserData[] = [];
   for (let i = 0; i < users.length; i++) {
     const username = users[i].username;
-    const temp: Types.UserData = { username };
+    const email = users[i].email;
+    const displayName = users[i].displayName;
+    const temp: Types.UserData = { username, email, displayName };
     userData[i] = temp;
   }
 
@@ -86,8 +90,6 @@ export const listRooms = async (req: Request, res: Response) => {
   const roomsPartof = await userService.getUserRooms(user, false, isMember);
   const roomsInvited = await userService.getUserRooms(user, false, false);
   const rooms = roomsOwned.concat(roomsPartof).concat(roomsInvited);
-
-  console.log(roomsOwned, roomsInvited, roomsPartof);
 
   // TODO: add permissions after discussing in group
   const roomsData: Types.RoomData[] = [];
@@ -147,7 +149,12 @@ export const removeRoomFromUser = async (req: Request, res: Response) => {
     return;
   }
   await userService.removeRoomUser(roomUserObj);
-
+  // broadcast to room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "delete",
+    data: { username: user.username, isMember: false },
+  });
   res.sendStatus(200);
 };
 
@@ -170,10 +177,111 @@ export const acceptRoomInvite = async (req: Request, res: Response) => {
   const isMember = true;
   await userService.updateRoomUser(roomUserObj, newPermissions, isMember);
 
+  // tell the room
+  Broadcaster.pushUpdateToRoom(roomID, {
+    endpoint: "user",
+    type: "update",
+    data: { username: user.username, isMember },
+  });
   res.sendStatus(200);
 };
 
 // currently seemingly have the same behavior, will discuss as a group
 export const declineRoomInvite = async (req: Request, res: Response) => {
   await removeRoomFromUser(req, res);
+};
+
+export const joinRoom = async (req: Request, res: Response) => {
+  const user: User = (req as any).user;
+  const { roomID } = req.params;
+
+  // check if room exists, and if the user is part of it
+  try {
+    const roomUser = await userService.getRoomUser(roomID, user.username);
+    if ((!roomUser || !roomUser.isMember) && !user.admin) {
+      res.status(403).json({ error: "Forbidden: User not part of Room" });
+      return;
+    }
+  } catch {
+    res.status(404).json({ error: "Not Found: Room doesn't exist" });
+    return;
+  }
+
+  // check if user is already in a room
+  if (PresenceState.getUserEntry(user.username) !== undefined) {
+    res.status(409).json({ error: "Conflict: User already in a room" });
+    return;
+  }
+
+  PresenceState.addUserEntry(user.username, roomID);
+  res.sendStatus(200);
+};
+
+export const leaveRoom = async (req: Request, res: Response) => {
+  const user: User = (req as any).user;
+  if (PresenceState.getUserEntry(user.username) === undefined) {
+    res.status(404).json({ error: "Not Found: User not in any room" });
+    return;
+  }
+
+  PresenceState.removeUserEntry(user.username);
+  res.sendStatus(200);
+};
+
+// user entering Server-Side Event Broadcasting for their room
+// separate from joinRoom to for keep-alive headers
+export const enterRoomBroadcast = async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const user: User = (req as any).user;
+  const { roomID } = req.params;
+
+  // Ensure user presence in room
+  const presence = PresenceState.getUserEntry(user.username);
+  if (presence == undefined) {
+    res
+      .status(404)
+      .write(JSON.stringify({ error: "Not Found: User not in any room" }));
+    res.end();
+    return;
+  }
+  if (presence.roomID !== roomID) {
+    res
+      .status(400)
+      .write(
+        JSON.stringify({
+          error: "Bad Request: RoomID does not match current active room",
+        }),
+      );
+    res.end();
+    return;
+  }
+
+  // set connection and send message
+  Broadcaster.addRoomResponse(roomID, res);
+
+  req.on("close", () => {
+    //remove from room->user map
+    Broadcaster.removeRoomResponse(roomID, res);
+    res.end();
+  });
+};
+
+export const enterUserBroadcast = async (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const user: User = (req as any).user;
+
+  // set connection and send message
+  Broadcaster.addUserResponse(user.username, res);
+
+  req.on("close", () => {
+    //remove from room->user map
+    Broadcaster.removeUserResponse(user.username);
+    res.end();
+  });
 };

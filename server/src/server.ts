@@ -1,10 +1,13 @@
-import express, { Application, Request, Response } from 'express';
+import express from 'express';
 import expressWs from 'express-ws';
 import sequelize from './db';
-import routerWs from './websockets/socketHandler';
+import routerWs from './websockets/routes';
 import routes from "./routes";
 import UserService from './services/userService';
 import fs from 'fs';
+import cleanup from './utils/cleanup';
+
+import { ErrorHandler } from './middleware/errorCatcher';
 import cors from 'cors';
 
 const port: number = 3000;
@@ -21,6 +24,8 @@ app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(routerWs);
 app.use(routes);
 
+app.use(ErrorHandler);
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);  
 });
@@ -33,7 +38,7 @@ sequelize.sync({ force: true }).then(() => {
     email: ADMIN_EMAIL,
     displayName: 'Admin',
     admin: true,
-  }).then(() => {
+  }).then(async () => {
     console.log('Admin user created');
   });
 });
@@ -43,3 +48,5 @@ if (USER_FILES) {
     fs.rmSync(`${USER_FILES}/${file}`);
   }
 }
+
+cleanup();

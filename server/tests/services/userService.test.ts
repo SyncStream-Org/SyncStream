@@ -4,6 +4,7 @@ import User from '../../src/models/users';
 import Room from '../../src/models/rooms';
 import RoomUser from '../../src/models/roomUsers';
 import { Types } from 'syncstream-sharedlib';
+import { Op } from 'sequelize';
 
 jest.mock('../../src/models/users');
 jest.mock('../../src/models/rooms');
@@ -193,7 +194,7 @@ describe('UserService', () => {
     jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(mockUser as unknown as User);
     jest.spyOn(Room, 'findAll').mockResolvedValue(mockRooms as Room[]);
 
-    const result = await UserService.getUserRooms(mockUser as unknown as User, true, false);
+    const result = await UserService.getUserRooms(mockUser as unknown as User, true, true);
 
     expect(Room.findAll).toHaveBeenCalledWith({ where: { roomOwner: mockUser.username } });
     expect(result).toEqual(mockRooms);
@@ -207,22 +208,13 @@ describe('UserService', () => {
     const result = await UserService.getUserRooms(mockUser as unknown as User, false, true);
     
     expect(RoomUser.findAll).toHaveBeenCalledWith({ where: { username: mockUser.username, isMember: true } });
-    expect(Room.findAll).toHaveBeenCalledWith({ where: { roomID: { in: mockRoomUsers.map((room) => room.roomID) } } });
+    expect(Room.findAll).toHaveBeenCalledWith({ 
+      where: { 
+        roomID: mockRoomUsers.map((room) => room.roomID),
+        roomOwner: { [Op.ne]: mockUser.username } 
+      } 
+    });
     expect(result).toEqual(mockRoomsJoined);
-  });
-
-  it('getUserRooms - should return both owned and joined rooms', async () => {
-    jest.spyOn(UserService, 'getUserByUsername').mockResolvedValue(mockUser as unknown as User);
-    jest.spyOn(Room, 'findAll').mockResolvedValueOnce(mockRooms as Room[]);
-    jest.spyOn(RoomUser, 'findAll').mockResolvedValue(mockRoomUsers as RoomUser[]);
-    jest.spyOn(Room, 'findAll').mockResolvedValueOnce(mockRoomsJoined as Room[]);
-
-    const result = await UserService.getUserRooms(mockUser as unknown as User, true, true);
-
-    expect(Room.findAll).toHaveBeenNthCalledWith(1, { where: { roomOwner: mockUser.username } });
-    expect(RoomUser.findAll).toHaveBeenCalledWith({ where: { username: mockUser.username, isMember: true } });
-    expect(Room.findAll).toHaveBeenNthCalledWith(2, { where: { roomID: { in: mockRoomUsers.map((room) => room.roomID) } } });
-    expect(result).toEqual([...mockRooms, ...mockRoomsJoined]);
   });
 
   it('getUserRooms - should throw an error if user not found', async () => {

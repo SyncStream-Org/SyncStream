@@ -18,7 +18,7 @@ export default function App() {
         <Route path="/" element={<Launch />} />
         <Route path="/home" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/room/:roomID" element={<Room />} />
+        <Route path="/room" element={<Room />} />
       </Routes>
     </Router>
   );
