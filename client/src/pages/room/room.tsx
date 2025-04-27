@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { NavigateFunction, useLocation } from 'react-router-dom';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
@@ -21,7 +21,6 @@ import * as api from '../../api';
 import RoomSettings from './room-settings/room-settings';
 import { StreamViewer } from './stream-viewer/streamViewer';
 import { StreamDialog } from './stream-viewer/stream-dialog';
-import { Stream } from 'stream';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -49,6 +48,7 @@ function RoomPage(props: Props) {
   const [openStreamSelect, setOpenStreamSelect] = useState(false);
   const [streamSourceID, setStreamSourceID] = useState<string>('');
   const [isStreamClient, setIsStreamClient] = useState<boolean>(false);
+  const streamRef = useRef<Types.MediaData | null>(null);
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
 
@@ -260,11 +260,11 @@ function RoomPage(props: Props) {
           }
           if (
             update.isServer === true &&
-            streamID?.mediaID === update.mediaID
+            streamRef.current?.mediaID! === update.mediaID
           ) {
             setActiveStream(null);
             setStreamID(null);
-          } else if (update.username === SessionState.getInstance().currentUser.username && update.mediaID === streamID?.mediaID) {
+          } else if (update.username === SessionState.getInstance().currentUser.username && update.mediaID === streamRef.current?.mediaID!) {
             setActiveStream(null);
             setStreamID(null);
           }
@@ -274,7 +274,7 @@ function RoomPage(props: Props) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [streamID],
+    [],
   );
 
   useRoomSSE(
@@ -310,8 +310,8 @@ function RoomPage(props: Props) {
   }, [activeVoice, room?.roomID]);
 
   useEffect(() => {
-    console.log(presenceMap);
-  }, [presenceMap]);
+    streamRef.current = activeStream;
+  }, [activeStream]);
 
   return (
     <div className="flex h-screen">
@@ -378,6 +378,7 @@ function RoomPage(props: Props) {
                   setActiveDoc={handleActiveDoc}
                   setActiveStream={handleActiveStream}
                   setActiveVoice={setActiveVoice}
+                  mediaPresence={presenceMap}
                 />
               )}
             {settingsOpen === true && (

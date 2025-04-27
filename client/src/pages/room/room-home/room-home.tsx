@@ -10,6 +10,7 @@ interface RoomHomeProps {
   setActiveDoc: (doc: Types.MediaData | null) => void;
   setActiveStream: (stream: Types.MediaData | null) => void;
   setActiveVoice: (voice: Types.MediaData | null) => void;
+  mediaPresence: Map<string, Omit<Types.MediaPresenceData, 'mediaID'>>;
 }
 
 export function RoomHome({
@@ -19,6 +20,7 @@ export function RoomHome({
   setActiveDoc,
   setActiveStream,
   setActiveVoice,
+  mediaPresence,
 }: RoomHomeProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<string[]>([]);
@@ -64,6 +66,7 @@ export function RoomHome({
               setActiveStream={setActiveStream}
               setActiveVoice={setActiveVoice}
               roomID={roomID}
+              activeUsers={mediaPresence.get(item.mediaID!)?.users}
             />
           ))
         ) : (
