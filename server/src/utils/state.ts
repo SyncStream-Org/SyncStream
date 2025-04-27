@@ -1,4 +1,4 @@
-import { Types } from 'syncstream-sharedlib';
+import { Types } from "syncstream-sharedlib";
 
 interface UserState {
   roomID: string;
@@ -27,7 +27,12 @@ class PresenceState {
     this.globalPresence.delete(username);
   }
 
-  public setUserMedia(username: string, mediaType: Types.MediaType, id: string, isServer?: boolean): void {
+  public setUserMedia(
+    username: string,
+    mediaType: Types.MediaType,
+    id: string,
+    isServer?: boolean,
+  ): void {
     const userState = this.globalPresence.get(username);
     if (userState) {
       userState[`${mediaType}ID`] = id;
@@ -35,14 +40,17 @@ class PresenceState {
     }
   }
 
-  public getUserMedia(username: string, mediaType: Types.MediaType): string | null {
+  public getUserMedia(
+    username: string,
+    mediaType: Types.MediaType,
+  ): string | null {
     const userState = this.globalPresence.get(username);
     if (userState) {
       return userState[`${mediaType}ID`] || null;
     }
     return null;
   }
-  
+
   public clearUserMedia(username: string, mediaType: Types.MediaType): void {
     const userState = this.globalPresence.get(username);
     if (userState) {
@@ -56,7 +64,10 @@ class PresenceState {
       .filter(([_, userState]) => userState.roomID === roomID)
       .map(([username, userState]) => ({ username, ...userState }));
     // create a map of media IDs, with a list of users that have that media
-    const mediaMap = new Map<string, Omit<Types.MediaPresenceData, "mediaID">>();
+    const mediaMap = new Map<
+      string,
+      Omit<Types.MediaPresenceData, "mediaID">
+    >();
     roomPresence.forEach(({ username, docID, streamID, voiceID, isServer }) => {
       const mediaIDs = [docID, streamID, voiceID].filter(Boolean) as string[];
       mediaIDs.forEach((mediaID) => {
@@ -64,11 +75,14 @@ class PresenceState {
           mediaMap.set(mediaID, { users: [], isServerSet: isServer });
         }
         mediaMap.get(mediaID)!.users.push(username);
-        mediaMap.get(mediaID)!.isServerSet = isServer || mediaMap.get(mediaID)!.isServerSet;
+        mediaMap.get(mediaID)!.isServerSet =
+          isServer || mediaMap.get(mediaID)!.isServerSet;
       });
     });
     // convert the map to an array of Types.MediaPresenceData
-    const presence: Types.MediaPresenceData[] = Array.from(mediaMap.entries()).map(([mediaID, { users, isServerSet }]) => ({
+    const presence: Types.MediaPresenceData[] = Array.from(
+      mediaMap.entries(),
+    ).map(([mediaID, { users, isServerSet }]) => ({
       mediaID,
       users,
       isServerSet,
@@ -77,11 +91,11 @@ class PresenceState {
   }
 
   public checkIfServer(mediaID: string): boolean {
-    Array.from(this.globalPresence.values()).forEach((userState) => {
+    for (const userState of this.globalPresence.values()) {
       if (userState.streamID === mediaID && userState.isServer) {
         return true;
       }
-    });
+    }
     return false;
   }
 }

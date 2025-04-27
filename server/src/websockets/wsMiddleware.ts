@@ -60,11 +60,11 @@ export async function wsPresence(
   try {
     const mediaObject = await mediaService.getMediaByID(roomID, mediaID);
     if (mediaObject === null || mediaObject.mediaType !== mediaType) {
-      ws.close(1008, 'Media not found');
-      return
+      ws.close(1008, "Media not found");
+      return;
     }
   } catch {
-    ws.close(1008, 'Invalid room/media ID');
+    ws.close(1008, "Invalid room/media ID");
     return;
   }
 
@@ -74,10 +74,12 @@ export async function wsPresence(
     ws.close(1008, "User not found in room");
     return;
   }
-  
-  const isServer = req.query.isClient ? !((req.query.isClient as string) === "true") : undefined;
-  
-  if (PresenceState.checkIfServer(mediaID)) {
+
+  const isServer = req.query.isClient
+    ? !((req.query.isClient as string) === "true")
+    : undefined;
+
+  if (isServer && PresenceState.checkIfServer(mediaID)) {
     Broadcaster.pushUpdateToRoom(roomID, {
       endpoint: "presence",
       type: "delete",
@@ -87,7 +89,7 @@ export async function wsPresence(
         isServer: false,
       },
     });
-    ws.close(1008, "FUCK OFF");
+    ws.close(1008, "FUCK OFF, but better");
     return;
   }
 
