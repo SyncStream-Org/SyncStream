@@ -56,7 +56,9 @@
       },
       "messageBox": {
         "errorTitle": "adsgfadgf",
-        "updateError": "shertaefasedfawefasdfa"
+        "updateError": "shertaefasedfawefasdfa",
+        "successTitle": "iufbiufewuogf",
+        "updateSuccess": "gbfiog3nfoignfoiweg"
       }
     },
     "language": {

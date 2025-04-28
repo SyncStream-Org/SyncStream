@@ -60,6 +60,8 @@ export type LanguageDict = {
       messageBox: {
         errorTitle: string;
         updateError: string;
+        successTitle: string;
+        updateSuccess: string;
       };
     };
     language: {

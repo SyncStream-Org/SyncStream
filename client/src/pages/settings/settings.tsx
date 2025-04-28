@@ -46,11 +46,7 @@ class Settings extends React.Component<Props, State> {
       <div className="flex h-screen">
         <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
           <h1 className="text-2xl font-bold">
-            {
-              localize.settingsPage.categories[
-                'general'
-              ].title
-            }
+            {localize.settingsPage.categories.general.title}
           </h1>
           <div className="mt-6">
             <GeneralSettings navigate={this.props.navigate} />
@@ -60,22 +56,14 @@ class Settings extends React.Component<Props, State> {
           </div>
           <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
           <h1 className="text-2xl font-bold">
-            {
-              localize.settingsPage.categories[
-                'appearance'
-              ].title
-            }
+            {localize.settingsPage.categories.appearance.title}
           </h1>
           <div className="mt-6">
             <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
           </div>
           <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
           <h1 className="text-2xl font-bold">
-            {
-              localize.settingsPage.categories[
-                'language'
-              ].title
-            }
+            {localize.settingsPage.categories.language.title}
           </h1>
           <div className="mt-6">
             <LanguageSettings
