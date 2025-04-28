@@ -1,8 +1,15 @@
-import { useState, useEffect, SyntheticEvent, useCallback, ChangeEvent } from 'react';
+import {
+  useState,
+  useEffect,
+  SyntheticEvent,
+  useCallback,
+  ChangeEvent,
+} from 'react';
 import { NavigateFunction } from 'react-router-dom';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
 import { Time } from 'syncstream-sharedlib/utilities';
+import { Switch } from '@radix-ui/react-switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
@@ -21,7 +28,7 @@ interface Props {
   navigate: NavigateFunction;
 }
 
-function Home(props: Props) {
+function AdminPanel(props: Props) {
   const [users, setUsers] = useState<Types.UserData[]>([]);
   const [formData, setFormData] = useState({
     username: '',
@@ -127,23 +134,19 @@ function Home(props: Props) {
             <CardContent className="pt-2">
               <form onSubmit={createUser} className="space-y-2">
                 <div className="space-y-2">
-                  <Label htmlFor="displayName">
-                    {localize.settingsPage.general.changeProfile.displayName}
-                  </Label>
+                  <Label htmlFor="username">Username</Label>
                   <Input
-                    id="displayName"
+                    id="username"
                     type="text"
-                    placeholder="New display name"
-                    value={formData.displayName}
+                    placeholder="New username"
+                    value={formData.username}
                     onChange={handleChange}
                     className="w-full"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">
-                    {localize.settingsPage.general.changeProfile.email}
-                  </Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -155,19 +158,37 @@ function Home(props: Props) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">
-                    {localize.settingsPage.general.changeProfile.password}
-                  </Label>
+                  <Label htmlFor="displayName">Display Name</Label>
                   <Input
-                    id="password"
-                    type="password"
-                    value={formData.password}
+                    id="displayName"
+                    type="displayName"
+                    value={formData.displayName}
                     onChange={handleChange}
-                    placeholder="New password"
+                    placeholder="New Display Name"
                     className="w-full"
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="isAdmin">Is Admin</Label>
+                  <Switch
+                    id="isAdmin"
+                    checked={formData.isAdmin}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        isAdmin: checked,
+                      }))
+                    }
+                    className="w-16 h-8 bg-gray-200 rounded-full relative cursor-pointer transition-colors duration-300 ease-in-out"
+                  >
+                    <span
+                      className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
+                        formData.isAdmin ? 'translate-x-8' : ''
+                      }`}
+                    />
+                  </Switch>
+                </div>
                 <Button type="submit" className="mt-4 bg-blue-700">
                   {localize.settingsPage.general.changeProfile.submit}
                 </Button>
@@ -179,4 +200,4 @@ function Home(props: Props) {
     </div>
   );
 }
-export default asPage(Home, false);
+export default asPage(AdminPanel, false);

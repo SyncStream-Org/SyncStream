@@ -1,6 +1,6 @@
 import { useState, useEffect, SyntheticEvent, useCallback } from 'react';
 import { NavigateFunction } from 'react-router-dom';
-import { Settings, Plus } from 'lucide-react';
+import { Settings, Plus, UserCheck2Icon } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
 import {
   Popover,
@@ -230,6 +230,19 @@ function Home(props: Props) {
               <Settings size={16} />
               Settings
             </Button>
+            {SessionState.getInstance().currentUser.admin && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1 mr-2"
+                onClick={() => {
+                  props.navigate('/admin-panel');
+                }}
+              >
+                <UserCheck2Icon size={16} />
+                Admin Panel
+              </Button>
+            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
