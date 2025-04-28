@@ -30,6 +30,9 @@ function Home(props: Props) {
   const [rooms, setRooms] = useState<Types.RoomData[]>([]);
   const currentRooms = rooms.filter((room) => room.isMember);
   const invitedRooms = rooms.filter((room) => !room.isMember);
+  const [roomPresence, setRoomPresence] = useState<Map<string, string[]>>(
+    new Map<string, string[]>(),
+  );
 
   const fetchRooms = useCallback(() => {
     if (SessionState.getInstance().currentUser.admin) {
@@ -90,7 +93,6 @@ function Home(props: Props) {
 
   const onRoomUpdate = useCallback(
     (type: Types.UpdateType, update: Types.RoomData) => {
-      console.log('Room update:', type, update);
       setRooms((prevRooms) => {
         switch (type) {
           case 'update':
@@ -113,7 +115,36 @@ function Home(props: Props) {
     [],
   );
 
-  useHomeSse(SessionState.getInstance().sessionToken, onRoomUpdate);
+  const onPresenceUpdate = useCallback(
+    (type: Types.UpdateType, update: Types.UserPresenceData) => {
+      setRoomPresence((prev) => {
+        const newMap = new Map(prev);
+        if (type === 'create') {
+          if (newMap.has(update.roomID)) {
+            newMap.set(update.roomID, [
+              ...newMap.get(update.roomID)!,
+              update.username,
+            ]);
+          } else {
+            newMap.set(update.roomID, [update.username]);
+          }
+        } else if (type === 'delete') {
+          if (newMap.has(update.roomID)) {
+            const users = newMap.get(update.roomID)!;
+            users.splice(users.indexOf(update.username), 1);
+            if (users.length === 0) {
+              newMap.delete(update.roomID);
+            } else {
+              newMap.set(update.roomID, users);
+            }
+          }
+        }
+        return newMap;
+      });
+    }
+  , []);
+
+  useHomeSse(SessionState.getInstance().sessionToken, onRoomUpdate, onPresenceUpdate);
 
   useEffect(() => {
     fetchRooms();
@@ -195,7 +226,7 @@ function Home(props: Props) {
                 roomData={room}
                 navigate={props.navigate}
                 updateRoomList={fetchRooms}
-                users={['user1', 'user2', 'user3']}
+                users={roomPresence.get(room.roomID!)}
               />
             ))}
           </div>

@@ -6,6 +6,7 @@ import { generateRoute } from '../utilities';
 export function useHomeSse(
   token: string,
   onRoomUpdate: (type: Types.UpdateType, update: Types.RoomData) => void,
+  onPresenceUpdate: (type: Types.UpdateType, update: Types.UserPresenceData) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
