@@ -133,18 +133,6 @@ export default class GeneralSettings extends React.Component<Props, State> {
             type="submit"
           />
         </form>
-
-        <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
-
-        <PrimaryButton
-          className="mt-2"
-          text={localize.settingsPage.general.dangerZone.logOut}
-          type="button"
-          onClick={() => {
-            SessionState.getInstance().sessionToken = '';
-            this.props.navigate('/');
-          }}
-        />
       </>
     );
   }

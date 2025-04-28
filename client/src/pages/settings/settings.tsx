@@ -44,66 +44,45 @@ class Settings extends React.Component<Props, State> {
     // ---- RENDER BLOCK ----
     return (
       <div className="flex h-screen">
-        <div className="flex flex-col w-64 dark:bg-gray-800 shadow-lg">
-          <div className="p-6">
-            <h2 className="text-lg font-semibold">
-              {localize.settingsPage.title}
-            </h2>
-          </div>
-          <nav className="grow">
-            {this.state.categories.map((category) => (
-              <div
-                key={category}
-                className={`p-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer ${
-                  this.state.activeCategory === category
-                    ? 'bg-gray-200 dark:bg-gray-700'
-                    : ''
-                }`}
-                onClick={() => {
-                  this.setState({ activeCategory: category });
-                }}
-              >
-                {
-                  localize.settingsPage.categories[
-                    category as SettingsPageCategories
-                  ].shortTitle
-                }
-              </div>
-            ))}
-          </nav>
-          <PrimaryButton
-            text={localize.settingsPage.backButtonText}
-            className="mx-4 mb-4"
-            onClick={() => {
-              this.props.navigate(-1);
-            }}
-          />
-        </div>
         <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
           <h1 className="text-2xl font-bold">
             {
               localize.settingsPage.categories[
-                this.state.activeCategory as SettingsPageCategories
+                'general'
               ].title
             }
           </h1>
           <div className="mt-6">
-            {this.state.activeCategory === 'general' && (
-              <GeneralSettings navigate={this.props.navigate} />
-            )}
-            {this.state.activeCategory === 'appearance' && (
-              <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
-            )}
-            {this.state.activeCategory === 'language' && (
-              <LanguageSettings
-                forceUpdate={() => {
-                  this.forceUpdate();
-                }}
-              />
-            )}
+            <GeneralSettings navigate={this.props.navigate} />
             {this.state.activeCategory === 'userManagement' && (
               <UserManagementSettings />
             )}
+          </div>
+          <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
+          <h1 className="text-2xl font-bold">
+            {
+              localize.settingsPage.categories[
+                'appearance'
+              ].title
+            }
+          </h1>
+          <div className="mt-6">
+            <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
+          </div>
+          <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
+          <h1 className="text-2xl font-bold">
+            {
+              localize.settingsPage.categories[
+                'language'
+              ].title
+            }
+          </h1>
+          <div className="mt-6">
+            <LanguageSettings
+              forceUpdate={() => {
+                this.forceUpdate();
+              }}
+            />
           </div>
         </div>
       </div>
