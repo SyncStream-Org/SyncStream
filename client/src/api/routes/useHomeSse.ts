@@ -26,7 +26,18 @@ export function useHomeSse(
             if (!Validation.isUserBroadcastUpdate(data)) {
               throw new Error('Invalid media update data');
             }
-            onRoomUpdate(data.type, data.data);
+            switch (data.endpoint) {
+              case 'room':
+                onRoomUpdate(data.type, data.data as Types.RoomData);
+                break
+              case 'presence':
+                onPresenceUpdate(data.type, data.data as Types.UserPresenceData);
+                break
+              default:
+                console.warn(`Unknown endpoint: ${data.endpoint}`);
+                break;
+            }
+
           } catch (err) {
             setError(
               err instanceof Error ? err : new Error('Failed to parse message'),

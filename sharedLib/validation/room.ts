@@ -1,6 +1,6 @@
 // Room type validation
 
-import { InviteData, RoomData, RoomPermissions, RoomUpdateData, UpdateType, PresenceData } from "../types";
+import { InviteData, RoomData, RoomPermissions, RoomUpdateData, UpdateType, PresenceData, RoomBroadcastUpdate, UserBroadcastUpdate } from "../types";
 
 export function isRoomPermissions(roomPermissions: any): boolean {
     return (
@@ -98,11 +98,7 @@ function isUpdateType(
 
 export function isRoomBroadcastUpdate(
     roomBroadcastUpdate: any,
-): roomBroadcastUpdate is {
-    endpoint: "room" | "media" | "user" | "presence";
-    type: UpdateType;
-    data: any; // TODO: add more specific type
-} {
+): roomBroadcastUpdate is RoomBroadcastUpdate {
     return (
         !!roomBroadcastUpdate &&
         (roomBroadcastUpdate.endpoint === "room" ||
@@ -115,13 +111,12 @@ export function isRoomBroadcastUpdate(
 
 export function isUserBroadcastUpdate(
     userBroadcastUpdate: any,
-): userBroadcastUpdate is {
-    type: UpdateType;
-    data: RoomData;
-} {
+): userBroadcastUpdate is UserBroadcastUpdate {
     return (
         !!userBroadcastUpdate &&
-        isRoomDataFull(userBroadcastUpdate.data)
+        (userBroadcastUpdate.endpoint === "room" ||
+            userBroadcastUpdate.endpoint === "presence") &&
+        isUpdateType(userBroadcastUpdate.type)
     );
 }
 
