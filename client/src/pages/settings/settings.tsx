@@ -2,14 +2,15 @@ import React from 'react';
 import './settings.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import PrimaryButton from '../../components/buttons/primary-button';
-import Localize, { SettingsPageCategories } from '../../utilities/localize';
+import { ArrowLeft, LogOut } from 'lucide-react';
+import { Button } from '../../components/ui/button';
+import Localize from '../../utilities/localize';
 import { asPage } from '../../utilities/page-wrapper';
-import SessionState from '../../utilities/session-state';
 import AppearanceSettings from './appearance';
 import GeneralSettings from './general';
 import LanguageSettings from './language';
 import UserManagementSettings from './userManagment';
+import SessionState from '@/utilities/session-state';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -28,12 +29,9 @@ interface State {
 class Settings extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
     this.state = {
       activeCategory: 'general',
-      categories: SessionState.getInstance().currentUser.admin
-        ? ['general', 'appearance', 'language', 'userManagement']
-        : ['general', 'appearance', 'language'],
+      categories: ['general', 'appearance', 'language', 'userManagement']
     };
   }
 
@@ -43,13 +41,38 @@ class Settings extends React.Component<Props, State> {
 
     // ---- RENDER BLOCK ----
     return (
-      <div className="flex h-screen">
+      <div className="flex flex-col h-screen">
         <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
-          <h1 className="text-2xl font-bold">
-            {localize.settingsPage.categories.general.title}
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">
+              {localize.settingsPage.categories.general.title}
+            </h1>
+            <div className="flex gap-2">
+              <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {this.props.navigate(-1)}}
+              className="flex items-center gap-1"
+              >
+              <ArrowLeft size={16} />
+              {localize.settingsPage.backButtonText || "Back"}
+              </Button>
+              <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={() => {
+                SessionState.getInstance().sessionToken = '';
+                this.props.navigate('/');
+              }}
+              className="flex items-center gap-1"
+              >
+              <LogOut size={16} />
+              {localize.settingsPage.general.dangerZone.logOut || "Logout"}
+              </Button>
+            </div>
+          </div>
           <div className="mt-6">
-            <GeneralSettings navigate={this.props.navigate} />
+            <GeneralSettings />
             {this.state.activeCategory === 'userManagement' && (
               <UserManagementSettings />
             )}

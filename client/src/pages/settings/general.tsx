@@ -124,7 +124,7 @@ function GeneralSettings() {
 
       <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
 
-      <h2 className="text-xl mt-6 mb-4 text-gray-800 dark:text-gray-100 font-semibold">
+      <h2 className="text-xl mt-6 mb-4 text-gray-800 dark:text-gray-100">
         {localize.settingsPage.general.changeProfile.title}
       </h2>
 
