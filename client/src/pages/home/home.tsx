@@ -69,6 +69,24 @@ function Home(props: Props) {
     }
   }, []);
 
+  const fetchRoomPresence = useCallback(() => {
+    api.User.getRoomPresence().then((res) => {
+      if (res.success !== api.SuccessState.SUCCESS) {
+        window.electron.ipcRenderer.invokeFunction('show-message-box', {
+          title: 'Error',
+          message: 'Unable to get room presence data at this time.',
+        });
+      } else {
+        if (res.data === undefined) throw Error('Unreachable');
+        const newMap = new Map<string, string[]>();
+        res.data.forEach((presence) => {
+          newMap.set(presence.roomID, presence.users);
+        });
+        setRoomPresence(newMap);
+      }
+    });
+  }, []);
+
   const addRoom = (event: SyntheticEvent) => {
     event.preventDefault();
     const target = event.target as typeof event.target & {
@@ -117,6 +135,7 @@ function Home(props: Props) {
 
   const onPresenceUpdate = useCallback(
     (type: Types.UpdateType, update: Types.UserPresenceData) => {
+      console.log('onPresenceUpdate', type, update);
       setRoomPresence((prev) => {
         const newMap = new Map(prev);
         if (type === 'create') {
@@ -148,6 +167,7 @@ function Home(props: Props) {
 
   useEffect(() => {
     fetchRooms();
+    fetchRoomPresence();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -226,7 +246,7 @@ function Home(props: Props) {
                 roomData={room}
                 navigate={props.navigate}
                 updateRoomList={fetchRooms}
-                users={roomPresence.get(room.roomID!)}
+                users={roomPresence.get(room.roomID!) || []}
               />
             ))}
           </div>

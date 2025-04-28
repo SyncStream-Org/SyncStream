@@ -215,8 +215,10 @@ export const joinRoom = async (req: Request, res: Response) => {
 
   PresenceState.addUserEntry(user.username, roomID);
   // broadcast to users in the room
-  const usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  let usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
   const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  usersInRoom = usersInRoom.filter((username) => !admins.includes(username));
+
   Broadcaster.pushUpdateToUsers(
     [...usersInRoom, ...admins],
     {
@@ -240,8 +242,10 @@ export const leaveRoom = async (req: Request, res: Response) => {
   const { roomID } = PresenceState.getUserEntry(user.username)!;
   PresenceState.removeUserEntry(user.username);
   // broadcast to users in the room
-  const usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  let usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
   const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  usersInRoom = usersInRoom.filter((username) => !admins.includes(username));
+
   Broadcaster.pushUpdateToUsers(
     [...usersInRoom, ...admins],
     {
@@ -319,8 +323,9 @@ export const getRoomPresence = async (req: Request, res: Response) => {
 
   // get all rooms the user is in
   const rooms = await userService.getUserRooms(user, false, true);
-  rooms.concat(await userService.getUserRooms(user, true, true));
-  const roomIDs = rooms.map((room) => room.roomID);
+
+  const roomsOwned = await userService.getUserRooms(user, true, true);
+  const roomIDs = (rooms.concat(roomsOwned)).map((room) => room.roomID);
   const roomPresence = PresenceState.getUsersInRooms(roomIDs);
 
   res.json(roomPresence);
