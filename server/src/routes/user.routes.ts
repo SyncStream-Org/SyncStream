@@ -31,5 +31,6 @@ router.put("/rooms/:roomID/invitation", ErrorCatcher(controller.acceptRoomInvite
 router.delete("/rooms/:roomID/invitation", ErrorCatcher(controller.declineRoomInvite));
 router.get("/rooms/:roomID/broadcast", ErrorCatcher(controller.enterRoomBroadcast));
 router.get("/broadcast", ErrorCatcher(controller.enterUserBroadcast));
+router.get("/presence", ErrorCatcher(controller.getRoomPresence));
 
 export default router;

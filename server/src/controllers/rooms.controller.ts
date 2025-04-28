@@ -57,6 +57,7 @@ export const createRoom = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [username, ...adminsUsernames],
     {
+      endpoint: "room",
       type: "create",
       data: {isMember: true, ...roomDataResponse},
     },
@@ -122,6 +123,7 @@ export const updateRoom = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [...members, ...adminsUsernames],
     {
+      endpoint: "room",
       type: "update",
       data: { isMember: true, ...roomDataResponse },
     },
@@ -129,6 +131,7 @@ export const updateRoom = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     invited,
     {
+      endpoint: "room",
       type: "update",
       data: { isMember: false, ...roomDataResponse },
     },
@@ -177,6 +180,7 @@ export const deleteRoom = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [...members, ...adminsUsernames],
     {
+      endpoint: "room",
       type: "delete",
       data: { isMember: true, ...roomDataResponse },
     },
@@ -184,6 +188,7 @@ export const deleteRoom = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     invited,
     {
+      endpoint: "room",
       type: "delete",
       data: { isMember: false, ...roomDataResponse },
     },
@@ -287,6 +292,7 @@ export const inviteUser = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [username],
     {
+      endpoint: "room",
       type: "create",
       data: { isMember: false, ...roomDataResponse },
     },
@@ -345,6 +351,7 @@ export const removeUser = async (req: Request, res: Response) => {
   Broadcaster.pushUpdateToUsers(
     [username],
     {
+      endpoint: "room",
       type: "delete",
       data: { isMember: member, ...roomDataResponse },
     },

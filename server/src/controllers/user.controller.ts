@@ -214,6 +214,20 @@ export const joinRoom = async (req: Request, res: Response) => {
   }
 
   PresenceState.addUserEntry(user.username, roomID);
+  // broadcast to users in the room
+  const usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  Broadcaster.pushUpdateToUsers(
+    [...usersInRoom, ...admins],
+    {
+      endpoint: "presence",
+      type: "create",
+      data: {
+        username: user.username,
+        roomID,
+      }
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -223,8 +237,22 @@ export const leaveRoom = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: User not in any room" });
     return;
   }
-
+  const { roomID } = PresenceState.getUserEntry(user.username)!;
   PresenceState.removeUserEntry(user.username);
+  // broadcast to users in the room
+  const usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  Broadcaster.pushUpdateToUsers(
+    [...usersInRoom, ...admins],
+    {
+      endpoint: "presence",
+      type: "delete",
+      data: {
+        username: user.username,
+        roomID,
+      }
+    },
+  )
   res.sendStatus(200);
 };
 
@@ -285,3 +313,16 @@ export const enterUserBroadcast = async (req: Request, res: Response) => {
     res.end();
   });
 };
+
+export const getRoomPresence = async (req: Request, res: Response) => {
+  const user: User = (req as any).user;
+
+  // get all rooms the user is in
+  const rooms = await userService.getUserRooms(user, false, true);
+  rooms.concat(await userService.getUserRooms(user, true, true));
+  const roomIDs = rooms.map((room) => room.roomID);
+  const roomPresence = PresenceState.getUsersInRooms(roomIDs);
+
+  res.json(roomPresence);
+};
+  

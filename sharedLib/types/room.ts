@@ -58,3 +58,8 @@ export interface UserBroadcastUpdate {
     type: UpdateType;
     data: RoomData | UserPresenceData;
 }
+
+export interface RoomPresenceData {
+    roomID: string;
+    users: string[];
+}
