@@ -3,15 +3,26 @@ import './room-card.css';
 
 import { Types } from 'syncstream-sharedlib';
 import { NavigateFunction } from 'react-router-dom';
+import { Check, User, X } from 'lucide-react';
 import SessionState from '@/utilities/session-state';
-import { Check, X } from 'lucide-react';
 import * as api from '../../../api';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   roomData: Types.RoomData;
   navigate: NavigateFunction;
   updateRoomList: () => void;
   isInvite?: boolean;
+  users?: string[];
 }
 
 interface State {}
@@ -96,39 +107,68 @@ export default class RoomCard extends React.Component<Props, State> {
 
     // ---- RENDER BLOCK ----
     return (
-      <div
-        className="dark:bg-gray-800 p-6 rounded-lg shadow-md"
+      <Card
+        key={this.props.roomData.roomID}
+        className="overflow-hidden hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer transition-colors relative"
         onClick={handleJoinRoom}
       >
-        <div className="flex flex-row">
+        {!this.props.isInvite && this.props.users!.length > 0 && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="absolute top-4 right-4">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    <User className="h-5 w-5" />
+                    {this.props.users!.length}
+                  </Badge>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p className="font-semibold">Users in Room:</p>
+                <ScrollArea className="h-full max-h-[100px]">
+                  <ul className="list-disc pl-4">
+                    {this.props.users!.map((username) => (
+                      <li key={username} className="text-sm">
+                        {username}
+                      </li>
+                    ))}
+                  </ul>
+                </ScrollArea>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+
+        <CardContent className="p-4 flex flex-col select-none h-full w-full">
           <div className="grow">
-            <h3 className="text-xl font-bold mb-2">
+            <h2 className="text-xl font-semibold">
               {this.props.roomData.roomName}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Owner: {this.props.roomData.roomOwner}
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {`Room Owner: ${this.props.roomData.roomOwner}`}
             </p>
           </div>
           {this.props.isInvite && (
-            <>
-              <button
-                type="button"
-                className="my-auto mr-2 p-2 bg-gray-200 rounded-full text-gray-800"
+            <div className="absolute bottom-4 right-4 flex gap-2">
+              <Button variant="destructive" size="sm" onClick={rejectInvite}>
+                <X className="h-4 w-4" />
+              </Button>
+
+              <Button
+                variant="default"
+                size="sm"
+                className="bg-green-500 hover:bg-green-600"
                 onClick={acceptInvite}
               >
-                <Check className="max-h-7 " />
-              </button>
-              <button
-                type="button"
-                className="my-auto mr-2 p-2 bg-gray-200 rounded-full text-gray-800"
-                onClick={rejectInvite}
-              >
-                <X className="max-h-7 " />
-              </button>
-            </>
+                <Check className="h-4 w-4" />
+              </Button>
+            </div>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 }

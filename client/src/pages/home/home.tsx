@@ -1,8 +1,6 @@
 import { useState, useEffect, SyntheticEvent, useCallback } from 'react';
-import './home.css';
-
 import { NavigateFunction } from 'react-router-dom';
-import { Settings, CirclePlus } from 'lucide-react';
+import { Settings, Plus } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
 import {
   Popover,
@@ -18,6 +16,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -129,13 +128,15 @@ function Home(props: Props) {
           <h1 className="text-3xl font-bold">Home</h1>
           <div className="flex items-center">
             <Popover>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
+              <PopoverTrigger>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-1 mr-2"
                 >
-                  <CirclePlus className="max-h-7" />
-                </button>
+                  <Plus size={16} />
+                  Create New Room
+                </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="grid gap-4">
@@ -157,49 +158,65 @@ function Home(props: Props) {
               </PopoverContent>
             </Popover>
 
-            <button
-              type="button"
-              className="mr-4 p-2 bg-gray-200 rounded-full text-gray-800"
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="flex items-center gap-1 mr-2"
               onClick={() => {
                 props.navigate('/settings');
               }}
             >
-              <Settings className="max-h-7 " />
-            </button>
-            <Avatar className="w-10 h-10 bg-gray-200">
-              <AvatarFallback className="w-10 h-10 bg-gray-200 dark:text-gray-700">
-                {SessionState.getInstance().currentUser.username[0]}
-              </AvatarFallback>
-            </Avatar>
+              <Settings size={16} />
+              Settings
+            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarFallback className="rounded-lg">
+                      {SessionState.getInstance().currentUser.username[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  <p className="font-semibold">{`Logged in as: ${SessionState.getInstance().currentUser.username}`}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </header>
 
         {/* Grid of Current Rooms */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {currentRooms.map((room) => (
-            <RoomCard
-              key={room.roomName}
-              roomData={room}
-              navigate={props.navigate}
-              updateRoomList={fetchRooms}
-            />
-          ))}
+        <div className={`overflow-y-auto border rounded-md p-4 ${invitedRooms.length === 0 ? 'max-h-[calc(100vh-120px)]' : 'max-h-[calc(70vh-120px)]'} pr-2`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {currentRooms.map((room) => (
+              <RoomCard
+                key={room.roomName}
+                roomData={room}
+                navigate={props.navigate}
+                updateRoomList={fetchRooms}
+                users={['user1', 'user2', 'user3']}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Grid of Invited Rooms */}
         {invitedRooms.length !== 0 && (
           <>
-            <h1 className="mt-4 text-3xl font-bold">Invites</h1>
-            <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {invitedRooms.map((room) => (
-                <RoomCard
-                  key={room.roomName}
-                  roomData={room}
-                  navigate={props.navigate}
-                  updateRoomList={fetchRooms}
-                  isInvite
-                />
-              ))}
+            <h1 className="mt-4 text-xl font-bold">Invites</h1>
+            <div className={`overflow-y-auto border rounded-md p-4 ${invitedRooms.length === 0 ? 'max-h-[calc(100vh-120px)]' : 'max-h-[calc(50vh-120px)]'} pr-2`}>
+              <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {invitedRooms.map((room) => (
+                  <RoomCard
+                    key={room.roomName}
+                    roomData={room}
+                    navigate={props.navigate}
+                    updateRoomList={fetchRooms}
+                    isInvite
+                  />
+                ))}
+              </div>
             </div>
           </>
         )}
