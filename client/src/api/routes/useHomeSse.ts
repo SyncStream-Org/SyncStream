@@ -6,7 +6,10 @@ import { generateRoute } from '../utilities';
 export function useHomeSse(
   token: string,
   onRoomUpdate: (type: Types.UpdateType, update: Types.RoomData) => void,
-  onPresenceUpdate: (type: Types.UpdateType, update: Types.UserPresenceData) => void,
+  onPresenceUpdate: (
+    type: Types.UpdateType,
+    update: Types.UserPresenceData,
+  ) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -30,15 +33,17 @@ export function useHomeSse(
             switch (data.endpoint) {
               case 'room':
                 onRoomUpdate(data.type, data.data as Types.RoomData);
-                break
+                break;
               case 'presence':
-                onPresenceUpdate(data.type, data.data as Types.UserPresenceData);
-                break
+                onPresenceUpdate(
+                  data.type,
+                  data.data as Types.UserPresenceData,
+                );
+                break;
               default:
                 console.warn(`Unknown endpoint: ${data.endpoint}`);
                 break;
             }
-
           } catch (err) {
             setError(
               err instanceof Error ? err : new Error('Failed to parse message'),

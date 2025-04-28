@@ -13,10 +13,15 @@ import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -160,10 +165,15 @@ function Home(props: Props) {
         }
         return newMap;
       });
-    }
-  , []);
+    },
+    [],
+  );
 
-  useHomeSse(SessionState.getInstance().sessionToken, onRoomUpdate, onPresenceUpdate);
+  useHomeSse(
+    SessionState.getInstance().sessionToken,
+    onRoomUpdate,
+    onPresenceUpdate,
+  );
 
   useEffect(() => {
     fetchRooms();
@@ -180,9 +190,9 @@ function Home(props: Props) {
           <div className="flex items-center">
             <Popover>
               <PopoverTrigger>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="flex items-center gap-1 mr-2"
                 >
                   <Plus size={16} />
@@ -209,9 +219,9 @@ function Home(props: Props) {
               </PopoverContent>
             </Popover>
 
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="flex items-center gap-1 mr-2"
               onClick={() => {
                 props.navigate('/settings');
@@ -230,7 +240,9 @@ function Home(props: Props) {
                   </Avatar>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                  <p className="font-semibold">{`Logged in as: ${SessionState.getInstance().currentUser.username}`}</p>
+                  <p className="font-semibold">{`Logged in as: ${
+                    SessionState.getInstance().currentUser.username
+                  }`}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -238,7 +250,13 @@ function Home(props: Props) {
         </header>
 
         {/* Grid of Current Rooms */}
-        <div className={`overflow-y-auto border rounded-md p-4 ${invitedRooms.length === 0 ? 'max-h-[calc(100vh-120px)]' : 'max-h-[calc(70vh-120px)]'} pr-2`}>
+        <div
+          className={`overflow-y-auto border rounded-md p-4 ${
+            invitedRooms.length === 0
+              ? 'max-h-[calc(100vh-120px)]'
+              : 'max-h-[calc(70vh-120px)]'
+          } pr-2`}
+        >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentRooms.map((room) => (
               <RoomCard
@@ -256,7 +274,13 @@ function Home(props: Props) {
         {invitedRooms.length !== 0 && (
           <>
             <h1 className="mt-4 text-xl font-bold">Invites</h1>
-            <div className={`overflow-y-auto border rounded-md p-4 ${invitedRooms.length === 0 ? 'max-h-[calc(100vh-120px)]' : 'max-h-[calc(50vh-120px)]'} pr-2`}>
+            <div
+              className={`overflow-y-auto border rounded-md p-4 ${
+                invitedRooms.length === 0
+                  ? 'max-h-[calc(100vh-120px)]'
+                  : 'max-h-[calc(50vh-120px)]'
+              } pr-2`}
+            >
               <div className="mt-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {invitedRooms.map((room) => (
                   <RoomCard

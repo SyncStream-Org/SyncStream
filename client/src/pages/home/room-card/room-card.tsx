@@ -5,7 +5,6 @@ import { Types } from 'syncstream-sharedlib';
 import { NavigateFunction } from 'react-router-dom';
 import { Check, User, X } from 'lucide-react';
 import SessionState from '@/utilities/session-state';
-import * as api from '../../../api';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Tooltip,
@@ -16,6 +15,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import * as api from '../../../api';
 
 interface Props {
   roomData: Types.RoomData;

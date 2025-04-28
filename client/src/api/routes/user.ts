@@ -463,13 +463,10 @@ export const getRoomPresence = (): Promise<{
   const headers: Headers = generateDefaultHeaders();
 
   // eslint-disable-next-line no-undef
-  const request: RequestInfo = new Request(
-    generateRoute('user/presence'),
-    {
-      method: 'GET',
-      headers,
-    },
-  );
+  const request: RequestInfo = new Request(generateRoute('user/presence'), {
+    method: 'GET',
+    headers,
+  });
 
   return fetch(request)
     .then(async (res) => {
@@ -489,4 +486,4 @@ export const getRoomPresence = (): Promise<{
       console.error(`Fetch Encountered an Error:\n${error}`);
       return { success: SuccessState.ERROR };
     });
-}
+};
