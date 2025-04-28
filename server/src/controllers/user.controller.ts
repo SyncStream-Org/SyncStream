@@ -5,6 +5,7 @@ import * as Auth from "../utils/auth";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
+import Room from "../models/rooms";
 import PresenceState from "../utils/state";
 import Broadcaster from "../utils/broadcaster";
 
@@ -321,11 +322,14 @@ export const enterUserBroadcast = async (req: Request, res: Response) => {
 export const getRoomPresence = async (req: Request, res: Response) => {
   const user: User = (req as any).user;
 
-  // get all rooms the user is in
-  const rooms = await userService.getUserRooms(user, false, true);
-
-  const roomsOwned = await userService.getUserRooms(user, true, true);
-  const roomIDs = (rooms.concat(roomsOwned)).map((room) => room.roomID);
+  let rooms: Room[] = [];
+  if (user.admin) {
+    rooms = await roomService.listAllRooms();
+  } else {
+    rooms = await userService.getUserRooms(user, false, true);
+    rooms = (await userService.getUserRooms(user, true, true)).concat(rooms);
+  }
+  const roomIDs = rooms.map((room) => room.roomID);
   const roomPresence = PresenceState.getUsersInRooms(roomIDs);
 
   res.json(roomPresence);
