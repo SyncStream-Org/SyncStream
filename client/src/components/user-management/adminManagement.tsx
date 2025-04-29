@@ -70,22 +70,16 @@ export function AdminManagementSection({
 
     setLoading(true);
     try {
-      selectedUsers.forEach((username) => {
-        api.Admin.deleteUser(username).then(async (res) => {
-          if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
-            window.electron.ipcRenderer.invokeFunction('show-message-box', {
-              title: localize.settingsPage.userManagement.messageBox.errorTitle,
-              message:
-                localize.settingsPage.userManagement.messageBox.userDeleteError,
-            });
-          } else {
-            await Time.delay(100);
-            handleUserFetch();
-          }
-        });
-      });
-      // Reset selection and refresh list
+      for (const username of selectedUsers) {
+        await api.Admin.deleteUser(username);
+      }
+      Time.delay(100);
+      handleUserFetch();
       setSelectedUsers([]);
+      window.electron.ipcRenderer.invokeFunction('show-message-box', {
+        title: 'Success',
+        message: `Removed ${selectedUsers.length} users from the room.`,
+      });
     } catch (error) {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
         title: 'Error',

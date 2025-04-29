@@ -80,6 +80,13 @@ function AdminPanel(props: Props) {
             localize.settingsPage.userManagement.messageBox.userCreateError,
         });
       } else {
+        setFormData({
+          username: '',
+          email: '',
+          password: '',
+          isAdmin: false,
+          displayName: '',
+        });
         await Time.delay(100);
         fetchUsers();
       }
