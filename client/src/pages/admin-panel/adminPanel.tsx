@@ -9,7 +9,7 @@ import { NavigateFunction } from 'react-router-dom';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
 import { Time } from 'syncstream-sharedlib/utilities';
-import { Switch } from '@radix-ui/react-switch';
+import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
@@ -125,7 +125,7 @@ function AdminPanel(props: Props) {
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
         <h1 className="text-2xl font-bold">User Management</h1>
         <div className="mt-6">
-          <AdminManagementSection users={users} />
+          <AdminManagementSection users={users} handleUserFetch={fetchUsers} />
         </div>
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
         <h1 className="text-2xl font-bold">User Creation</h1>
@@ -180,14 +180,7 @@ function AdminPanel(props: Props) {
                         isAdmin: checked,
                       }))
                     }
-                    className="w-16 h-8 bg-gray-200 rounded-full relative cursor-pointer transition-colors duration-300 ease-in-out"
-                  >
-                    <span
-                      className={`absolute top-1 left-1 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
-                        formData.isAdmin ? 'translate-x-8' : ''
-                      }`}
-                    />
-                  </Switch>
+                  />
                 </div>
                 <Button type="submit" className="mt-4 bg-blue-700">
                   {localize.settingsPage.general.changeProfile.submit}

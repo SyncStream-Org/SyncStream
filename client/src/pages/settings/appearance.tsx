@@ -43,7 +43,6 @@ function AppearanceSettings({ toggleDarkMode }: Props) {
               id="dark-mode"
               checked={isDarkMode}
               onCheckedChange={toggleDarkMode}
-              aria-label="Toggle dark mode"
             />
           </div>
         </CardContent>

@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 interface UserTableProps {
   users: (Types.RoomsUserData | Types.UserData)[];
   member?: boolean;
+  admin?: boolean;
   selectedUsers: string[];
   toggleUserSelection: (username: string) => void;
   toggleSelectAll: () => void;
@@ -22,6 +23,7 @@ interface UserTableProps {
 export function UserTable({
   users,
   member,
+  admin,
   selectedUsers,
   toggleUserSelection,
   toggleSelectAll,
@@ -47,6 +49,7 @@ export function UserTable({
             <TableHead>Display Name</TableHead>
             <TableHead>Email</TableHead>
             {member && <TableHead>Member</TableHead>}
+            {admin && <TableHead>Admin</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -78,6 +81,19 @@ export function UserTable({
                     ) : (
                       <Badge variant="outline" className="text-gray-500">
                         Not Member
+                      </Badge>
+                    )}
+                  </TableCell>
+                )}
+                {admin && (
+                  <TableCell>
+                    {(user as Types.UserData).admin ? (
+                      <Badge className="bg-green-500 hover:bg-green-600">
+                        Admin
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-gray-500">
+                        Not Admin
                       </Badge>
                     )}
                   </TableCell>

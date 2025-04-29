@@ -5,19 +5,26 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TablePagination } from './userPagination';
 import { UserTable } from './userTable';
+import * as api from '../../api';
+import Localize from '@/utilities/localize';
+import { Time } from 'syncstream-sharedlib/utilities';
 
 interface UserManagementProps {
   users: Types.UserData[];
+  handleUserFetch: () => void;
 }
 
 export function AdminManagementSection({
-  users
+  users,
+  handleUserFetch,
 }: UserManagementProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
+  const localize = Localize.getInstance().localize();
+  
   useEffect(() => {
     // Reset selections when tab changes
     setSelectedUsers([]);
@@ -63,7 +70,20 @@ export function AdminManagementSection({
 
     setLoading(true);
     try {
-      
+      selectedUsers.forEach((username) => {
+        api.Admin.deleteUser(username).then(async (res) => {
+          if (res === api.SuccessState.ERROR || res === api.SuccessState.FAIL) {
+            window.electron.ipcRenderer.invokeFunction('show-message-box', {
+              title: localize.settingsPage.userManagement.messageBox.errorTitle,
+              message:
+                localize.settingsPage.userManagement.messageBox.userDeleteError,
+            });
+          } else {
+            await Time.delay(100);
+            handleUserFetch();
+          }
+        });
+      });
       // Reset selection and refresh list
       setSelectedUsers([]);
     } catch (error) {
@@ -78,10 +98,6 @@ export function AdminManagementSection({
 
   return (
     <div className="mt-6 space-y-4">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-        User Management
-      </h2>
-
       <div className="flex items-center space-x-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -93,10 +109,11 @@ export function AdminManagementSection({
           />
         </div>
         <Button
+          variant="destructive"
           onClick={handleBatchAction}
           disabled={selectedUsers.length === 0 || loading}
         >
-          Invite Selected ({selectedUsers.length})
+          Delete Selected ({selectedUsers.length})
         </Button>
       </div>
 
@@ -106,6 +123,7 @@ export function AdminManagementSection({
         toggleUserSelection={toggleUserSelection}
         toggleSelectAll={toggleSelectAll}
         loading={loading}
+        admin
       />
 
       <TablePagination
