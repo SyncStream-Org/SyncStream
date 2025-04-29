@@ -6,9 +6,9 @@ import { ErrorCatcher } from "../middleware/errorCatcher";
 
 import rateLimit from "express-rate-limit";
 
-// rate limit to 1000 rq per 15min
+// rate limit to 1000 rq per second
 const limiter = rateLimit({
-    windowMs: 15*60*1000,
+    windowMs: 1000,
     max: 1000
 }); 
 
