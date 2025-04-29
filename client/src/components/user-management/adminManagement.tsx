@@ -3,11 +3,11 @@ import { Search } from 'lucide-react';
 import { Types } from 'syncstream-sharedlib';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import Localize from '@/utilities/localize';
+import { Time } from 'syncstream-sharedlib/utilities';
 import { TablePagination } from './userPagination';
 import { UserTable } from './userTable';
 import * as api from '../../api';
-import Localize from '@/utilities/localize';
-import { Time } from 'syncstream-sharedlib/utilities';
 
 interface UserManagementProps {
   users: Types.UserData[];
@@ -24,7 +24,7 @@ export function AdminManagementSection({
   const [loading, setLoading] = useState(false);
 
   const localize = Localize.getInstance().localize();
-  
+
   useEffect(() => {
     // Reset selections when tab changes
     setSelectedUsers([]);

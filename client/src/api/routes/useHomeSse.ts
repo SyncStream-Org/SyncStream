@@ -68,7 +68,7 @@ export function useHomeSse(
       );
       return () => {};
     }
-  }, [token, onRoomUpdate]);
+  }, [token, onRoomUpdate, onPresenceUpdate]);
 
   useEffect(() => {
     const cleanup = connect();

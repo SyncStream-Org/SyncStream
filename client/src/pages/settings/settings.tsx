@@ -10,7 +10,6 @@ import { asPage } from '../../utilities/page-wrapper';
 import AppearanceSettings from './appearance';
 import GeneralSettings from './general';
 import LanguageSettings from './language';
-import UserManagementSettings from './userManagment';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -21,18 +20,10 @@ interface Props {
   navigate: NavigateFunction;
 }
 
-interface State {
-  activeCategory: string;
-  categories: string[];
-}
-
-class Settings extends React.Component<Props, State> {
+class Settings extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      activeCategory: 'general',
-      categories: ['general', 'appearance', 'language', 'userManagement'],
-    };
+    this.state = {};
   }
 
   render() {
@@ -75,9 +66,6 @@ class Settings extends React.Component<Props, State> {
           </div>
           <div className="mt-6">
             <GeneralSettings />
-            {this.state.activeCategory === 'userManagement' && (
-              <UserManagementSettings />
-            )}
           </div>
           <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
           <h1 className="text-2xl font-bold">

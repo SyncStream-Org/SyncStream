@@ -15,10 +15,10 @@ import { Input } from '@/components/ui/input';
 import SessionState from '@/utilities/session-state';
 import { asPage } from '@/utilities/page-wrapper';
 import { Button } from '@/components/ui/button';
-import * as api from '../../api';
 import Localize from '@/utilities/localize';
 import { AdminManagementSection } from '@/components/user-management/adminManagement';
 import { Card, CardContent } from '@/components/ui/card';
+import * as api from '../../api';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
