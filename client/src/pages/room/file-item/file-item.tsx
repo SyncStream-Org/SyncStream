@@ -8,9 +8,9 @@ import {
 } from '@/components/ui/context-menu';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import { FileUpdate } from './file-update';
 import { FileDelete } from './file-delete';
-import Localize from '@/utilities/localize';
 
 interface FileItemProps {
   roomID: string;

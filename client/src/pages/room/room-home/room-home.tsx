@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import { DocCard } from './doc-card';
 import { HomeToolbar } from './home-toolbar';
-import Localize from '@/utilities/localize';
 
 interface RoomHomeProps {
   media: Types.MediaData[];

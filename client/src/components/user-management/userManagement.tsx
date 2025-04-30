@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as api from '@/api';
+import Localize from '@/utilities/localize';
 import { TablePagination } from './userPagination';
 import { UserTable } from './userTable';
-import Localize from '@/utilities/localize';
 
 interface UserManagementProps {
   room: Types.RoomData;

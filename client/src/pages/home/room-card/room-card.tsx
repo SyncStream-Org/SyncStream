@@ -15,8 +15,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
-import * as api from '../../../api';
 import Localize from '@/utilities/localize';
+import * as api from '../../../api';
 
 interface Props {
   roomData: Types.RoomData;
