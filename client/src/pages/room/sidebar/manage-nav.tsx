@@ -7,6 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import Localize from '@/utilities/localize';
 
 interface ManageNavProps {
   setRoomHome: () => void;
@@ -14,33 +15,34 @@ interface ManageNavProps {
 }
 
 export function ManageNav({ setRoomHome, setRoomSettings }: ManageNavProps) {
+  const localize = Localize.getInstance().localize();
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton
             asChild
-            tooltip="Room Homepage"
+            tooltip={localize.roomPage.categories.home}
             onClick={setRoomHome}
           >
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a>
               <Home />
-              <span>Home</span>
+              <span>{localize.roomPage.categories.home}</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton
             asChild
-            tooltip="Room Settings"
+            tooltip={localize.roomPage.categories.settings}
             onClick={setRoomSettings}
           >
             {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
             <a>
               <Settings />
-              <span>Settings</span>
+              <span>{localize.roomPage.categories.settings}</span>
             </a>
           </SidebarMenuButton>
         </SidebarMenuItem>

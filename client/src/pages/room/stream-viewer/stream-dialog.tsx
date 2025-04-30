@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Localize from '@/utilities/localize';
 
 interface StreamDialogProps {
   open: boolean;
@@ -39,13 +40,13 @@ export function StreamDialog({
     }
   }, [open]);
 
+  const localize = Localize.getInstance().localize();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            No Stream Started - Select a Window or Screen to Share
-          </DialogTitle>
+          <DialogTitle>{localize.roomPage.streamDialog.title}</DialogTitle>
         </DialogHeader>
         <Select
           onValueChange={(sourceID: string) => {
@@ -54,11 +55,17 @@ export function StreamDialog({
           }}
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Source to Select" />
+            <SelectValue
+              placeholder={
+                localize.roomPage.streamDialog.sourceSelectPlaceholder
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectLabel>Sources</SelectLabel>
+              <SelectLabel>
+                {localize.roomPage.streamDialog.sources}
+              </SelectLabel>
               {sources.map((source: any) => (
                 <SelectItem key={source.id} value={source.id}>
                   {source.name}

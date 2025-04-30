@@ -6,6 +6,7 @@ import {
   closeVideoCall,
 } from '@/api/routes/useWebRTCVideo';
 import { Button } from '@/components/ui/button';
+import Localize from '@/utilities/localize';
 
 interface StreamViewerProps {
   activeStream: Types.MediaData | null;
@@ -34,6 +35,8 @@ export function StreamViewer({
     }
   }, [sourceID, isClient, roomID, activeStream?.mediaID]);
 
+  const localize = Localize.getInstance().localize();
+
   return (
     <>
       <video
@@ -55,7 +58,9 @@ export function StreamViewer({
         className="mx-auto mt-4"
         variant="destructive"
       >
-        {isClient ? 'Leave Stream' : 'Stop Stream'}
+        {isClient
+          ? localize.roomPage.streamViewer.leave
+          : localize.roomPage.streamViewer.stop}
       </Button>
     </>
   );

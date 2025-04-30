@@ -9,6 +9,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import SessionState from '@/utilities/session-state';
+import Localize from '@/utilities/localize';
 
 interface User {
   name: string;
@@ -43,6 +44,8 @@ export function VoiceChannelCard({
     onLeaveCall();
   };
 
+  const localize = Localize.getInstance().localize();
+
   return callActive ? (
     <Card className="fixed bottom-4 right-4 w-48 shadow-lg py-2 gap-1">
       <CardHeader>
@@ -72,7 +75,10 @@ export function VoiceChannelCard({
         <Collapsible open={isUsersListOpen} onOpenChange={setIsUsersListOpen}>
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-medium text-muted-foreground">
-              {users.length} {users.length === 1 ? 'user' : 'users'}
+              {users.length}{' '}
+              {users.length === 1
+                ? localize.roomPage.voiceChannelCard.user
+                : localize.roomPage.voiceChannelCard.users}
             </span>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="icon" className="h-6 w-6">
@@ -106,7 +112,7 @@ export function VoiceChannelCard({
                       {user.name}{' '}
                       {user.name ===
                         SessionState.getInstance().currentUser.username &&
-                        '(You)'}
+                        `(${localize.roomPage.voiceChannelCard.you})`}
                     </span>
                   </div>
                 </div>

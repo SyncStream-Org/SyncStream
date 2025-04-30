@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import Localize from '@/utilities/localize';
 
 interface UserNavProps {
   username: string;
@@ -23,6 +24,8 @@ interface UserNavProps {
 }
 
 export function UserNav({ username, goToHome, goToSettings }: UserNavProps) {
+  const localize = Localize.getInstance().localize();
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -64,12 +67,12 @@ export function UserNav({ username, goToHome, goToSettings }: UserNavProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={goToSettings}>
               <Settings />
-              Settings
+              {localize.roomPage.categories.settings}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={goToHome}>
               <LogOut />
-              Leave Room
+              {localize.roomPage.leaveRoom}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

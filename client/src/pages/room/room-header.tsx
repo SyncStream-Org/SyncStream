@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import Localize from '@/utilities/localize';
 import { Types } from 'syncstream-sharedlib';
 
 interface RoomHeaderProps {
@@ -21,6 +22,8 @@ export function RoomHeader({
   activeDoc,
   activeStream,
 }: RoomHeaderProps) {
+  const localize = Localize.getInstance().localize();
+
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
@@ -31,7 +34,9 @@ export function RoomHeader({
             {(activeDoc || activeStream) && (
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="#">
-                  {activeDoc ? 'Documents' : 'Streams'}
+                  {activeDoc
+                    ? localize.roomPage.categories.documents
+                    : localize.roomPage.categories.streams}
                 </BreadcrumbLink>
               </BreadcrumbItem>
             )}
@@ -40,7 +45,9 @@ export function RoomHeader({
               <BreadcrumbPage>
                 {activeDoc?.mediaName ||
                   activeStream?.mediaName ||
-                  (roomHome ? 'Home' : 'Settings')}
+                  (roomHome
+                    ? localize.roomPage.categories.home
+                    : localize.roomPage.categories.settings)}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>

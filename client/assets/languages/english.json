@@ -149,5 +149,104 @@
       "roomInviteDeclineError1": "Unable to decline invite to room. Something went wrong with the server.",
       "roomInviteDeclineError2": "Unable to decline invite to room. Room with that name may not exist or you may not be invited to that room."
     }
+  },
+  "roomPage": {
+    "leaveRoom": "Leave Room",
+    "filter": "Filter",
+    "sort": "Sort",
+    "search": "Search...",
+    "noMedia": "No media found matching your filters",
+    "type": "Type",
+    "name": "Name",
+    "noItems": "No items found",
+    "fileItem": {
+      "rename": "Rename",
+      "delete": "Delete"
+    },
+    "voiceChannelCard": {
+      "user": "user",
+      "users": "users",
+      "you": "You"
+    },
+    "streamViewer": {
+      "leave": "Leave Stream",
+      "stop": "Stop Stream"
+    },
+    "streamDialog": {
+      "title": "No Stream Started - Select a Window or Screen to Share",
+      "sourceSelectPlaceholder": "Source to Select",
+      "sources": "Sources"
+    },
+    "createMedia": {
+      "button": "Create",
+      "title": "Create New Media",
+      "name": "Media Name",
+      "type": "Media Type",
+      "submit": "Create",
+      "typePlaceholder": "Select Media Type"
+    },
+    "categories": {
+      "media": "Media",
+      "home": "Home",
+      "settings": "Settings",
+      "documents": "Documents",
+      "streams": "Streams",
+      "voiceChannels": "Voice Channels",
+      "document": "Document",
+      "stream": "Stream",
+      "voiceChannel": "Voice Channel"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "successTitle": "Success",
+      "inviteSuccess": {
+        "Part1": "Invited",
+        "Part2": "users to the room."
+      },
+      "removedSuccess": {
+        "Part1": "Removed",
+        "Part2": "users from the room."
+      },
+      "inviteRemoveError": {
+        "Part1": "Failed to",
+        "Part2": "users:",
+        "invite": "invite",
+        "remove": "remove"
+      },
+      "userFetchError1": "Something went wrong with the server and we could not grab username data.",
+      "userFetchError2": "Something went wrong with the server and we could not grab room member data.",
+      "roomDeleteError": "Something went wrong with the server and we could not delete the room.",
+      "roomLeaveError": "Something went wrong with the server and we could not remove you from the room.",
+      "roomUpdateError": "Something went wrong with the server and we could not update the room."
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "Update Room",
+        "newName": "New Room Name",
+        "newOwner": "New Room Owner",
+        "submit": "Submit"
+      },
+      "userManagment": {
+        "title": "User Management",
+        "invite": "Invite Users",
+        "remove": "Remove Users",
+        "searchUsersPlaceholder": "Search users by username...",
+        "searchMembersPlaceholder": "Search room members...",
+        "inviteSelected": "Invite Selected",
+        "removeSelected": "Remove Selected"
+      },
+      "leave": "Leave Room",
+      "leaveCheck": {
+        "Part1": "Are you sure you want to leave ",
+        "Part2": "? You will need to be invited back to rejoin."
+      },
+      "delete": "Delete Room",
+      "deleteCheck": {
+        "Part1": "Are you sure you want to delete ",
+        "Part2": " and all associated data? You can transfer the room ownership and then leave to persist the room."
+      },
+      "audioInputLong": "Audio Input Device",
+      "audioInputShort": "Audio Input"
+    }
   }
 }

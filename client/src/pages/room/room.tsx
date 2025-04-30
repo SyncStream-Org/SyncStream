@@ -10,6 +10,7 @@ import {
   useWebRTCAudio,
   toggleMute,
 } from '@/api/routes/useWebRTCAudio';
+import Localize from '@/utilities/localize';
 import SessionState from '../../utilities/session-state';
 import DocEditor from './editor/editor';
 import { asPage } from '../../utilities/page-wrapper';
@@ -52,6 +53,8 @@ function RoomPage(props: Props) {
   // Get webRTC connections
   const userAudioData = useWebRTCAudio();
 
+  const localize = Localize.getInstance().localize();
+
   const handleRoomFetch = () => {
     api.Media.getAllRoomMedia(room?.roomID!).then(({ success, data }) => {
       if (success === api.SuccessState.SUCCESS) {
@@ -84,17 +87,15 @@ function RoomPage(props: Props) {
     api.User.getAllUsers().then(async (res1) => {
       if (res1.success !== api.SuccessState.SUCCESS) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message:
-            'Something went wrong with the server and we could not grab username data.',
+          title: localize.roomPage.messageBox.errorTitle,
+          message: localize.roomPage.messageBox.userFetchError1,
         });
       } else {
         api.Rooms.listMembers(room!.roomID!).then(async (res2) => {
           if (res2.success !== api.SuccessState.SUCCESS) {
             window.electron.ipcRenderer.invokeFunction('show-message-box', {
-              title: 'Error',
-              message:
-                'Something went wrong with the server and we could not grab room member data.',
+              title: localize.roomPage.messageBox.errorTitle,
+              message: localize.roomPage.messageBox.userFetchError2,
             });
           } else {
             if (

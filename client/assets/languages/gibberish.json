@@ -149,5 +149,104 @@
       "roomInviteDeclineError1": "32-89tyrhp[ifngewo';kaml",
       "roomInviteDeclineError2": "4yt2q3ag89-ephf[wji;okmld"
     }
+  },
+  "roomPage": {
+    "leaveRoom": "sdfhsrtrg",
+    "filter": "sfdgsdfghsdfgjhrtsd",
+    "sort": "ssdfghssgfdh",
+    "search": "djfghdfgh...",
+    "noMedia": "hdfgjserttgergsdrfg",
+    "type": "asgsdfgsdf",
+    "name": "asdfasdfgsdf",
+    "noItems": "agsdfersdjhswergre",
+    "fileItem": {
+      "rename": "asdgasdgf",
+      "delete": "asdgasdf"
+    },
+    "voiceChannelCard": {
+      "user": "aghdfhd",
+      "users": "sdfherg",
+      "you": "sdhasrfg"
+    },
+    "streamViewer": {
+      "leave": "ahgerhfwef",
+      "stop": "sheergsreg"
+    },
+    "streamDialog": {
+      "title": "agdfrseahergawerf",
+      "sourceSelectPlaceholder": "asdfgaerewfadgs",
+      "sources": "agherarewf"
+    },
+    "createMedia": {
+      "button": "sgfjhfdjgfh",
+      "title": "sdfhsrtjrst",
+      "name": "tywredrth",
+      "type": "yertjhdgfhj",
+      "submit": "rteuhndgh",
+      "typePlaceholder": "agsfdhgdfgasdf"
+    },
+    "categories": {
+      "media": "rywrteh",
+      "home": "thdhrtedrth",
+      "settings": "ertyerhd",
+      "documents": "reyerthdt",
+      "streams": "hertherth",
+      "voiceChannels": "ewrywery ewrywery",
+      "document": "asdgfasdgsdf",
+      "stream": "sgdfhsdfgsdfg",
+      "voiceChannel": "sdfhsrgsegsdf"
+    },
+    "messageBox": {
+      "errorTitle": "dfghdfghd",
+      "successTitle": "sdgasdfgasdfa",
+      "inviteSuccess": {
+        "Part1": "asdgawefqw",
+        "Part2": "gfstdhearfasdfawe"
+      },
+      "removedSuccess": {
+        "Part1": "sdfgsdfg",
+        "Part2": "aergerfasdgsdfg"
+      },
+      "inviteRemoveError": {
+        "Part1": "awegesrdsawefds",
+        "Part2": "sdfgeryhjyedrtge",
+        "invite": "asdgasdfwe",
+        "remove": "adsfasgew"
+      },
+      "userFetchError1": "dfghdftryhdfgh",
+      "userFetchError2": "Sew5yhdtdgfhdrthwr.",
+      "roomDeleteError": "dtywrtjhdyjfghfghdfthrt.",
+      "roomLeaveError": "jrse5rtgbhdymkjr545yuhsrt",
+      "roomUpdateError": "djrtyhgdrtjsdrthdrth"
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "dfgjhdjythrth",
+        "newName": "dfghdyjrth",
+        "newOwner": "drtrjtrthrtd",
+        "submit": "dfghdrthdrth"
+      },
+      "userManagment": {
+        "title": "htrjsrthdrthdfg",
+        "invite": "serthjdrtjfghdfghrt",
+        "remove": "dftjrthdgfhdfrth",
+        "searchUsersPlaceholder": "asdgerawertgserhsaerfawef",
+        "searchMembersPlaceholder": "asdgawefaweqfasdfawefaw",
+        "inviteSelected": "drtjhdrthdfghdrt",
+        "removeSelected": "agwefawegerfwefawe"
+      },
+      "leave": "dtrhdrtjhfthj",
+      "leaveCheck": {
+        "Part1": "agsfdsdfhdfgadsf",
+        "Part2": "gsrhergfwaefrwaef"
+      },
+      "delete": "asdgsaerfdhadfasdf",
+      "deleteCheck": {
+        "Part1": "Are you sure you want to delete",
+        "Part2": "srhasergsredgsdfg"
+      },
+      "audioInputLong": "dtrjerswgserg",
+      "audioInputShort": "tdrjrstgergreth"
+    }
   }
 }

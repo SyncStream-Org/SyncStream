@@ -153,6 +153,105 @@ export type LanguageDict = {
       roomInviteDeclineError2: string;
     };
   };
+  roomPage: {
+    leaveRoom: string;
+    filter: string;
+    sort: string;
+    search: string;
+    noMedia: string;
+    type: string;
+    name: string;
+    noItems: string;
+    fileItem: {
+      rename: string;
+      delete: string;
+    };
+    voiceChannelCard: {
+      user: string;
+      users: string;
+      you: string;
+    };
+    streamViewer: {
+      leave: string;
+      stop: string;
+    };
+    streamDialog: {
+      title: string;
+      sourceSelectPlaceholder: string;
+      sources: string;
+    };
+    createMedia: {
+      button: string;
+      title: string;
+      name: string;
+      type: string;
+      submit: string;
+      typePlaceholder: string;
+    };
+    categories: {
+      media: string;
+      home: string;
+      settings: string;
+      documents: string;
+      streams: string;
+      voiceChannels: string;
+      document: string;
+      stream: string;
+      voiceChannel: string;
+    };
+    messageBox: {
+      errorTitle: string;
+      successTitle: string;
+      inviteSuccess: {
+        Part1: string;
+        Part2: string;
+      };
+      removedSuccess: {
+        Part1: string;
+        Part2: string;
+      };
+      inviteRemoveError: {
+        Part1: string;
+        Part2: string;
+        invite: string;
+        remove: string;
+      };
+      userFetchError1: string;
+      userFetchError2: string;
+      roomDeleteError: string;
+      roomLeaveError: string;
+      roomUpdateError: string;
+    };
+    roomSettings: {
+      updateRoom: {
+        title: string;
+        newName: string;
+        newOwner: string;
+        submit: string;
+      };
+      userManagment: {
+        title: string;
+        invite: string;
+        remove: string;
+        searchUsersPlaceholder: string;
+        searchMembersPlaceholder: string;
+        inviteSelected: string;
+        removeSelected: string;
+      };
+      leave: string;
+      leaveCheck: {
+        Part1: string;
+        Part2: string;
+      };
+      delete: string;
+      deleteCheck: {
+        Part1: string;
+        Part2: string;
+      };
+      audioInputLong: string;
+      audioInputShort: string;
+    };
+  };
 };
 
 // Map language ids to language maps
