@@ -1,10 +1,21 @@
 // The localization engine. Loads localized text from disk for use at runtime
 
 import englishDict from '../../assets/languages/english.json';
-import gibberishDict from '../../assets/languages/gibberish.json';
+import frenchDict from '../../assets/languages/french.json';
+import italianDict from '../../assets/languages/italian.json';
+import japaneseDict from '../../assets/languages/japanese.json';
+import koreanDict from '../../assets/languages/korean.json';
+import spanishDict from '../../assets/languages/spanish.json';
 
 // Export languages available
-export const LanguageArray = ['english', 'gibberish'] as const;
+export const LanguageArray = [
+  'english',
+  'french',
+  'italian',
+  'japanese',
+  'korean',
+  'spanish',
+] as const;
 export type Language = (typeof LanguageArray)[number];
 
 // Export available ids for strings
@@ -257,7 +268,11 @@ export type LanguageDict = {
 // Map language ids to language maps
 const languageMap: { [id in Language]: LanguageDict } = {
   english: englishDict as LanguageDict,
-  gibberish: gibberishDict as LanguageDict,
+  french: frenchDict as LanguageDict,
+  italian: italianDict as LanguageDict,
+  japanese: japaneseDict as LanguageDict,
+  korean: koreanDict as LanguageDict,
+  spanish: spanishDict as LanguageDict,
 };
 
 export default class Localize {

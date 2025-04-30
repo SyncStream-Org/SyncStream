@@ -1,0 +1,253 @@
+{
+  "launchPage": {
+    "title": "Connexion",
+    "form": {
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "serverURL": "URL du serveur",
+      "serverURLButton": "Modifier l'URL du serveur",
+      "submit": "Soumettre"
+    },
+    "messageBox": {
+      "errorTitle": "Erreur",
+      "invalidServer": "Adresse de serveur invalide. Veuillez entrer l'adresse correcte ou contacter votre administrateur pour obtenir de l'aide.",
+      "invalidAuth": "Nom d'utilisateur ou mot de passe invalide.",
+      "incompatibleClient": "La version du client est incompatible avec la version du serveur. Veuillez utiliser une version client plus récente."
+    }
+  },
+  "settingsPage": {
+    "title": "Paramètres",
+    "backButtonText": "Retour",
+    "categories": {
+      "general": {
+        "title": "Paramètres généraux",
+        "shortTitle": "Général"
+      },
+      "appearance": {
+        "title": "Paramètres d'apparence",
+        "shortTitle": "Apparence"
+      },
+      "language": {
+        "title": "Paramètres de langue",
+        "shortTitle": "Langue"
+      },
+      "userManagement": {
+        "title": "Paramètres de gestion des utilisateurs",
+        "shortTitle": "Gestion des utilisateurs"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "Profil",
+        "username": "Nom d'utilisateur :",
+        "displayName": "Nom d'affichage :",
+        "email": "E-mail :",
+        "password": "Mot de passe :"
+      },
+      "changeProfile": {
+        "title": "Mettre à jour le profil",
+        "displayName": "Nom d'affichage",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "submit": "Soumettre",
+        "displayNamePlaceholder": "Nouveau nom d'affichage",
+        "emailPlaceholder": "Nouvel e-mail",
+        "passwordPlaceholder": "Nouveau mot de passe"
+      },
+      "dangerZone": {
+        "title": "Zone de danger",
+        "logOut": "Se déconnecter"
+      },
+      "messageBox": {
+        "errorTitle": "Erreur",
+        "updateError": "Impossible de mettre à jour l'utilisateur pour le moment. Veuillez réessayer dans quelques minutes.",
+        "successTitle": "Succès",
+        "updateSuccess": "Mis à jour avec succès"
+      }
+    },
+    "language": {
+      "languageChange": "Langue de l'application"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "Schéma de couleurs",
+        "lightMode": "Activer le mode sombre",
+        "darkMode": "Activer le mode clair"
+      }
+    },
+    "userManagement": {
+      "title": "Panneau d'administration",
+      "userCreationTitle": "Création d'utilisateur",
+      "adminManagement": {
+        "searchPlaceholder": "Rechercher des utilisateurs par nom d'utilisateur...",
+        "deleteSelectedButton": "Supprimer la sélection",
+        "loading": "Chargement...",
+        "noUsers": "Aucun utilisateur trouvé",
+        "member": "Membre",
+        "notMember": "Pas membre",
+        "admin": "Admin",
+        "notAdmin": "Pas admin"
+      },
+      "users": {
+        "title": "Utilisateurs",
+        "noUsers": "Aucun utilisateur à afficher...",
+        "username": "Nom d'utilisateur",
+        "displayName": "Nom d'affichage",
+        "email": "E-mail",
+        "admin": "Est administrateur ?"
+      },
+      "createUser": {
+        "title": "Créer un utilisateur",
+        "username": "Nom d'utilisateur",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "displayName": "Nom d'affichage",
+        "admin": "Est administrateur ?",
+        "submit": "Soumettre",
+        "displayNamePlaceholder": "Nouveau nom d'affichage",
+        "emailPlaceholder": "Nouvel e-mail",
+        "usernamePlaceholder": "Nouveau nom d'utilisateur"
+      },
+      "messageBox": {
+        "successTitle": "Succès",
+        "errorTitle": "Erreur",
+        "userGetError": "Impossible d'obtenir les utilisateurs du serveur.",
+        "userDeleteError": "Impossible de supprimer l'utilisateur.",
+        "userCreateError": "Impossible de créer l'utilisateur.",
+        "userCreateAutogenPass": "Le nouvel utilisateur a un mot de passe généré automatiquement :",
+        "removeUserError": "Échec de la suppression de l'utilisateur :",
+        "removeUserSuccess": {
+          "Part1": "Supprimé",
+          "Part2": "utilisateurs de la salle."
+        }
+      }
+    }
+  },
+  "homePage": {
+    "title": "Accueil",
+    "settingsButton": "Paramètres",
+    "adminPanelButton": "Panneau d'administration",
+    "avatarTooltip": "Connecté en tant que :",
+    "roomCard": {
+      "owner": "Propriétaire de la salle :",
+      "userCount": "Utilisateurs dans la salle :"
+    },
+    "createRoom": {
+      "button": "Créer une nouvelle salle",
+      "popupTitle": "Ajouter une salle",
+      "inputLabel": "Nom de la salle",
+      "submit": "Soumettre"
+    },
+    "messageBox": {
+      "errorTitle": "Erreur",
+      "roomFetchError": "Impossible d'obtenir les données de la salle pour le moment.",
+      "roomPresenceError": "Impossible d'obtenir les données de présence dans la salle pour le moment.",
+      "roomCreationError1": "Impossible de créer la salle. Un problème est survenu avec le serveur.",
+      "roomCreationError2": "Impossible de créer la salle. Une salle portant ce nom existe peut-être déjà.",
+      "joinRoomError": "Impossible de rejoindre la salle pour le moment.",
+      "roomInviteAcceptError1": "Impossible d'accepter l'invitation à la salle. Un problème est survenu avec le serveur.",
+      "roomInviteAcceptError2": "Impossible d'accepter l'invitation à la salle. Une salle portant ce nom n'existe peut-être pas ou vous n'êtes peut-être pas invité à cette salle.",
+      "roomInviteDeclineError1": "Impossible de refuser l'invitation à la salle. Un problème est survenu avec le serveur.",
+      "roomInviteDeclineError2": "Impossible de refuser l'invitation à la salle. Une salle portant ce nom n'existe peut-être pas ou vous n'êtes peut-être pas invité à cette salle."
+    }
+  },
+  "roomPage": {
+    "leaveRoom": "Quitter la salle",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "search": "Rechercher...",
+    "noMedia": "Aucun média trouvé correspondant à vos filtres",
+    "type": "Type",
+    "name": "Nom",
+    "noItems": "Aucun élément trouvé",
+    "fileItem": {
+      "rename": "Renommer",
+      "delete": "Supprimer"
+    },
+    "voiceChannelCard": {
+      "user": "utilisateur",
+      "users": "utilisateurs",
+      "you": "Vous"
+    },
+    "streamViewer": {
+      "leave": "Quitter le flux",
+      "stop": "Arrêter le flux"
+    },
+    "streamDialog": {
+      "title": "Aucun flux n'a démarré - Sélectionnez une fenêtre ou un écran à partager",
+      "sourceSelectPlaceholder": "Source à sélectionner",
+      "sources": "Sources"
+    },
+    "createMedia": {
+      "button": "Créer",
+      "title": "Créer un nouveau média",
+      "name": "Nom du média",
+      "type": "Type de média",
+      "submit": "Créer",
+      "typePlaceholder": "Sélectionner le type de média"
+    },
+    "categories": {
+      "media": "Médias",
+      "home": "Accueil",
+      "settings": "Paramètres",
+      "documents": "Documents",
+      "streams": "Flux",
+      "voiceChannels": "Canaux vocaux",
+      "document": "Document",
+      "stream": "Flux",
+      "voiceChannel": "Canal vocal"
+    },
+    "messageBox": {
+      "errorTitle": "Erreur",
+      "successTitle": "Succès",
+      "inviteSuccess": {
+        "Part1": "Invité",
+        "Part2": "utilisateurs dans la salle."
+      },
+      "removedSuccess": {
+        "Part1": "Supprimé",
+        "Part2": "utilisateurs de la salle."
+      },
+      "inviteRemoveError": {
+        "Part1": "Échec de l'",
+        "Part2": "des utilisateurs :",
+        "invite": "invitation",
+        "remove": "suppression"
+      },
+      "userFetchError1": "Un problème est survenu avec le serveur et nous n'avons pas pu récupérer les données du nom d'utilisateur.",
+      "userFetchError2": "Un problème est survenu avec le serveur et nous n'avons pas pu récupérer les données des membres de la salle.",
+      "roomDeleteError": "Un problème est survenu avec le serveur et nous n'avons pas pu supprimer la salle.",
+      "roomLeaveError": "Un problème est survenu avec le serveur et nous n'avons pas pu vous retirer de la salle.",
+      "roomUpdateError": "Un problème est survenu avec le serveur et nous n'avons pas pu mettre à jour la salle."
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "Mettre à jour la salle",
+        "newName": "Nouveau nom de la salle",
+        "newOwner": "Nouveau propriétaire de la salle",
+        "submit": "Soumettre"
+      },
+      "userManagment": {
+        "title": "Gestion des utilisateurs",
+        "invite": "Inviter des utilisateurs",
+        "remove": "Supprimer des utilisateurs",
+        "searchUsersPlaceholder": "Rechercher des utilisateurs par nom d'utilisateur...",
+        "searchMembersPlaceholder": "Rechercher des membres de la salle...",
+        "inviteSelected": "Inviter la sélection",
+        "removeSelected": "Supprimer la sélection"
+      },
+      "leave": "Quitter la salle",
+      "leaveCheck": {
+        "Part1": "Êtes-vous sûr de vouloir quitter ",
+        "Part2": " ? Vous devrez être invité à nouveau pour rejoindre."
+      },
+      "delete": "Supprimer la salle",
+      "deleteCheck": {
+        "Part1": "Êtes-vous sûr de vouloir supprimer ",
+        "Part2": " et toutes les données associées ? Vous pouvez transférer la propriété de la salle, puis partir pour conserver la salle."
+      },
+      "audioInputLong": "Périphérique d'entrée audio",
+      "audioInputShort": "Entrée audio"
+    }
+  }
+}

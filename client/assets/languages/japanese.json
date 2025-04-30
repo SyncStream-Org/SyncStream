@@ -1,0 +1,252 @@
+{
+  "launchPage": {
+    "title": "ログイン",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "serverURL": "Server URL",
+      "serverURLButton": "Server URLの変更",
+      "submit": "送信"
+    },
+    "messageBox": {
+      "errorTitle": "エラー",
+      "invalidServer": "無効なサーバーアドレスです。正しいアドレスを入力するか、管理者に連絡して支援を求めてください。",
+      "invalidAuth": "無効なユーザー名またはパスワードです。",
+      "incompatibleClient": "クライアントのバージョンがサーバーのバージョンと互換性がありません。より新しいクライアントバージョンを使用してください。"
+    }
+  },
+  "settingsPage": {
+    "title": "設定",
+    "backButtonText": "戻る",
+    "categories": {
+      "general": {
+        "title": "一般設定",
+        "shortTitle": "一般"
+      },
+      "appearance": {
+        "title": "外観設定",
+        "shortTitle": "外観"
+      },
+      "language": {
+        "title": "言語設定",
+        "shortTitle": "言語"
+      },
+      "userManagement": {
+        "title": "ユーザー管理設定",
+        "shortTitle": "ユーザー管理"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "プロフィール",
+        "username": "Username:",
+        "displayName": "表示名:",
+        "email": "Email:"
+      },
+      "changeProfile": {
+        "title": "プロフィールの更新",
+        "displayName": "表示名",
+        "email": "Email",
+        "password": "Password",
+        "submit": "送信",
+        "displayNamePlaceholder": "新しい表示名",
+        "emailPlaceholder": "新しいEmail",
+        "passwordPlaceholder": "新しいPassword"
+      },
+      "dangerZone": {
+        "title": "危険ゾーン",
+        "logOut": "ログアウト"
+      },
+      "messageBox": {
+        "errorTitle": "エラー",
+        "updateError": "現時点ではユーザーを更新できません。数分後にもう一度お試しください。",
+        "successTitle": "成功",
+        "updateSuccess": "正常に更新されました"
+      }
+    },
+    "language": {
+      "languageChange": "アプリの言語"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "配色",
+        "lightMode": "ダークモードをオンにする",
+        "darkMode": "ライトモードをオンにする"
+      }
+    },
+    "userManagement": {
+      "title": "管理者パネル",
+      "userCreationTitle": "ユーザー作成",
+      "adminManagement": {
+        "searchPlaceholder": "ユーザー名でユーザーを検索...",
+        "deleteSelectedButton": "選択したものを削除",
+        "loading": "読み込み中...",
+        "noUsers": "ユーザーが見つかりません",
+        "member": "メンバー",
+        "notMember": "非メンバー",
+        "admin": "管理者",
+        "notAdmin": "非管理者"
+      },
+      "users": {
+        "title": "ユーザー",
+        "noUsers": "表示するユーザーがいません...",
+        "username": "Username",
+        "displayName": "表示名",
+        "email": "Email",
+        "admin": "管理者ですか？"
+      },
+      "createUser": {
+        "title": "ユーザーを作成",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "displayName": "表示名",
+        "admin": "管理者ですか？",
+        "submit": "送信",
+        "displayNamePlaceholder": "新しい表示名",
+        "emailPlaceholder": "新しいEmail",
+        "usernamePlaceholder": "新しいUsername"
+      },
+      "messageBox": {
+        "successTitle": "成功",
+        "errorTitle": "エラー",
+        "userGetError": "サーバーからユーザーを取得できません。",
+        "userDeleteError": "ユーザーを削除できません。",
+        "userCreateError": "ユーザーを作成できません。",
+        "userCreateAutogenPass": "新しいユーザーには自動生成されたパスワードがあります:",
+        "removeUserError": "ユーザーの削除に失敗しました:",
+        "removeUserSuccess": {
+          "Part1": "削除しました",
+          "Part2": "ルームからユーザーを削除しました。"
+        }
+      }
+    }
+  },
+  "homePage": {
+    "title": "ホーム",
+    "settingsButton": "設定",
+    "adminPanelButton": "管理者パネル",
+    "avatarTooltip": "ログインユーザー:",
+    "roomCard": {
+      "owner": "ルームオーナー:",
+      "userCount": "ルーム内のユーザー数:"
+    },
+    "createRoom": {
+      "button": "新しいルームを作成",
+      "popupTitle": "ルームを追加",
+      "inputLabel": "ルーム名",
+      "submit": "送信"
+    },
+    "messageBox": {
+      "errorTitle": "エラー",
+      "roomFetchError": "現時点ではルームデータを取得できません。",
+      "roomPresenceError": "現時点ではルームプレゼンスデータを取得できません。",
+      "roomCreationError1": "ルームを作成できません。サーバーで問題が発生しました。",
+      "roomCreationError2": "ルームを作成できません。同じ名前のルームが既に存在している可能性があります",
+      "joinRoomError": "現時点ではルームに参加できません。",
+      "roomInviteAcceptError1": "ルームへの招待を承諾できません。サーバーで問題が発生しました。",
+      "roomInviteAcceptError2": "ルームへの招待を承諾できません。その名前のルームが存在しないか、そのルームに招待されていない可能性があります。",
+      "roomInviteDeclineError1": "ルームへの招待を拒否できません。サーバーで問題が発生しました。",
+      "roomInviteDeclineError2": "ルームへの招待を拒否できません。その名前のルームが存在しないか、そのルームに招待されていない可能性があります。"
+    }
+  },
+  "roomPage": {
+    "leaveRoom": "ルームを退出",
+    "filter": "フィルター",
+    "sort": "ソート",
+    "search": "検索...",
+    "noMedia": "フィルターに一致するメディアが見つかりません",
+    "type": "タイプ",
+    "name": "名前",
+    "noItems": "アイテムが見つかりません",
+    "fileItem": {
+      "rename": "名前を変更",
+      "delete": "削除"
+    },
+    "voiceChannelCard": {
+      "user": "ユーザー",
+      "users": "ユーザー",
+      "you": "あなた"
+    },
+    "streamViewer": {
+      "leave": "ストリームを退出",
+      "stop": "ストリームを停止"
+    },
+    "streamDialog": {
+      "title": "ストリームが開始されていません - 共有するウィンドウまたは画面を選択してください",
+      "sourceSelectPlaceholder": "選択するソース",
+      "sources": "ソース"
+    },
+    "createMedia": {
+      "button": "作成",
+      "title": "新しいメディアを作成",
+      "name": "メディア名",
+      "type": "メディアタイプ",
+      "submit": "作成",
+      "typePlaceholder": "メディアタイプを選択"
+    },
+    "categories": {
+      "media": "メディア",
+      "home": "ホーム",
+      "settings": "設定",
+      "documents": "ドキュメント",
+      "streams": "ストリーム",
+      "voiceChannels": "ボイスチャンネル",
+      "document": "ドキュメント",
+      "stream": "ストリーム",
+      "voiceChannel": "ボイスチャンネル"
+    },
+    "messageBox": {
+      "errorTitle": "エラー",
+      "successTitle": "成功",
+      "inviteSuccess": {
+        "Part1": "招待しました",
+        "Part2": "ルームにユーザーを招待しました。"
+      },
+      "removedSuccess": {
+        "Part1": "削除しました",
+        "Part2": "ルームからユーザーを削除しました。"
+      },
+      "inviteRemoveError": {
+        "Part1": "失敗しました",
+        "Part2": "ユーザー:",
+        "invite": "招待",
+        "remove": "削除"
+      },
+      "userFetchError1": "サーバーで問題が発生し、ユーザー名データを取得できませんでした。",
+      "userFetchError2": "サーバーで問題が発生し、ルームメンバーデータを取得できませんでした。",
+      "roomDeleteError": "サーバーで問題が発生し、ルームを削除できませんでした。",
+      "roomLeaveError": "サーバーで問題が発生し、ルームからあなたを削除できませんでした。",
+      "roomUpdateError": "サーバーで問題が発生し、ルームを更新できませんでした。"
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "ルームを更新",
+        "newName": "新しいルーム名",
+        "newOwner": "新しいルームオーナー",
+        "submit": "送信"
+      },
+      "userManagment": {
+        "title": "ユーザー管理",
+        "invite": "ユーザーを招待",
+        "remove": "ユーザーを削除",
+        "searchUsersPlaceholder": "ユーザー名でユーザーを検索...",
+        "searchMembersPlaceholder": "ルームメンバーを検索...",
+        "inviteSelected": "選択したものを招待",
+        "removeSelected": "選択したものを削除"
+      },
+      "leave": "ルームを退出",
+      "leaveCheck": {
+        "Part1": "本当に退出しますか ",
+        "Part2": "? 再参加するには招待される必要があります。"
+      },
+      "delete": "ルームを削除",
+      "deleteCheck": {
+        "Part1": "本当に削除しますか ",
+        "Part2": " とすべての関連データ? ルームの所有権を譲渡してから退出すると、ルームを維持できます。"
+      },
+      "audioInputLong": "オーディオ入力デバイス",
+      "audioInputShort": "オーディオ入力"
+    }
+  }
+}
