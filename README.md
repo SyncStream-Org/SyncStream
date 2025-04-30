@@ -18,20 +18,37 @@
 
 ## Installation
 
-### Using Docker 
+### Building Locally 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-org/syncstream.git
-   cd syncstream
+   git clone https://github.com/SyncStream-Org/SyncStream.git
+   cd SyncStream
    ```
-
-2. Start the server and client using Docker Compose:
+   
+2. Checkout a tagged version:
    ```bash
-   docker-compose up --build
+   git checkout tags/<tag_name>
    ```
 
-3. Docker hosts the web client at `http://localhost:80`
+3. Configure the .env file as described [/docs/ADMIN.md](./docs/ADMIN.md). 
+
+4. Start the server and client using Docker Compose:
+   ```bash
+   docker compose up --build
+   ```
+
+### Using Docker
+
+1. Download the Docker Compose file (docker-compose.yaml in the root directory)
+
+2. Configure the .env file as described [/docs/ADMIN.md](./docs/ADMIN.md). Be sure to specify the name of the image to be pulled in the .env file from [Packages](https://github.com/SyncStream-Org/SyncStream/pkgs/container/sync-stream)
+
+3. Start the server using Docker Compose
+   ```bash
+   docker compose up --pull
+   ```
+The server runs on `http://localhost:80` by default. It is encouraged to place the server behind a proxy. Make note of the version used in the server (either from the package version or the tag version), and direct members of your organization to download a corresponding client build on the [Releases page](https://github.com/SyncStream-Org/SyncStream/releases). See [/docs/ADMIN.md](./docs/ADMIN.md) for additional documentation for administrating a SyncStream server.
 
 ---
 
