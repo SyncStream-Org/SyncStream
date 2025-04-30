@@ -121,5 +121,33 @@
         }
       }
     }
+  },
+  "homePage": {
+    "title": "asdgsdfg",
+    "settingsButton": "afdgsdfhgfdh",
+    "adminPanelButton": "asdgsdfg sdfasdf",
+    "avatarTooltip": "hertweffe idfhn afd:",
+    "roomCard": {
+      "owner": "adsfas adsf:",
+      "userCount": "asdf asdf sdfg:"
+    },
+    "createRoom": {
+      "button": "asdgsadfg gsfdg sdfasdf",
+      "popupTitle": "sdfgsdh wergh",
+      "inputLabel": "wertgs erth",
+      "submit": "wrety"
+    },
+    "messageBox": {
+      "errorTitle": "wete",
+      "roomFetchError": "rwefstdyhtujyh",
+      "roomPresenceError": "retg8c;diov hnfkjus",
+      "roomCreationError1": "jdy6trps9e8jiofwa",
+      "roomCreationError2": "32et078rfphuwnbigj;oasdck",
+      "joinRoomError": "43t9e-[auw2'jgi0rpnkbd/fl",
+      "roomInviteAcceptError1": "15rp3t798gfheiq0onk",
+      "roomInviteAcceptError2": "3t2564g9eph[08wqipojmfkd';powi",
+      "roomInviteDeclineError1": "32-89tyrhp[ifngewo';kaml",
+      "roomInviteDeclineError2": "4yt2q3ag89-ephf[wji;okmld"
+    }
   }
 }

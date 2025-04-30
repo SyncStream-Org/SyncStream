@@ -121,5 +121,33 @@
         }
       }
     }
+  },
+  "homePage": {
+    "title": "Home",
+    "settingsButton": "Settings",
+    "adminPanelButton": "Admin Panel",
+    "avatarTooltip": "Logged in as:",
+    "roomCard": {
+      "owner": "Room Owner:",
+      "userCount": "Users in Room:"
+    },
+    "createRoom": {
+      "button": "Create New Room",
+      "popupTitle": "Add Room",
+      "inputLabel": "Room Name",
+      "submit": "Submit"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "roomFetchError": "Unable to get room data at this time.",
+      "roomPresenceError": "Unable to get room presence data at this time.",
+      "roomCreationError1": "Unable to create room. Something went wrong with the server.",
+      "roomCreationError2": "Unable to create room. Room with name may already exist",
+      "joinRoomError": "Unable to join room at this time.",
+      "roomInviteAcceptError1": "Unable to accept invite to room. Something went wrong with the server.",
+      "roomInviteAcceptError2": "Unable to accept invite to room. Room with that name may not exist or you may not be invited to that room.",
+      "roomInviteDeclineError1": "Unable to decline invite to room. Something went wrong with the server.",
+      "roomInviteDeclineError2": "Unable to decline invite to room. Room with that name may not exist or you may not be invited to that room."
+    }
   }
 }

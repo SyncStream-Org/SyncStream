@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import * as api from '../../../api';
+import Localize from '@/utilities/localize';
 
 interface Props {
   roomData: Types.RoomData;
@@ -39,6 +40,8 @@ export default class RoomCard extends React.Component<Props, State> {
   }
 
   render() {
+    const localize = Localize.getInstance().localize();
+
     const handleJoinRoom = (event: React.SyntheticEvent) => {
       if (
         !this.props.isInvite ||
@@ -51,8 +54,8 @@ export default class RoomCard extends React.Component<Props, State> {
               success === api.SuccessState.FAIL
             ) {
               window.electron.ipcRenderer.invokeFunction('show-message-box', {
-                title: 'Error',
-                message: 'Unable to join room at this time.',
+                title: localize.homePage.messageBox.errorTitle,
+                message: localize.homePage.messageBox.joinRoomError,
               });
             } else {
               this.props.navigate(`/room`, {
@@ -68,15 +71,13 @@ export default class RoomCard extends React.Component<Props, State> {
       api.User.acceptInviteToRoom(this.props.roomData.roomID).then((res) => {
         if (res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Unable to accept invite to room. Something went wrong with the server.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomInviteAcceptError1,
           });
         } else if (res === api.SuccessState.FAIL) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Unable to accept invite to room. Room with that name may not exist or you may not be invited to that room.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomInviteAcceptError2,
           });
         } else {
           this.props.updateRoomList();
@@ -89,15 +90,13 @@ export default class RoomCard extends React.Component<Props, State> {
       api.User.declineInviteToRoom(this.props.roomData.roomID).then((res) => {
         if (res === api.SuccessState.ERROR) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Unable to decline invite to room. Something went wrong with the server.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomInviteDeclineError1,
           });
         } else if (res === api.SuccessState.FAIL) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message:
-              'Unable to decline invite to room. Room with that name may not exist or you may not be invited to that room.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomInviteDeclineError2,
           });
         } else {
           this.props.updateRoomList();
@@ -127,7 +126,9 @@ export default class RoomCard extends React.Component<Props, State> {
                 </div>
               </TooltipTrigger>
               <TooltipContent side="top">
-                <p className="font-semibold">Users in Room:</p>
+                <p className="font-semibold">
+                  {localize.homePage.roomCard.userCount}
+                </p>
                 <ScrollArea className="h-full max-h-[100px]">
                   <ul className="list-disc pl-4">
                     {this.props.users!.map((username) => (
@@ -148,7 +149,7 @@ export default class RoomCard extends React.Component<Props, State> {
               {this.props.roomData.roomName}
             </h2>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {`Room Owner: ${this.props.roomData.roomOwner}`}
+              {`${localize.homePage.roomCard.owner} ${this.props.roomData.roomOwner}`}
             </p>
           </div>
           {this.props.isInvite && (

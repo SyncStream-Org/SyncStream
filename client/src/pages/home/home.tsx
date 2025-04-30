@@ -22,6 +22,7 @@ import {
 import { useHomeSse } from '../../api/routes/useHomeSse';
 import * as api from '../../api';
 import RoomCard from './room-card/room-card';
+import Localize from '@/utilities/localize';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -39,6 +40,8 @@ function Home(props: Props) {
     new Map<string, string[]>(),
   );
 
+  const localize = Localize.getInstance().localize();
+
   const fetchRooms = useCallback(() => {
     if (SessionState.getInstance().currentUser.admin) {
       api.Admin.getAllRooms().then((res) => {
@@ -47,8 +50,8 @@ function Home(props: Props) {
           res.success === api.SuccessState.FAIL
         ) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomFetchError,
           });
         } else {
           if (res.data === undefined) throw Error('Unreachable');
@@ -62,8 +65,8 @@ function Home(props: Props) {
           res.success === api.SuccessState.FAIL
         ) {
           window.electron.ipcRenderer.invokeFunction('show-message-box', {
-            title: 'Error',
-            message: 'Unable to get room data at this time.',
+            title: localize.homePage.messageBox.errorTitle,
+            message: localize.homePage.messageBox.roomFetchError,
           });
         } else {
           if (res.data === undefined) throw Error('Unreachable');
@@ -72,14 +75,17 @@ function Home(props: Props) {
         }
       });
     }
-  }, []);
+  }, [
+    localize.homePage.messageBox.errorTitle,
+    localize.homePage.messageBox.roomFetchError,
+  ]);
 
   const fetchRoomPresence = useCallback(() => {
     api.User.getRoomPresence().then((res) => {
       if (res.success !== api.SuccessState.SUCCESS) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message: 'Unable to get room presence data at this time.',
+          title: localize.homePage.messageBox.errorTitle,
+          message: localize.homePage.messageBox.roomPresenceError,
         });
       } else {
         if (res.data === undefined) throw Error('Unreachable');
@@ -90,7 +96,10 @@ function Home(props: Props) {
         setRoomPresence(newMap);
       }
     });
-  }, []);
+  }, [
+    localize.homePage.messageBox.errorTitle,
+    localize.homePage.messageBox.roomPresenceError,
+  ]);
 
   const addRoom = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -101,14 +110,13 @@ function Home(props: Props) {
     api.Rooms.createRoom(target.roomName.value).then((res) => {
       if (res.success === api.SuccessState.ERROR) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message:
-            'Unable to create room. Something went wrong with the server.',
+          title: localize.homePage.messageBox.errorTitle,
+          message: localize.homePage.messageBox.roomCreationError1,
         });
       } else if (res.success === api.SuccessState.FAIL) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message: 'Unable to create room. Room with name may already exist',
+          title: localize.homePage.messageBox.errorTitle,
+          message: localize.homePage.messageBox.roomCreationError2,
         });
       }
     });
@@ -186,7 +194,7 @@ function Home(props: Props) {
       <div className="flex-1 p-8">
         {/* Header */}
         <header className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Home</h1>
+          <h1 className="text-3xl font-bold">{localize.homePage.title}</h1>
           <div className="flex items-center">
             <Popover>
               <PopoverTrigger>
@@ -196,24 +204,28 @@ function Home(props: Props) {
                   className="flex items-center gap-1 mr-2"
                 >
                   <Plus size={16} />
-                  Create New Room
+                  {localize.homePage.createRoom.button}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="grid gap-4">
                   <h4 className="space-y-2 font-medium leading-none">
-                    Add Room
+                    {localize.homePage.createRoom.popupTitle}
                   </h4>
                   <form onSubmit={addRoom} className="grid gap-2">
                     <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="roomName">Room Name</Label>
+                      <Label htmlFor="roomName">
+                        {localize.homePage.createRoom.inputLabel}
+                      </Label>
                       <Input
                         id="roomName"
                         defaultValue=""
                         className="col-span-2 h-8"
                       />
                     </div>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">
+                      {localize.homePage.createRoom.submit}
+                    </Button>
                   </form>
                 </div>
               </PopoverContent>
@@ -228,7 +240,7 @@ function Home(props: Props) {
               }}
             >
               <Settings size={16} />
-              Settings
+              {localize.homePage.settingsButton}
             </Button>
             {SessionState.getInstance().currentUser.admin && (
               <Button
@@ -240,7 +252,7 @@ function Home(props: Props) {
                 }}
               >
                 <UserCheck2Icon size={16} />
-                Admin Panel
+                {localize.homePage.adminPanelButton}
               </Button>
             )}
             <TooltipProvider>
@@ -253,9 +265,9 @@ function Home(props: Props) {
                   </Avatar>
                 </TooltipTrigger>
                 <TooltipContent side="top">
-                  <p className="font-semibold">{`Logged in as: ${
-                    SessionState.getInstance().currentUser.username
-                  }`}</p>
+                  <p className="font-semibold">{`${
+                    localize.homePage.avatarTooltip
+                  } ${SessionState.getInstance().currentUser.username}`}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

@@ -125,6 +125,34 @@ export type LanguageDict = {
       };
     };
   };
+  homePage: {
+    title: string;
+    settingsButton: string;
+    adminPanelButton: string;
+    avatarTooltip: string;
+    roomCard: {
+      owner: string;
+      userCount: string;
+    };
+    createRoom: {
+      button: string;
+      popupTitle: string;
+      inputLabel: string;
+      submit: string;
+    };
+    messageBox: {
+      errorTitle: string;
+      roomFetchError: string;
+      roomPresenceError: string;
+      roomCreationError1: string;
+      roomCreationError2: string;
+      joinRoomError: string;
+      roomInviteAcceptError1: string;
+      roomInviteAcceptError2: string;
+      roomInviteDeclineError1: string;
+      roomInviteDeclineError2: string;
+    };
+  };
 };
 
 // Map language ids to language maps
