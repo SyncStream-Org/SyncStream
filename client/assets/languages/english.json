@@ -48,7 +48,10 @@
         "displayName": "Display Name",
         "email": "Email",
         "password": "Password",
-        "submit": "Submit"
+        "submit": "Submit",
+        "displayNamePlaceholder": "New Display Name",
+        "emailPlaceholder": "New Email",
+        "passwordPlaceholder": "New Password"
       },
       "dangerZone": {
         "title": "Danger Zone",
@@ -72,6 +75,18 @@
       }
     },
     "userManagement": {
+      "title": "Admin Panel",
+      "userCreationTitle": "User Creation",
+      "adminManagement": {
+        "searchPlaceholder": "Search users by username...",
+        "deleteSelectedButton": "Delete Selected",
+        "loading": "Loading...",
+        "noUsers": "No Users Found",
+        "member": "Member",
+        "notMember": "Not Member",
+        "admin": "Admin",
+        "notAdmin": "Not Admin"
+      },
       "users": {
         "title": "Users",
         "noUsers": "No users to display...",
@@ -87,7 +102,10 @@
         "password": "Password",
         "displayName": "Display Name",
         "admin": "Is Admin?",
-        "submit": "Submit"
+        "submit": "Submit",
+        "displayNamePlaceholder": "New Display Name",
+        "emailPlaceholder": "New Email",
+        "usernamePlaceholder": "New Username"
       },
       "messageBox": {
         "successTitle": "Success",
@@ -95,7 +113,12 @@
         "userGetError": "Unable to get users from server.",
         "userDeleteError": "Unable to delete user.",
         "userCreateError": "Unable to create user.",
-        "userCreateAutogenPass": "New user has auto generated password:"
+        "userCreateAutogenPass": "New user has auto generated password:",
+        "removeUserError": "Failed to remove user:",
+        "removeUserSuccess": {
+          "Part1": "Removed",
+          "Part2": "users from the room."
+        }
       }
     }
   }

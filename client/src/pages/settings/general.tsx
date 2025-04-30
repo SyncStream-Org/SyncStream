@@ -138,7 +138,10 @@ function GeneralSettings() {
               <Input
                 id="displayName"
                 type="text"
-                placeholder="New display name"
+                placeholder={
+                  localize.settingsPage.general.changeProfile
+                    .displayNamePlaceholder
+                }
                 value={formData.displayName}
                 onChange={handleChange}
                 className="w-full"
@@ -152,7 +155,9 @@ function GeneralSettings() {
               <Input
                 id="email"
                 type="email"
-                placeholder="New email address"
+                placeholder={
+                  localize.settingsPage.general.changeProfile.emailPlaceholder
+                }
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full"
@@ -168,7 +173,10 @@ function GeneralSettings() {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="New password"
+                placeholder={
+                  localize.settingsPage.general.changeProfile
+                    .passwordPlaceholder
+                }
                 className="w-full"
               />
             </div>

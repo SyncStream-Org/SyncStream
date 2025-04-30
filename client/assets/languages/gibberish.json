@@ -48,7 +48,10 @@
         "displayName": "awetashsdfgvdfgs",
         "email": "aefargasdfasd",
         "password": "eawtryeerhrtgerf",
-        "submit": "gaeraefagaerg"
+        "submit": "gaeraefagaerg",
+        "displayNamePlaceholder": "ghsehjnwe;aorijwe",
+        "emailPlaceholder": "sfdghstrhewasrtsgsdf",
+        "passwordPlaceholder": "hrtytqwertwsdgfsadfgsdfg"
       },
       "dangerZone": {
         "title": "awetgertyhrwtsasfd",
@@ -72,6 +75,18 @@
       }
     },
     "userManagement": {
+      "title": "asdgaserjf0g[iawe",
+      "userCreationTitle": "4tvqg 3ae9rp8uhfn;oicw ej",
+      "adminManagement": {
+        "searchPlaceholder": "gsfdsjhrtsgasergfaesf",
+        "deleteSelectedButton": "gsdfhrthwoiaefjowieajf",
+        "loading": "afsdgadrfgadfsgsdfgsdfg",
+        "noUsers": "p98h4eafwn;irowughf;oisejfd",
+        "member": "ap98efw;ohjinsd",
+        "notMember": "asdgp8hji;owefse",
+        "admin": "aghearthjaersg",
+        "notAdmin": "aerhyter5wysert"
+      },
       "users": {
         "title": "asdgsjgaer",
         "noUsers": "ahgrtsdgafasewfeasfea",
@@ -87,7 +102,10 @@
         "password": "wretgweyh",
         "displayName": "dfghrtedrew",
         "admin": "dfghrtee",
-        "submit": "dfghrtrt"
+        "submit": "dfghrtrt",
+        "displayNamePlaceholder": "uftygaubherliujns",
+        "emailPlaceholder": "ryshetnjy",
+        "usernamePlaceholder": "setjrykcm ,hujthgrd"
       },
       "messageBox": {
         "successTitle": "asgaag",
@@ -95,7 +113,12 @@
         "userGetError": "aagafdgsateyhgesrthdtyyertge4rtser",
         "userDeleteError": "dht5reywargdjnfdghjdrtyesrt",
         "userCreateError": "sh5jrtyhertgserg",
-        "userCreateAutogenPass": "sdfhrteysertsgerhbdrtjhrtysertge"
+        "userCreateAutogenPass": "sdfhrteysertsgerhbdrtjhrtysertge",
+        "removeUserError": "ageroifgojaweopikfj",
+        "removeUserSuccess": {
+          "Part1": "aagijpwe9ijf",
+          "Part2": "aesfwesoifjpoesijfpoiajes"
+        }
       }
     }
   }

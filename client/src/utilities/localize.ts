@@ -52,6 +52,9 @@ export type LanguageDict = {
         email: string;
         password: string;
         submit: string;
+        displayNamePlaceholder: string;
+        emailPlaceholder: string;
+        passwordPlaceholder: string;
       };
       dangerZone: {
         title: string;
@@ -75,6 +78,18 @@ export type LanguageDict = {
       };
     };
     userManagement: {
+      title: string;
+      userCreationTitle: string;
+      adminManagement: {
+        searchPlaceholder: string;
+        deleteSelectedButton: string;
+        loading: string;
+        noUsers: string;
+        member: string;
+        notMember: string;
+        admin: string;
+        notAdmin: string;
+      };
       users: {
         title: string;
         noUsers: string;
@@ -91,6 +106,9 @@ export type LanguageDict = {
         displayName: string;
         admin: string;
         submit: string;
+        displayNamePlaceholder: string;
+        emailPlaceholder: string;
+        usernamePlaceholder: string;
       };
       messageBox: {
         successTitle: string;
@@ -99,6 +117,11 @@ export type LanguageDict = {
         userDeleteError: string;
         userCreateError: string;
         userCreateAutogenPass: string;
+        removeUserError: string;
+        removeUserSuccess: {
+          Part1: string;
+          Part2: string;
+        };
       };
     };
   };

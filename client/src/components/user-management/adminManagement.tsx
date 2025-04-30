@@ -77,13 +77,13 @@ export function AdminManagementSection({
       handleUserFetch();
       setSelectedUsers([]);
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
-        title: 'Success',
-        message: `Removed ${selectedUsers.length} users from the room.`,
+        title: localize.settingsPage.userManagement.messageBox.successTitle,
+        message: `${localize.settingsPage.userManagement.messageBox.removeUserSuccess.Part1} ${selectedUsers.length} ${localize.settingsPage.userManagement.messageBox.removeUserSuccess.Part2}`,
       });
     } catch (error) {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
-        title: 'Error',
-        message: `Failed to remove users: ${error.message}`,
+        title: localize.settingsPage.userManagement.messageBox.errorTitle,
+        message: `${localize.settingsPage.userManagement.messageBox.removeUserError} ${error.message}`,
       });
     } finally {
       setLoading(false);
@@ -96,7 +96,10 @@ export function AdminManagementSection({
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
           <Input
-            placeholder="Search users by username..."
+            placeholder={
+              localize.settingsPage.userManagement.adminManagement
+                .searchPlaceholder
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-8"
@@ -107,7 +110,11 @@ export function AdminManagementSection({
           onClick={handleBatchAction}
           disabled={selectedUsers.length === 0 || loading}
         >
-          Delete Selected ({selectedUsers.length})
+          {
+            localize.settingsPage.userManagement.adminManagement
+              .deleteSelectedButton
+          }{' '}
+          ({selectedUsers.length})
         </Button>
       </div>
 

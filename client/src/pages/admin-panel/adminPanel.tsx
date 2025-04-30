@@ -54,15 +54,18 @@ function AdminPanel(props: Props) {
         res.success === api.SuccessState.FAIL
       ) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message: 'Unable to get room data at this time.',
+          title: localize.settingsPage.userManagement.messageBox.errorTitle,
+          message: localize.settingsPage.userManagement.messageBox.userGetError,
         });
       } else {
         if (res.data === undefined) throw Error('Unreachable');
         setUsers(res.data);
       }
     });
-  }, []);
+  }, [
+    localize.settingsPage.userManagement.messageBox.errorTitle,
+    localize.settingsPage.userManagement.messageBox.userGetError,
+  ]);
 
   const createUser = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -102,7 +105,9 @@ function AdminPanel(props: Props) {
     <div className="flex flex-col h-screen">
       <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <h1 className="text-2xl font-bold">
+            {localize.settingsPage.userManagement.title}
+          </h1>
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -130,22 +135,31 @@ function AdminPanel(props: Props) {
           </div>
         </div>
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
-        <h1 className="text-2xl font-bold">User Management</h1>
+        <h1 className="text-2xl font-bold">
+          {localize.settingsPage.categories.userManagement.shortTitle}
+        </h1>
         <div className="mt-6">
           <AdminManagementSection users={users} handleUserFetch={fetchUsers} />
         </div>
         <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
-        <h1 className="text-2xl font-bold">User Creation</h1>
+        <h1 className="text-2xl font-bold">
+          {localize.settingsPage.userManagement.userCreationTitle}
+        </h1>
         <div className="mt-6">
           <Card>
             <CardContent className="pt-2">
               <form onSubmit={createUser} className="space-y-2">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">
+                    {localize.settingsPage.userManagement.createUser.username}
+                  </Label>
                   <Input
                     id="username"
                     type="text"
-                    placeholder="New username"
+                    placeholder={
+                      localize.settingsPage.userManagement.createUser
+                        .usernamePlaceholder
+                    }
                     value={formData.username}
                     onChange={handleChange}
                     className="w-full"
@@ -153,11 +167,16 @@ function AdminPanel(props: Props) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">
+                    {localize.settingsPage.userManagement.createUser.email}
+                  </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="New email address"
+                    placeholder={
+                      localize.settingsPage.userManagement.createUser
+                        .emailPlaceholder
+                    }
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full"
@@ -165,19 +184,29 @@ function AdminPanel(props: Props) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="displayName">Display Name</Label>
+                  <Label htmlFor="displayName">
+                    {
+                      localize.settingsPage.userManagement.createUser
+                        .displayName
+                    }
+                  </Label>
                   <Input
                     id="displayName"
                     type="displayName"
                     value={formData.displayName}
                     onChange={handleChange}
-                    placeholder="New Display Name"
+                    placeholder={
+                      localize.settingsPage.userManagement.createUser
+                        .displayNamePlaceholder
+                    }
                     className="w-full"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="isAdmin">Is Admin</Label>
+                  <Label htmlFor="isAdmin">
+                    {localize.settingsPage.userManagement.createUser.admin}
+                  </Label>
                   <Switch
                     id="isAdmin"
                     checked={formData.isAdmin}
