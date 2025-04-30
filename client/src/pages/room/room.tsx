@@ -370,6 +370,7 @@ function RoomPage(props: Props) {
                 roomID={room?.roomID!}
                 sourceID={streamSourceID}
                 isClient={isStreamClient}
+                handleClose={handleHomeClick}
               />
             )}
             {activeDoc === null &&
