@@ -88,12 +88,6 @@ All documentation can be found in the [`/docs`](./docs) folder:
 
 ---
 
-## Badges
-
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/your-project-id)](https://app.codacy.com/gh/your-org/syncstream/dashboard)
-
----
-
 
 ## License
 
