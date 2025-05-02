@@ -52,10 +52,4 @@ sequelize.sync({ force: false }).then(() => {
     });
 });
 
-if (USER_FILES) {
-  for (const file of fs.readdirSync(USER_FILES)) {
-    fs.rmSync(`${USER_FILES}/${file}`);
-  }
-}
-
 cleanup();
