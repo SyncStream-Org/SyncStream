@@ -1,20 +1,37 @@
-import { RoomMedia } from '../models';
-import { Types } from 'syncstream-sharedlib';
+import { RoomMedia } from "../models";
+import { Types } from "syncstream-sharedlib";
 
-import { RoomMediaCreationAttributes } from 'room-types';
+import { RoomMediaCreationAttributes } from "room-types";
 
 class MediaService {
-  public async getMediaFromRoom(roomID: string, mediaName: string): Promise<RoomMedia | null> {
-    const media = await RoomMedia.findOne({ where: { roomID:roomID, mediaName:mediaName } });
+  public async getMediaFromRoom(
+    roomID: string,
+    mediaName: string,
+  ): Promise<RoomMedia | null> {
+    const media = await RoomMedia.findOne({
+      where: { roomID: roomID, mediaName: mediaName },
+    });
     return media;
   }
 
-  public async getMediaByID(roomID: string, mediaID: string): Promise<RoomMedia | null> {
-    const media = await RoomMedia.findOne({ where: { roomID: roomID, mediaID: mediaID } });
+  public async getMediaByID(
+    roomID: string,
+    mediaID: string,
+  ): Promise<RoomMedia | null> {
+    const media = await RoomMedia.findOne({
+      where: { roomID: roomID, mediaID: mediaID },
+    });
     return media;
   }
 
-  public async createRoomMedia(mediaData: RoomMediaCreationAttributes): Promise<RoomMedia> {
+  public async getMediaForCleanup(mediaID: string): Promise<RoomMedia | null> {
+    const media = await RoomMedia.findOne({ where: { mediaID: mediaID } });
+    return media;
+  }
+
+  public async createRoomMedia(
+    mediaData: RoomMediaCreationAttributes,
+  ): Promise<RoomMedia> {
     const media = await RoomMedia.create(mediaData);
     return media;
   }
@@ -29,11 +46,14 @@ class MediaService {
   }
 
   public async listAllMediaForRoom(roomID: string): Promise<RoomMedia[]> {
-    const media = await RoomMedia.findAll({ where: { roomID:roomID } });
+    const media = await RoomMedia.findAll({ where: { roomID: roomID } });
     return media;
   }
 
-  public async updateRoomMedia(media: RoomMedia, update: Types.MediaDataUpdate): Promise<RoomMedia> {
+  public async updateRoomMedia(
+    media: RoomMedia,
+    update: Types.MediaDataUpdate,
+  ): Promise<RoomMedia> {
     if (update.mediaName) {
       media.mediaName = update.mediaName;
     }
