@@ -10,6 +10,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FileItem } from '../file-item/file-item';
+import Localize from '@/utilities/localize';
 
 interface DocCardProps {
   roomID: string;
@@ -51,6 +52,8 @@ export function DocCard({
     }
   };
 
+  const localize = Localize.getInstance().localize();
+
   return (
     <FileItem roomID={roomID} mediaObject={item}>
       <Card
@@ -73,7 +76,7 @@ export function DocCard({
                 </div>
               </TooltipTrigger>
               <TooltipContent side="top">
-                <p className="font-semibold">Active users:</p>
+                <p className="font-semibold">{localize.roomPage.activeUsers}</p>
                 <ScrollArea className="h-full max-h-[100px]">
                   <ul className="list-disc pl-4">
                     {activeUsers.map((username) => (

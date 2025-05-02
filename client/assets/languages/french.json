@@ -160,6 +160,7 @@
     "type": "Type",
     "name": "Nom",
     "noItems": "Aucun élément trouvé",
+    "activeUsers": "Utilisateurs actifs:",
     "fileItem": {
       "rename": "Renommer",
       "delete": "Supprimer"

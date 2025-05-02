@@ -159,6 +159,7 @@
     "type": "Tipo",
     "name": "Nombre",
     "noItems": "No se encontraron elementos",
+    "activeUsers": "Usuarios activas:",
     "fileItem": {
       "rename": "Cambiar nombre",
       "delete": "Eliminar"

@@ -159,6 +159,7 @@
     "type": "Type",
     "name": "Name",
     "noItems": "No items found",
+    "activeUsers": "Active Users:",
     "fileItem": {
       "rename": "Rename",
       "delete": "Delete"

@@ -9,12 +9,12 @@ import spanishDict from '../../assets/languages/spanish.json';
 
 // Export languages available
 export const LanguageArray = [
-  'english',
-  'french',
-  'italian',
-  'japanese',
-  'korean',
-  'spanish',
+  'English',
+  'Française',
+  'Italiana',
+  '日本語',
+  '한국어',
+  'Español',
 ] as const;
 export type Language = (typeof LanguageArray)[number];
 
@@ -173,6 +173,7 @@ export type LanguageDict = {
     type: string;
     name: string;
     noItems: string;
+    activeUsers: string;
     fileItem: {
       rename: string;
       delete: string;
@@ -267,19 +268,19 @@ export type LanguageDict = {
 
 // Map language ids to language maps
 const languageMap: { [id in Language]: LanguageDict } = {
-  english: englishDict as LanguageDict,
-  french: frenchDict as LanguageDict,
-  italian: italianDict as LanguageDict,
-  japanese: japaneseDict as LanguageDict,
-  korean: koreanDict as LanguageDict,
-  spanish: spanishDict as LanguageDict,
+  English: englishDict as LanguageDict,
+  Française: frenchDict as LanguageDict,
+  Italiana: italianDict as LanguageDict,
+  日本語: japaneseDict as LanguageDict,
+  한국어: koreanDict as LanguageDict,
+  Español: spanishDict as LanguageDict,
 };
 
 export default class Localize {
   private static instance: Localize = new Localize();
 
   // Change this to another language to change the localization
-  public currentLanguage: Language = 'english';
+  public currentLanguage: Language = 'English';
 
   public static getInstance(): Localize {
     return this.instance;
