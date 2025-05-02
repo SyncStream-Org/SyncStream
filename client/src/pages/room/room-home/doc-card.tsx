@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/tooltip';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { FileItem } from '../file-item/file-item';
 import Localize from '@/utilities/localize';
+import { FileItem } from '../file-item/file-item';
 
 interface DocCardProps {
   roomID: string;
