@@ -36,7 +36,7 @@ RUN npm install
 
 WORKDIR /app
 
-COPY --from=build /app/server/dist ./server/dist
+COPY --from=build /app/server/dist/src ./server/dist
 COPY --from=build /app/sharedLib/dist ./sharedLib/dist
 
 WORKDIR /app/server

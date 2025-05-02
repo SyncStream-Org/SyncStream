@@ -4,7 +4,7 @@
   "description": "The server for SyncStream - a self-hosted collaborative workspace environment.",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/src/server.js",
+    "start": "node dist/server.js",
     "build": "tsc",
     "lint": "eslint -c eslint.config.mjs src/",
     "lint:fix": "eslint -c eslint.config.mjs src/ --fix",
