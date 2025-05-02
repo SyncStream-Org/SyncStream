@@ -1,0 +1,253 @@
+{
+  "launchPage": {
+    "title": "로그인",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "serverURL": "Server URL",
+      "serverURLButton": "Server URL 변경",
+      "submit": "제출"
+    },
+    "messageBox": {
+      "errorTitle": "오류",
+      "invalidServer": "잘못된 서버 주소입니다. 올바른 주소를 입력하거나 관리자에게 문의하십시오.",
+      "invalidAuth": "잘못된 사용자 이름 또는 비밀번호입니다.",
+      "incompatibleClient": "클라이언트 버전이 서버 버전과 호환되지 않습니다. 최신 클라이언트 버전을 사용하십시오."
+    }
+  },
+  "settingsPage": {
+    "title": "설정",
+    "backButtonText": "돌아가기",
+    "categories": {
+      "general": {
+        "title": "일반 설정",
+        "shortTitle": "일반"
+      },
+      "appearance": {
+        "title": "모양 설정",
+        "shortTitle": "모양"
+      },
+      "language": {
+        "title": "언어 설정",
+        "shortTitle": "언어"
+      },
+      "userManagement": {
+        "title": "사용자 관리 설정",
+        "shortTitle": "사용자 관리"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "프로필",
+        "username": "Username:",
+        "displayName": "표시 이름:",
+        "email": "Email:"
+      },
+      "changeProfile": {
+        "title": "프로필 업데이트",
+        "displayName": "표시 이름",
+        "email": "Email",
+        "password": "Password",
+        "submit": "제출",
+        "displayNamePlaceholder": "새 표시 이름",
+        "emailPlaceholder": "새 Email",
+        "passwordPlaceholder": "새 Password"
+      },
+      "dangerZone": {
+        "title": "위험 구역",
+        "logOut": "로그아웃"
+      },
+      "messageBox": {
+        "errorTitle": "오류",
+        "updateError": "현재 사용자를 업데이트할 수 없습니다. 잠시 후 다시 시도하십시오.",
+        "successTitle": "성공",
+        "updateSuccess": "성공적으로 업데이트되었습니다."
+      }
+    },
+    "language": {
+      "languageChange": "앱 언어"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "색 구성표",
+        "lightMode": "다크 모드 켜기",
+        "darkMode": "라이트 모드 켜기"
+      }
+    },
+    "userManagement": {
+      "title": "관리자 패널",
+      "userCreationTitle": "사용자 생성",
+      "adminManagement": {
+        "searchPlaceholder": "Username으로 사용자 검색...",
+        "deleteSelectedButton": "선택 항목 삭제",
+        "loading": "로드 중...",
+        "noUsers": "사용자를 찾을 수 없습니다.",
+        "member": "Member",
+        "notMember": "Not Member",
+        "admin": "Admin",
+        "notAdmin": "Not Admin"
+      },
+      "users": {
+        "title": "사용자",
+        "noUsers": "표시할 사용자가 없습니다...",
+        "username": "Username",
+        "displayName": "표시 이름",
+        "email": "Email",
+        "admin": "Admin 권한?"
+      },
+      "createUser": {
+        "title": "사용자 생성",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "displayName": "표시 이름",
+        "admin": "Admin 권한?",
+        "submit": "제출",
+        "displayNamePlaceholder": "새 표시 이름",
+        "emailPlaceholder": "새 Email",
+        "usernamePlaceholder": "새 Username"
+      },
+      "messageBox": {
+        "successTitle": "성공",
+        "errorTitle": "오류",
+        "userGetError": "서버에서 사용자를 가져올 수 없습니다.",
+        "userDeleteError": "사용자를 삭제할 수 없습니다.",
+        "userCreateError": "사용자를 생성할 수 없습니다.",
+        "userCreateAutogenPass": "새 사용자의 자동 생성된 비밀번호:",
+        "removeUserError": "사용자 제거 실패:",
+        "removeUserSuccess": {
+          "Part1": "제거됨",
+          "Part2": "방에서 사용자."
+        }
+      }
+    }
+  },
+  "homePage": {
+    "title": "홈",
+    "settingsButton": "설정",
+    "adminPanelButton": "관리자 패널",
+    "avatarTooltip": "로그인 계정:",
+    "roomCard": {
+      "owner": "방 소유자:",
+      "userCount": "방에 있는 사용자:"
+    },
+    "createRoom": {
+      "button": "새 방 만들기",
+      "popupTitle": "방 추가",
+      "inputLabel": "방 이름",
+      "submit": "제출"
+    },
+    "messageBox": {
+      "errorTitle": "오류",
+      "roomFetchError": "현재 방 데이터를 가져올 수 없습니다.",
+      "roomPresenceError": "현재 방 존재 데이터를 가져올 수 없습니다.",
+      "roomCreationError1": "방을 만들 수 없습니다. 서버에 문제가 발생했습니다.",
+      "roomCreationError2": "방을 만들 수 없습니다. 해당 이름의 방이 이미 존재할 수 있습니다.",
+      "joinRoomError": "현재 방에 참여할 수 없습니다.",
+      "roomInviteAcceptError1": "방 초대를 수락할 수 없습니다. 서버에 문제가 발생했습니다.",
+      "roomInviteAcceptError2": "방 초대를 수락할 수 없습니다. 해당 이름의 방이 존재하지 않거나 해당 방에 초대되지 않았을 수 있습니다.",
+      "roomInviteDeclineError1": "방 초대를 거절할 수 없습니다. 서버에 문제가 발생했습니다.",
+      "roomInviteDeclineError2": "방 초대를 거절할 수 없습니다. 해당 이름의 방이 존재하지 않거나 해당 방에 초대되지 않았을 수 있습니다."
+    }
+  },
+  "roomPage": {
+    "leaveRoom": "방 나가기",
+    "filter": "필터",
+    "sort": "정렬",
+    "search": "검색...",
+    "noMedia": "필터와 일치하는 미디어를 찾을 수 없습니다.",
+    "type": "유형",
+    "name": "이름",
+    "noItems": "아이템을 찾을 수 없습니다.",
+    "activeUsers": "활성 사용자:",
+    "fileItem": {
+      "rename": "이름 변경",
+      "delete": "삭제"
+    },
+    "voiceChannelCard": {
+      "user": "사용자",
+      "users": "사용자",
+      "you": "당신"
+    },
+    "streamViewer": {
+      "leave": "스트림 나가기",
+      "stop": "스트림 중지"
+    },
+    "streamDialog": {
+      "title": "스트림이 시작되지 않았습니다. 공유할 창 또는 화면을 선택하십시오.",
+      "sourceSelectPlaceholder": "선택할 소스",
+      "sources": "소스"
+    },
+    "createMedia": {
+      "button": "만들기",
+      "title": "새 미디어 만들기",
+      "name": "미디어 이름",
+      "type": "미디어 유형",
+      "submit": "만들기",
+      "typePlaceholder": "미디어 유형 선택"
+    },
+    "categories": {
+      "media": "미디어",
+      "home": "홈",
+      "settings": "설정",
+      "documents": "문서",
+      "streams": "스트림",
+      "voiceChannels": "음성 채널",
+      "document": "문서",
+      "stream": "스트림",
+      "voiceChannel": "음성 채널"
+    },
+    "messageBox": {
+      "errorTitle": "오류",
+      "successTitle": "성공",
+      "inviteSuccess": {
+        "Part1": "초대됨",
+        "Part2": "방에 사용자."
+      },
+      "removedSuccess": {
+        "Part1": "제거됨",
+        "Part2": "방에서 사용자."
+      },
+      "inviteRemoveError": {
+        "Part1": "실패",
+        "Part2": "사용자:",
+        "invite": "초대",
+        "remove": "제거"
+      },
+      "userFetchError1": "서버에 문제가 발생하여 사용자 이름 데이터를 가져올 수 없습니다.",
+      "userFetchError2": "서버에 문제가 발생하여 방 멤버 데이터를 가져올 수 없습니다.",
+      "roomDeleteError": "서버에 문제가 발생하여 방을 삭제할 수 없습니다.",
+      "roomLeaveError": "서버에 문제가 발생하여 방에서 사용자를 제거할 수 없습니다.",
+      "roomUpdateError": "서버에 문제가 발생하여 방을 업데이트할 수 없습니다."
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "방 업데이트",
+        "newName": "새 방 이름",
+        "newOwner": "새 방 소유자",
+        "submit": "제출"
+      },
+      "userManagment": {
+        "title": "사용자 관리",
+        "invite": "사용자 초대",
+        "remove": "사용자 제거",
+        "searchUsersPlaceholder": "Username으로 사용자 검색...",
+        "searchMembersPlaceholder": "방 멤버 검색...",
+        "inviteSelected": "선택 항목 초대",
+        "removeSelected": "선택 항목 제거"
+      },
+      "leave": "방 나가기",
+      "leaveCheck": {
+        "Part1": "정말로 나가시겠습니까? ",
+        "Part2": "? 다시 참여하려면 초대를 받아야 합니다."
+      },
+      "delete": "방 삭제",
+      "deleteCheck": {
+        "Part1": "정말로 삭제하시겠습니까? ",
+        "Part2": " 및 모든 관련 데이터? 방 소유권을 이전한 다음 방을 유지하기 위해 나갈 수 있습니다."
+      },
+      "audioInputLong": "오디오 입력 장치",
+      "audioInputShort": "오디오 입력"
+    }
+  }
+}

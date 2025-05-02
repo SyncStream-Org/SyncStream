@@ -1,0 +1,253 @@
+{
+  "launchPage": {
+    "title": "Iniciar sesión",
+    "form": {
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "serverURL": "URL del servidor",
+      "serverURLButton": "Cambiar URL del servidor",
+      "submit": "Enviar"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "invalidServer": "Dirección del servidor no válida. Introduzca la dirección correcta o póngase en contacto con su administrador para obtener ayuda.",
+      "invalidAuth": "Nombre de usuario o contraseña no válidos.",
+      "incompatibleClient": "La versión del cliente es incompatible con la versión del servidor. Utilice una versión de cliente más reciente."
+    }
+  },
+  "settingsPage": {
+    "title": "Ajustes",
+    "backButtonText": "Volver",
+    "categories": {
+      "general": {
+        "title": "Configuración general",
+        "shortTitle": "General"
+      },
+      "appearance": {
+        "title": "Ajustes de apariencia",
+        "shortTitle": "Apariencia"
+      },
+      "language": {
+        "title": "Ajustes de idioma",
+        "shortTitle": "Idioma"
+      },
+      "userManagement": {
+        "title": "Ajustes de gestión de usuarios",
+        "shortTitle": "Gestión de usuarios"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "Perfil",
+        "username": "Nombre de usuario:",
+        "displayName": "Nombre para mostrar:",
+        "email": "Correo electrónico:"
+      },
+      "changeProfile": {
+        "title": "Actualizar perfil",
+        "displayName": "Nombre para mostrar",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "submit": "Enviar",
+        "displayNamePlaceholder": "Nuevo nombre para mostrar",
+        "emailPlaceholder": "Nuevo correo electrónico",
+        "passwordPlaceholder": "Nueva contraseña"
+      },
+      "dangerZone": {
+        "title": "Zona de peligro",
+        "logOut": "Cerrar sesión"
+      },
+      "messageBox": {
+        "errorTitle": "Error",
+        "updateError": "No se puede actualizar el usuario en este momento. Inténtelo de nuevo en unos minutos.",
+        "successTitle": "Éxito",
+        "updateSuccess": "Actualizado con éxito"
+      }
+    },
+    "language": {
+      "languageChange": "Idioma de la aplicación"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "Esquema de color",
+        "lightMode": "Activar el modo oscuro",
+        "darkMode": "Activar el modo claro"
+      }
+    },
+    "userManagement": {
+      "title": "Panel de administración",
+      "userCreationTitle": "Creación de usuario",
+      "adminManagement": {
+        "searchPlaceholder": "Buscar usuarios por nombre de usuario...",
+        "deleteSelectedButton": "Eliminar seleccionados",
+        "loading": "Cargando...",
+        "noUsers": "No se encontraron usuarios",
+        "member": "Miembro",
+        "notMember": "No es miembro",
+        "admin": "Administrador",
+        "notAdmin": "No es administrador"
+      },
+      "users": {
+        "title": "Usuarios",
+        "noUsers": "No hay usuarios para mostrar...",
+        "username": "Nombre de usuario",
+        "displayName": "Nombre para mostrar",
+        "email": "Correo electrónico",
+        "admin": "¿Es administrador?"
+      },
+      "createUser": {
+        "title": "Crear usuario",
+        "username": "Nombre de usuario",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "displayName": "Nombre para mostrar",
+        "admin": "¿Es administrador?",
+        "submit": "Enviar",
+        "displayNamePlaceholder": "Nuevo nombre para mostrar",
+        "emailPlaceholder": "Nuevo correo electrónico",
+        "usernamePlaceholder": "Nuevo nombre de usuario"
+      },
+      "messageBox": {
+        "successTitle": "Éxito",
+        "errorTitle": "Error",
+        "userGetError": "No se pueden obtener los usuarios del servidor.",
+        "userDeleteError": "No se puede eliminar el usuario.",
+        "userCreateError": "No se puede crear el usuario.",
+        "userCreateAutogenPass": "El nuevo usuario tiene una contraseña generada automáticamente:",
+        "removeUserError": "Error al eliminar el usuario:",
+        "removeUserSuccess": {
+          "Part1": "Eliminado",
+          "Part2": "usuarios de la sala."
+        }
+      }
+    }
+  },
+  "homePage": {
+    "title": "Inicio",
+    "settingsButton": "Ajustes",
+    "adminPanelButton": "Panel de administración",
+    "avatarTooltip": "Conectado como:",
+    "roomCard": {
+      "owner": "Propietario de la sala:",
+      "userCount": "Usuarios en la sala:"
+    },
+    "createRoom": {
+      "button": "Crear nueva sala",
+      "popupTitle": "Añadir sala",
+      "inputLabel": "Nombre de la sala",
+      "submit": "Enviar"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "roomFetchError": "No se pueden obtener los datos de la sala en este momento.",
+      "roomPresenceError": "No se pueden obtener los datos de presencia en la sala en este momento.",
+      "roomCreationError1": "No se puede crear la sala. Algo salió mal con el servidor.",
+      "roomCreationError2": "No se puede crear la sala. Es posible que ya exista una sala con ese nombre",
+      "joinRoomError": "No se puede entrar en la sala en este momento.",
+      "roomInviteAcceptError1": "No se puede aceptar la invitación a la sala. Algo salió mal con el servidor.",
+      "roomInviteAcceptError2": "No se puede aceptar la invitación a la sala. Es posible que la sala con ese nombre no exista o que no estés invitado a esa sala.",
+      "roomInviteDeclineError1": "No se puede rechazar la invitación a la sala. Algo salió mal con el servidor.",
+      "roomInviteDeclineError2": "No se puede rechazar la invitación a la sala. Es posible que la sala con ese nombre no exista o que no estés invitado a esa sala."
+    }
+  },
+  "roomPage": {
+    "leaveRoom": "Salir de la sala",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "search": "Buscar...",
+    "noMedia": "No se encontraron medios que coincidan con sus filtros",
+    "type": "Tipo",
+    "name": "Nombre",
+    "noItems": "No se encontraron elementos",
+    "activeUsers": "Usuarios activas:",
+    "fileItem": {
+      "rename": "Cambiar nombre",
+      "delete": "Eliminar"
+    },
+    "voiceChannelCard": {
+      "user": "usuario",
+      "users": "usuarios",
+      "you": "Tú"
+    },
+    "streamViewer": {
+      "leave": "Salir de la transmisión",
+      "stop": "Detener la transmisión"
+    },
+    "streamDialog": {
+      "title": "No se ha iniciado ninguna transmisión - Seleccione una ventana o pantalla para compartir",
+      "sourceSelectPlaceholder": "Fuente para seleccionar",
+      "sources": "Fuentes"
+    },
+    "createMedia": {
+      "button": "Crear",
+      "title": "Crear nuevo medio",
+      "name": "Nombre del medio",
+      "type": "Tipo de medio",
+      "submit": "Crear",
+      "typePlaceholder": "Seleccionar tipo de medio"
+    },
+    "categories": {
+      "media": "Medios",
+      "home": "Inicio",
+      "settings": "Ajustes",
+      "documents": "Documentos",
+      "streams": "Transmisiones",
+      "voiceChannels": "Canales de voz",
+      "document": "Documento",
+      "stream": "Transmisión",
+      "voiceChannel": "Canal de voz"
+    },
+    "messageBox": {
+      "errorTitle": "Error",
+      "successTitle": "Éxito",
+      "inviteSuccess": {
+        "Part1": "Invitado",
+        "Part2": "usuarios a la sala."
+      },
+      "removedSuccess": {
+        "Part1": "Eliminado",
+        "Part2": "usuarios de la sala."
+      },
+      "inviteRemoveError": {
+        "Part1": "Error al",
+        "Part2": "usuarios:",
+        "invite": "invitar",
+        "remove": "eliminar"
+      },
+      "userFetchError1": "Algo salió mal con el servidor y no pudimos obtener los datos del nombre de usuario.",
+      "userFetchError2": "Algo salió mal con el servidor y no pudimos obtener los datos de los miembros de la sala.",
+      "roomDeleteError": "Algo salió mal con el servidor y no pudimos eliminar la sala.",
+      "roomLeaveError": "Algo salió mal con el servidor y no pudimos eliminarte de la sala.",
+      "roomUpdateError": "Algo salió mal con el servidor y no pudimos actualizar la sala."
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "Actualizar sala",
+        "newName": "Nuevo nombre de la sala",
+        "newOwner": "Nuevo propietario de la sala",
+        "submit": "Enviar"
+      },
+      "userManagment": {
+        "title": "Gestión de usuarios",
+        "invite": "Invitar usuarios",
+        "remove": "Eliminar usuarios",
+        "searchUsersPlaceholder": "Buscar usuarios por nombre de usuario...",
+        "searchMembersPlaceholder": "Buscar miembros de la sala...",
+        "inviteSelected": "Invitar seleccionados",
+        "removeSelected": "Eliminar seleccionados"
+      },
+      "leave": "Salir de la sala",
+      "leaveCheck": {
+        "Part1": "¿Estás seguro de que quieres salir de ",
+        "Part2": "? Tendrás que ser invitado de nuevo para volver a unirte."
+      },
+      "delete": "Eliminar sala",
+      "deleteCheck": {
+        "Part1": "¿Estás seguro de que quieres eliminar ",
+        "Part2": " y todos los datos asociados? Puedes transferir la propiedad de la sala y luego salir para que la sala persista."
+      },
+      "audioInputLong": "Dispositivo de entrada de audio",
+      "audioInputShort": "Entrada de audio"
+    }
+  }
+}

@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import Localize from '@/utilities/localize';
 import { FileCreate } from './file-create';
 
 interface HomeToolbarProps {
@@ -32,14 +33,16 @@ export function HomeToolbar({
   const [sortOption, setSortOption] = useState('newest');
   const [open, setOpen] = useState(false);
 
+  const localize = Localize.getInstance().localize();
+
   const filterOptions = [
-    { value: 'doc', label: 'Document' },
-    { value: 'stream', label: 'Stream' },
-    { value: 'voice', label: 'Voice Channel' },
+    { value: 'doc', label: localize.roomPage.categories.documents },
+    { value: 'stream', label: localize.roomPage.categories.streams },
+    { value: 'voice', label: localize.roomPage.categories.voiceChannels },
   ];
   const sortOptions = [
-    { value: 'type', label: 'Type' },
-    { value: 'name', label: 'Name' },
+    { value: 'type', label: localize.roomPage.type },
+    { value: 'name', label: localize.roomPage.name },
   ];
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +72,7 @@ export function HomeToolbar({
         <div className="relative flex-grow max-w-md">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search..."
+            placeholder={localize.roomPage.search}
             value={searchTerm}
             onChange={handleSearchChange}
             className="pl-8 focus-visible:ring-0"
@@ -84,7 +87,7 @@ export function HomeToolbar({
               className="flex items-center gap-1"
             >
               <Filter className="h-4 w-4" />
-              Filter
+              {localize.roomPage.filter}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
@@ -109,7 +112,7 @@ export function HomeToolbar({
               className="flex items-center gap-1"
             >
               <SortDesc className="h-4 w-4" />
-              Sort
+              {localize.roomPage.sort}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
@@ -139,7 +142,7 @@ export function HomeToolbar({
         <DialogTrigger>
           <Button size="default" className="ml-2" variant="outline">
             <Plus className="h-4 w-4 mr-1" />
-            Create
+            {localize.roomPage.createMedia.button}
           </Button>
         </DialogTrigger>
         <FileCreate roomID={roomID} setOpen={setOpen} />

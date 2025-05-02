@@ -9,10 +9,12 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import Localize from '@/utilities/localize';
 
 interface UserTableProps {
   users: (Types.RoomsUserData | Types.UserData)[];
   member?: boolean;
+  admin?: boolean;
   selectedUsers: string[];
   toggleUserSelection: (username: string) => void;
   toggleSelectAll: () => void;
@@ -22,6 +24,7 @@ interface UserTableProps {
 export function UserTable({
   users,
   member,
+  admin,
   selectedUsers,
   toggleUserSelection,
   toggleSelectAll,
@@ -30,6 +33,8 @@ export function UserTable({
   const allSelected =
     users.length > 0 &&
     users.every((user) => selectedUsers.includes(user.username));
+
+  const localize = Localize.getInstance().localize();
 
   return (
     <div className="border rounded-md">
@@ -43,17 +48,35 @@ export function UserTable({
                 disabled={loading || users.length === 0}
               />
             </TableHead>
-            <TableHead>Username</TableHead>
-            <TableHead>Display Name</TableHead>
-            <TableHead>Email</TableHead>
-            {member && <TableHead>Member</TableHead>}
+            <TableHead>
+              {localize.settingsPage.userManagement.createUser.username}
+            </TableHead>
+            <TableHead>
+              {localize.settingsPage.userManagement.createUser.displayName}
+            </TableHead>
+            <TableHead>
+              {localize.settingsPage.userManagement.createUser.email}
+            </TableHead>
+            {member && (
+              <TableHead>
+                {localize.settingsPage.userManagement.adminManagement.member}
+              </TableHead>
+            )}
+            {admin && (
+              <TableHead>
+                {localize.settingsPage.userManagement.adminManagement.admin}
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
               <TableCell colSpan={2} className="h-24 text-center">
-                {loading ? 'Loading...' : 'No users found'}
+                {loading
+                  ? localize.settingsPage.userManagement.adminManagement.loading
+                  : localize.settingsPage.userManagement.adminManagement
+                      .noUsers}
               </TableCell>
             </TableRow>
           ) : (
@@ -73,11 +96,36 @@ export function UserTable({
                   <TableCell>
                     {(user as Types.RoomsUserData).isMember ? (
                       <Badge className="bg-green-500 hover:bg-green-600">
-                        Member
+                        {
+                          localize.settingsPage.userManagement.adminManagement
+                            .member
+                        }
                       </Badge>
                     ) : (
                       <Badge variant="outline" className="text-gray-500">
-                        Not Member
+                        {
+                          localize.settingsPage.userManagement.adminManagement
+                            .notMember
+                        }
+                      </Badge>
+                    )}
+                  </TableCell>
+                )}
+                {admin && (
+                  <TableCell>
+                    {(user as Types.UserData).admin ? (
+                      <Badge className="bg-green-500 hover:bg-green-600">
+                        {
+                          localize.settingsPage.userManagement.adminManagement
+                            .admin
+                        }
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-gray-500">
+                        {
+                          localize.settingsPage.userManagement.adminManagement
+                            .notAdmin
+                        }
                       </Badge>
                     )}
                   </TableCell>

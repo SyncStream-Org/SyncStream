@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Localize from '@/utilities/localize';
 import * as api from '../../../api';
 
 interface FileCreateProps {
@@ -48,16 +49,18 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
     });
   };
 
+  const localize = Localize.getInstance().localize();
+
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Create New Media</DialogTitle>
+        <DialogTitle>{localize.roomPage.createMedia.title}</DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit}>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Media Name
+              {localize.roomPage.createMedia.name}
             </Label>
             <Input
               id="name"
@@ -70,7 +73,7 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="fileType" className="text-right">
-              Media Type
+              {localize.roomPage.createMedia.type}
             </Label>
             <div className="col-span-3">
               <Select
@@ -79,12 +82,20 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
                 disabled={isLoading}
               >
                 <SelectTrigger id="fileType">
-                  <SelectValue placeholder="Select media type" />
+                  <SelectValue
+                    placeholder={localize.roomPage.createMedia.typePlaceholder}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="doc">Document</SelectItem>
-                  <SelectItem value="stream">Stream</SelectItem>
-                  <SelectItem value="voice">Voice Channel</SelectItem>
+                  <SelectItem value="doc">
+                    {localize.roomPage.categories.document}
+                  </SelectItem>
+                  <SelectItem value="stream">
+                    {localize.roomPage.categories.stream}
+                  </SelectItem>
+                  <SelectItem value="voice">
+                    {localize.roomPage.categories.voiceChannel}
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -93,7 +104,7 @@ export function FileCreate({ roomID, setOpen }: FileCreateProps) {
 
         <DialogFooter>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create'}
+            {isLoading ? '...' : localize.roomPage.createMedia.submit}
           </Button>
         </DialogFooter>
       </form>

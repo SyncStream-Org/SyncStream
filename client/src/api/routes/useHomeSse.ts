@@ -6,6 +6,10 @@ import { generateRoute } from '../utilities';
 export function useHomeSse(
   token: string,
   onRoomUpdate: (type: Types.UpdateType, update: Types.RoomData) => void,
+  onPresenceUpdate: (
+    type: Types.UpdateType,
+    update: Types.UserPresenceData,
+  ) => void,
 ) {
   const [error, setError] = useState<Error | null>(null);
   const eventSourceRef = useRef<any>(null);
@@ -26,7 +30,20 @@ export function useHomeSse(
             if (!Validation.isUserBroadcastUpdate(data)) {
               throw new Error('Invalid media update data');
             }
-            onRoomUpdate(data.type, data.data);
+            switch (data.endpoint) {
+              case 'room':
+                onRoomUpdate(data.type, data.data as Types.RoomData);
+                break;
+              case 'presence':
+                onPresenceUpdate(
+                  data.type,
+                  data.data as Types.UserPresenceData,
+                );
+                break;
+              default:
+                console.warn(`Unknown endpoint: ${data.endpoint}`);
+                break;
+            }
           } catch (err) {
             setError(
               err instanceof Error ? err : new Error('Failed to parse message'),
@@ -51,7 +68,7 @@ export function useHomeSse(
       );
       return () => {};
     }
-  }, [token, onRoomUpdate]);
+  }, [token, onRoomUpdate, onPresenceUpdate]);
 
   useEffect(() => {
     const cleanup = connect();

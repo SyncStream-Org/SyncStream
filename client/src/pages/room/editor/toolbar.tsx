@@ -30,7 +30,6 @@ export function Toolbar({ editor }: ToolbarProps) {
               'underline',
               'code',
               'strikethrough',
-              'clearFormatting',
             ]}
             mainActionCount={5}
           />

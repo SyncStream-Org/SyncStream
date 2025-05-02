@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Types } from 'syncstream-sharedlib';
 import { useEffect, useState } from 'react';
+import Localize from '@/utilities/localize';
 import { FileItem } from '../file-item/file-item';
 
 interface MediaCategory {
@@ -52,24 +53,26 @@ export function MediaNav({
   setActiveStream,
   setActiveVoice,
 }: MediaNavProps) {
+  const localize = Localize.getInstance().localize();
+
   // Define mediaItems as state inside the component
   const [mediaItems, setMediaItems] = useState<Record<string, MediaCategory>>({
     docs: {
-      title: 'Documents',
+      title: localize.roomPage.categories.documents,
       icon: FileText,
       activeItem: null,
       setActive: setActiveDoc,
       items: [],
     },
     streams: {
-      title: 'Streams',
+      title: localize.roomPage.categories.streams,
       icon: TvMinimalPlay,
       activeItem: null,
       setActive: setActiveStream,
       items: [],
     },
     voiceChannels: {
-      title: 'Voice Channels',
+      title: localize.roomPage.categories.voiceChannels,
       icon: AudioLines,
       activeItem: null,
       setActive: setActiveVoice,
@@ -116,7 +119,9 @@ export function MediaNav({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Media</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        {localize.roomPage.categories.media}
+      </SidebarGroupLabel>
       <SidebarMenu>
         {Object.values(mediaItems).map((item) => (
           <Collapsible key={item.title} asChild className="group/collapsible">
@@ -152,7 +157,9 @@ export function MediaNav({
                     ))
                   ) : (
                     <SidebarMenuSubItem>
-                      <span className="text-gray-500">No items found</span>
+                      <span className="text-gray-500">
+                        {localize.roomPage.noItems}
+                      </span>
                     </SidebarMenuSubItem>
                   )}
                 </SidebarMenuSub>

@@ -7,6 +7,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import Localize from '@/utilities/localize';
 import * as api from '../../../api';
 
 interface FileUpdateProps {
@@ -17,6 +18,8 @@ interface FileUpdateProps {
 export function RoomLeave({ room, setOpen }: FileUpdateProps) {
   const [isLoading, setIsLoading] = useState(false);
 
+  const localize = Localize.getInstance().localize();
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,9 +27,8 @@ export function RoomLeave({ room, setOpen }: FileUpdateProps) {
     api.User.leaveRoom(room.roomID!).then(async (res) => {
       if (res !== api.SuccessState.SUCCESS) {
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Error',
-          message:
-            'Something went wrong with the server and we could not remove you from the room.',
+          title: localize.roomPage.messageBox.errorTitle,
+          message: localize.roomPage.messageBox.roomLeaveError,
         });
       }
       setIsLoading(false);
@@ -42,8 +44,9 @@ export function RoomLeave({ room, setOpen }: FileUpdateProps) {
     >
       <DialogHeader>
         <DialogTitle>
-          Are you sure you want to leave {room.roomName}? You will need to be
-          invited back to rejoin.
+          {localize.roomPage.roomSettings.leaveCheck.Part1}
+          {room.roomName}
+          {localize.roomPage.roomSettings.leaveCheck.Part2}
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit}>

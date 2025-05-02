@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as api from '@/api';
+import Localize from '@/utilities/localize';
 import { TablePagination } from './userPagination';
 import { UserTable } from './userTable';
 
@@ -27,6 +28,8 @@ export function UserManagementSection({
     (Types.UserData | Types.RoomsUserData)[]
   >([]);
   const [loading, setLoading] = useState(false);
+
+  const localize = Localize.getInstance().localize();
 
   useEffect(() => {
     // Reset selections when tab changes
@@ -85,8 +88,8 @@ export function UserManagementSection({
           await api.Rooms.inviteUser(room.roomID!, { username });
         }
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Success',
-          message: `Invited ${selectedUsers.length} users to the room.`,
+          title: localize.roomPage.messageBox.successTitle,
+          message: `${localize.roomPage.messageBox.inviteSuccess.Part1} ${selectedUsers.length} ${localize.roomPage.messageBox.inviteSuccess.Part2}`,
         });
       } else {
         // Remove selected users
@@ -94,8 +97,8 @@ export function UserManagementSection({
           await api.Rooms.removeUser(room.roomID!, username);
         }
         window.electron.ipcRenderer.invokeFunction('show-message-box', {
-          title: 'Success',
-          message: `Removed ${selectedUsers.length} users from the room.`,
+          title: localize.roomPage.messageBox.successTitle,
+          message: `${localize.roomPage.messageBox.removedSuccess.Part1} ${selectedUsers.length} ${localize.roomPage.messageBox.removedSuccess.Part2}`,
         });
       }
 
@@ -103,10 +106,14 @@ export function UserManagementSection({
       setSelectedUsers([]);
     } catch (error) {
       window.electron.ipcRenderer.invokeFunction('show-message-box', {
-        title: 'Error',
-        message: `Failed to ${
-          activeTab === 'invite' ? 'invite' : 'remove'
-        } users: ${error.message}`,
+        title: localize.roomPage.messageBox.errorTitle,
+        message: `${localize.roomPage.messageBox.inviteRemoveError.Part1} ${
+          activeTab === 'invite'
+            ? localize.roomPage.messageBox.inviteRemoveError.invite
+            : localize.roomPage.messageBox.inviteRemoveError.remove
+        } ${localize.roomPage.messageBox.inviteRemoveError.Part2} ${
+          error.message
+        }`,
       });
     } finally {
       setLoading(false);
@@ -116,7 +123,7 @@ export function UserManagementSection({
   return (
     <div className="mt-6 space-y-4">
       <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-        User Management
+        {localize.roomPage.roomSettings.userManagment.title}
       </h2>
 
       <Tabs
@@ -125,8 +132,12 @@ export function UserManagementSection({
         onValueChange={setActiveTab}
       >
         <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="invite">Invite Users</TabsTrigger>
-          <TabsTrigger value="remove">Remove Users</TabsTrigger>
+          <TabsTrigger value="invite">
+            {localize.roomPage.roomSettings.userManagment.invite}
+          </TabsTrigger>
+          <TabsTrigger value="remove">
+            {localize.roomPage.roomSettings.userManagment.remove}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="invite" className="space-y-4">
@@ -134,7 +145,10 @@ export function UserManagementSection({
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input
-                placeholder="Search users by username..."
+                placeholder={
+                  localize.roomPage.roomSettings.userManagment
+                    .searchUsersPlaceholder
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -144,7 +158,8 @@ export function UserManagementSection({
               onClick={handleBatchAction}
               disabled={selectedUsers.length === 0 || loading}
             >
-              Invite Selected ({selectedUsers.length})
+              {localize.roomPage.roomSettings.userManagment.inviteSelected} (
+              {selectedUsers.length})
             </Button>
           </div>
 
@@ -168,7 +183,10 @@ export function UserManagementSection({
             <div className="relative flex-1">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
               <Input
-                placeholder="Search room members..."
+                placeholder={
+                  localize.roomPage.roomSettings.userManagment
+                    .searchMembersPlaceholder
+                }
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-8"
@@ -179,7 +197,8 @@ export function UserManagementSection({
               disabled={selectedUsers.length === 0 || loading}
               variant="destructive"
             >
-              Remove Selected ({selectedUsers.length})
+              {localize.roomPage.roomSettings.userManagment.removeSelected} (
+              {selectedUsers.length})
             </Button>
           </div>
 

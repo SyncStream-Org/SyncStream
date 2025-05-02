@@ -5,12 +5,15 @@ import {
   initiateVideoCall,
   closeVideoCall,
 } from '@/api/routes/useWebRTCVideo';
+import { Button } from '@/components/ui/button';
+import Localize from '@/utilities/localize';
 
 interface StreamViewerProps {
   activeStream: Types.MediaData | null;
   roomID: string;
   sourceID: string;
   isClient: boolean;
+  handleClose: () => void;
 }
 
 export function StreamViewer({
@@ -18,6 +21,7 @@ export function StreamViewer({
   roomID,
   sourceID,
   isClient,
+  handleClose,
 }: StreamViewerProps) {
   useWebRTCVideo();
 
@@ -31,17 +35,33 @@ export function StreamViewer({
     }
   }, [sourceID, isClient, roomID, activeStream?.mediaID]);
 
+  const localize = Localize.getInstance().localize();
+
   return (
-    <video
-      id="remoteVideoPlayer"
-      autoPlay
-      style={{
-        width: '100%',
-        height: 'auto',
-        display: isClient !== null ? 'block' : 'none',
-      }}
-    >
-      <track kind="captions" hidden />
-    </video>
+    <>
+      <video
+        id="remoteVideoPlayer"
+        autoPlay
+        style={{
+          width: 'auto',
+          height: 'auto',
+          display: isClient !== null ? 'block' : 'none',
+        }}
+      >
+        <track kind="captions" hidden />
+      </video>
+      <Button
+        onClick={() => {
+          closeVideoCall();
+          handleClose();
+        }}
+        className="mx-auto mt-4"
+        variant="destructive"
+      >
+        {isClient
+          ? localize.roomPage.streamViewer.leave
+          : localize.roomPage.streamViewer.stop}
+      </Button>
+    </>
   );
 }

@@ -40,6 +40,11 @@ export interface PresenceData {
     isServer?: boolean;
 }
 
+export interface UserPresenceData {
+    roomID: string;
+    username: string;
+}
+
 export type UpdateType = 'create' | 'update' | 'delete';
 
 export interface RoomBroadcastUpdate {
@@ -49,6 +54,12 @@ export interface RoomBroadcastUpdate {
 }
 
 export interface UserBroadcastUpdate {
+    endpoint: 'room' | 'presence';
     type: UpdateType;
-    data: RoomData;
+    data: RoomData | UserPresenceData;
+}
+
+export interface RoomPresenceData {
+    roomID: string;
+    users: string[];
 }

@@ -5,6 +5,7 @@ import Launch from '../pages/launch/launch';
 import Home from '../pages/home/home';
 import Settings from '../pages/settings/settings';
 import Room from '../pages/room/room';
+import AdminPanel from '../pages/admin-panel/adminPanel';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/room" element={<Room />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
     </Router>
   );

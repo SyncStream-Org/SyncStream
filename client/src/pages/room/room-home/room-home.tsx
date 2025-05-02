@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import { DocCard } from './doc-card';
 import { HomeToolbar } from './home-toolbar';
 
@@ -25,6 +26,8 @@ export function RoomHome({
   const [searchQuery, setSearchQuery] = useState('');
   const [mediaTypeFilter, setMediaTypeFilter] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState('type');
+
+  const localize = Localize.getInstance().localize();
 
   const filteredMedia = media.filter((item) => {
     const matchesType =
@@ -71,7 +74,7 @@ export function RoomHome({
           ))
         ) : (
           <div className="col-span-full text-center py-10 text-gray-500">
-            No media found matching your filters
+            {localize.roomPage.noMedia}
           </div>
         )}
       </div>

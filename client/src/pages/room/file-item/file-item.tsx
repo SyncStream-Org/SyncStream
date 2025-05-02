@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/context-menu';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { Types } from 'syncstream-sharedlib';
+import Localize from '@/utilities/localize';
 import { FileUpdate } from './file-update';
 import { FileDelete } from './file-delete';
 
@@ -21,16 +22,18 @@ export function FileItem({ roomID, mediaObject, children }: FileItemProps) {
   const [openUpdate, setOpenUpdate] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState(false);
 
+  const localize = Localize.getInstance().localize();
+
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger>{children}</ContextMenuTrigger>
         <ContextMenuContent className="w-64 bg-white dark:bg-gray-900">
           <ContextMenuItem inset onClick={() => setOpenUpdate(true)}>
-            Rename
+            {localize.roomPage.fileItem.rename}
           </ContextMenuItem>
           <ContextMenuItem inset onClick={() => setOpenDelete(true)}>
-            Delete
+            {localize.roomPage.fileItem.delete}
           </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>

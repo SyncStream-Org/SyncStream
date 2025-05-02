@@ -2,14 +2,14 @@ import React from 'react';
 import './settings.css';
 
 import { NavigateFunction } from 'react-router-dom';
-import PrimaryButton from '../../components/buttons/primary-button';
-import Localize, { SettingsPageCategories } from '../../utilities/localize';
+import { ArrowLeft, LogOut } from 'lucide-react';
+import SessionState from '@/utilities/session-state';
+import { Button } from '../../components/ui/button';
+import Localize from '../../utilities/localize';
 import { asPage } from '../../utilities/page-wrapper';
-import SessionState from '../../utilities/session-state';
 import AppearanceSettings from './appearance';
 import GeneralSettings from './general';
 import LanguageSettings from './language';
-import UserManagementSettings from './userManagment';
 
 interface Props {
   // eslint-disable-next-line react/no-unused-prop-types
@@ -20,21 +20,10 @@ interface Props {
   navigate: NavigateFunction;
 }
 
-interface State {
-  activeCategory: string;
-  categories: string[];
-}
-
-class Settings extends React.Component<Props, State> {
+class Settings extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      activeCategory: 'general',
-      categories: SessionState.getInstance().currentUser.admin
-        ? ['general', 'appearance', 'language', 'userManagement']
-        : ['general', 'appearance', 'language'],
-    };
+    this.state = {};
   }
 
   render() {
@@ -43,67 +32,58 @@ class Settings extends React.Component<Props, State> {
 
     // ---- RENDER BLOCK ----
     return (
-      <div className="flex h-screen">
-        <div className="flex flex-col w-64 dark:bg-gray-800 shadow-lg">
-          <div className="p-6">
-            <h2 className="text-lg font-semibold">
-              {localize.settingsPage.title}
-            </h2>
-          </div>
-          <nav className="grow">
-            {this.state.categories.map((category) => (
-              <div
-                key={category}
-                className={`p-4 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer ${
-                  this.state.activeCategory === category
-                    ? 'bg-gray-200 dark:bg-gray-700'
-                    : ''
-                }`}
-                onClick={() => {
-                  this.setState({ activeCategory: category });
-                }}
-              >
-                {
-                  localize.settingsPage.categories[
-                    category as SettingsPageCategories
-                  ].shortTitle
-                }
-              </div>
-            ))}
-          </nav>
-          <PrimaryButton
-            text={localize.settingsPage.backButtonText}
-            className="mx-4 mb-4"
-            onClick={() => {
-              this.props.navigate(-1);
-            }}
-          />
-        </div>
+      <div className="flex flex-col h-screen">
         <div className="flex-1 p-10 overflow-y-auto max-h-screen no-scrollbar">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">
+              {localize.settingsPage.categories.general.title}
+            </h1>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  this.props.navigate(-1);
+                }}
+                className="flex items-center gap-1"
+              >
+                <ArrowLeft size={16} />
+                {localize.settingsPage.backButtonText || 'Back'}
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  SessionState.getInstance().sessionToken = '';
+                  this.props.navigate('/');
+                }}
+                className="flex items-center gap-1"
+              >
+                <LogOut size={16} />
+                {localize.settingsPage.general.dangerZone.logOut || 'Logout'}
+              </Button>
+            </div>
+          </div>
+          <div className="mt-6">
+            <GeneralSettings />
+          </div>
+          <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
           <h1 className="text-2xl font-bold">
-            {
-              localize.settingsPage.categories[
-                this.state.activeCategory as SettingsPageCategories
-              ].title
-            }
+            {localize.settingsPage.categories.appearance.title}
           </h1>
           <div className="mt-6">
-            {this.state.activeCategory === 'general' && (
-              <GeneralSettings navigate={this.props.navigate} />
-            )}
-            {this.state.activeCategory === 'appearance' && (
-              <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
-            )}
-            {this.state.activeCategory === 'language' && (
-              <LanguageSettings
-                forceUpdate={() => {
-                  this.forceUpdate();
-                }}
-              />
-            )}
-            {this.state.activeCategory === 'userManagement' && (
-              <UserManagementSettings />
-            )}
+            <AppearanceSettings toggleDarkMode={this.props.toggleDarkMode} />
+          </div>
+          <hr className="my-5 text-gray-600 dark:text-gray-400 border-1" />
+          <h1 className="text-2xl font-bold">
+            {localize.settingsPage.categories.language.title}
+          </h1>
+          <div className="mt-6">
+            <LanguageSettings
+              forceUpdate={() => {
+                this.forceUpdate();
+              }}
+            />
           </div>
         </div>
       </div>

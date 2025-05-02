@@ -5,6 +5,7 @@ import * as Auth from "../utils/auth";
 import userService from "../services/userService";
 import roomService from "../services/roomService";
 import User from "../models/users";
+import Room from "../models/rooms";
 import PresenceState from "../utils/state";
 import Broadcaster from "../utils/broadcaster";
 
@@ -214,6 +215,22 @@ export const joinRoom = async (req: Request, res: Response) => {
   }
 
   PresenceState.addUserEntry(user.username, roomID);
+  // broadcast to users in the room
+  let usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  usersInRoom = usersInRoom.filter((username) => !admins.includes(username));
+
+  Broadcaster.pushUpdateToUsers(
+    [...usersInRoom, ...admins],
+    {
+      endpoint: "presence",
+      type: "create",
+      data: {
+        username: user.username,
+        roomID,
+      }
+    },
+  );
   res.sendStatus(200);
 };
 
@@ -223,8 +240,24 @@ export const leaveRoom = async (req: Request, res: Response) => {
     res.status(404).json({ error: "Not Found: User not in any room" });
     return;
   }
-
+  const { roomID } = PresenceState.getUserEntry(user.username)!;
   PresenceState.removeUserEntry(user.username);
+  // broadcast to users in the room
+  let usersInRoom = (await roomService.getAllRoomUsers(roomID)).map((user) => user.username);
+  const admins = (await userService.listAllUsers(false)).map((user) => user.username);
+  usersInRoom = usersInRoom.filter((username) => !admins.includes(username));
+
+  Broadcaster.pushUpdateToUsers(
+    [...usersInRoom, ...admins],
+    {
+      endpoint: "presence",
+      type: "delete",
+      data: {
+        username: user.username,
+        roomID,
+      }
+    },
+  )
   res.sendStatus(200);
 };
 
@@ -285,3 +318,20 @@ export const enterUserBroadcast = async (req: Request, res: Response) => {
     res.end();
   });
 };
+
+export const getRoomPresence = async (req: Request, res: Response) => {
+  const user: User = (req as any).user;
+
+  let rooms: Room[] = [];
+  if (user.admin) {
+    rooms = await roomService.listAllRooms();
+  } else {
+    rooms = await userService.getUserRooms(user, false, true);
+    rooms = (await userService.getUserRooms(user, true, true)).concat(rooms);
+  }
+  const roomIDs = rooms.map((room) => room.roomID);
+  const roomPresence = PresenceState.getUsersInRooms(roomIDs);
+
+  res.json(roomPresence);
+};
+  

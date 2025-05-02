@@ -98,6 +98,30 @@ class PresenceState {
     }
     return false;
   }
+
+  public getUsersInRooms(roomIDs: string[]): Types.RoomPresenceData[] {
+    const roomMap = new Map<string, string[]>();
+
+    const filteredRooms = Array.from(this.globalPresence.entries()).filter(
+      ([_, userState]) => roomIDs.includes(userState.roomID),
+    );
+
+    filteredRooms.forEach(([username, userState]) => {
+      if (!roomMap.has(userState.roomID)) {
+        roomMap.set(userState.roomID, []);
+      }
+      roomMap.get(userState.roomID)!.push(username);
+    });
+
+    const roomPresence: Types.RoomPresenceData[] = Array.from(
+      roomMap.entries(),
+    ).map(([roomID, users]) => ({
+      roomID,
+      users,
+    }));
+
+    return roomPresence;
+  }
 }
 
 export default new PresenceState();

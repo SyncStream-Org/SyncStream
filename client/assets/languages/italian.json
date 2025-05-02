@@ -1,0 +1,253 @@
+{
+  "launchPage": {
+    "title": "Accedi",
+    "form": {
+      "username": "Nome utente",
+      "password": "Password",
+      "serverURL": "URL del server",
+      "serverURLButton": "Cambia URL del server",
+      "submit": "Invia"
+    },
+    "messageBox": {
+      "errorTitle": "Errore",
+      "invalidServer": "Indirizzo del server non valido. Inserisci l'indirizzo corretto o contatta l'amministratore per assistenza.",
+      "invalidAuth": "Nome utente o password non validi.",
+      "incompatibleClient": "La versione del client non è compatibile con la versione del server. Utilizza una versione client più recente."
+    }
+  },
+  "settingsPage": {
+    "title": "Impostazioni",
+    "backButtonText": "Torna indietro",
+    "categories": {
+      "general": {
+        "title": "Impostazioni generali",
+        "shortTitle": "Generale"
+      },
+      "appearance": {
+        "title": "Impostazioni aspetto",
+        "shortTitle": "Aspetto"
+      },
+      "language": {
+        "title": "Impostazioni lingua",
+        "shortTitle": "Lingua"
+      },
+      "userManagement": {
+        "title": "Impostazioni gestione utenti",
+        "shortTitle": "Gestione utenti"
+      }
+    },
+    "general": {
+      "profile": {
+        "title": "Profilo",
+        "username": "Nome utente:",
+        "displayName": "Nome visualizzato:",
+        "email": "Email:"
+      },
+      "changeProfile": {
+        "title": "Aggiorna profilo",
+        "displayName": "Nome visualizzato",
+        "email": "Email",
+        "password": "Password",
+        "submit": "Invia",
+        "displayNamePlaceholder": "Nuovo nome visualizzato",
+        "emailPlaceholder": "Nuova email",
+        "passwordPlaceholder": "Nuova password"
+      },
+      "dangerZone": {
+        "title": "Zona di pericolo",
+        "logOut": "Disconnetti"
+      },
+      "messageBox": {
+        "errorTitle": "Errore",
+        "updateError": "Impossibile aggiornare l'utente in questo momento. Riprova tra qualche minuto.",
+        "successTitle": "Successo",
+        "updateSuccess": "Aggiornato con successo"
+      }
+    },
+    "language": {
+      "languageChange": "Lingua dell'app"
+    },
+    "appearance": {
+      "colorScheme": {
+        "label": "Schema colori",
+        "lightMode": "Attiva la modalità scura",
+        "darkMode": "Attiva la modalità chiara"
+      }
+    },
+    "userManagement": {
+      "title": "Pannello di amministrazione",
+      "userCreationTitle": "Creazione utente",
+      "adminManagement": {
+        "searchPlaceholder": "Cerca utenti per nome utente...",
+        "deleteSelectedButton": "Elimina selezionati",
+        "loading": "Caricamento...",
+        "noUsers": "Nessun utente trovato",
+        "member": "Membro",
+        "notMember": "Non membro",
+        "admin": "Amministratore",
+        "notAdmin": "Non amministratore"
+      },
+      "users": {
+        "title": "Utenti",
+        "noUsers": "Nessun utente da visualizzare...",
+        "username": "Nome utente",
+        "displayName": "Nome visualizzato",
+        "email": "Email",
+        "admin": "È amministratore?"
+      },
+      "createUser": {
+        "title": "Crea utente",
+        "username": "Nome utente",
+        "email": "Email",
+        "password": "Password",
+        "displayName": "Nome visualizzato",
+        "admin": "È amministratore?",
+        "submit": "Invia",
+        "displayNamePlaceholder": "Nuovo nome visualizzato",
+        "emailPlaceholder": "Nuova email",
+        "usernamePlaceholder": "Nuovo nome utente"
+      },
+      "messageBox": {
+        "successTitle": "Successo",
+        "errorTitle": "Errore",
+        "userGetError": "Impossibile ottenere gli utenti dal server.",
+        "userDeleteError": "Impossibile eliminare l'utente.",
+        "userCreateError": "Impossibile creare l'utente.",
+        "userCreateAutogenPass": "Il nuovo utente ha una password generata automaticamente:",
+        "removeUserError": "Impossibile rimuovere l'utente:",
+        "removeUserSuccess": {
+          "Part1": "Rimossi",
+          "Part2": "utenti dalla stanza."
+        }
+      }
+    }
+  },
+  "homePage": {
+    "title": "Home",
+    "settingsButton": "Impostazioni",
+    "adminPanelButton": "Pannello di amministrazione",
+    "avatarTooltip": "Connesso come:",
+    "roomCard": {
+      "owner": "Proprietario della stanza:",
+      "userCount": "Utenti nella stanza:"
+    },
+    "createRoom": {
+      "button": "Crea nuova stanza",
+      "popupTitle": "Aggiungi stanza",
+      "inputLabel": "Nome della stanza",
+      "submit": "Invia"
+    },
+    "messageBox": {
+      "errorTitle": "Errore",
+      "roomFetchError": "Impossibile ottenere i dati della stanza in questo momento.",
+      "roomPresenceError": "Impossibile ottenere i dati di presenza nella stanza in questo momento.",
+      "roomCreationError1": "Impossibile creare la stanza. Qualcosa è andato storto con il server.",
+      "roomCreationError2": "Impossibile creare la stanza. Una stanza con questo nome potrebbe già esistere",
+      "joinRoomError": "Impossibile accedere alla stanza in questo momento.",
+      "roomInviteAcceptError1": "Impossibile accettare l'invito alla stanza. Qualcosa è andato storto con il server.",
+      "roomInviteAcceptError2": "Impossibile accettare l'invito alla stanza. La stanza con quel nome potrebbe non esistere o potresti non essere invitato a quella stanza.",
+      "roomInviteDeclineError1": "Impossibile rifiutare l'invito alla stanza. Qualcosa è andato storto con il server.",
+      "roomInviteDeclineError2": "Impossibile rifiutare l'invito alla stanza. La stanza con quel nome potrebbe non esistere o potresti non essere invitato a quella stanza."
+    }
+  },
+  "roomPage": {
+    "leaveRoom": "Lascia stanza",
+    "filter": "Filtra",
+    "sort": "Ordina",
+    "search": "Cerca...",
+    "noMedia": "Nessun elemento multimediale trovato corrispondente ai tuoi filtri",
+    "type": "Tipo",
+    "name": "Nome",
+    "noItems": "Nessun elemento trovato",
+    "activeUsers": "Utenti attivi:",
+    "fileItem": {
+      "rename": "Rinomina",
+      "delete": "Elimina"
+    },
+    "voiceChannelCard": {
+      "user": "utente",
+      "users": "utenti",
+      "you": "Tu"
+    },
+    "streamViewer": {
+      "leave": "Abbandona lo stream",
+      "stop": "Interrompi lo stream"
+    },
+    "streamDialog": {
+      "title": "Nessuno stream avviato - Seleziona una finestra o uno schermo da condividere",
+      "sourceSelectPlaceholder": "Sorgente da selezionare",
+      "sources": "Sorgenti"
+    },
+    "createMedia": {
+      "button": "Crea",
+      "title": "Crea nuovo elemento multimediale",
+      "name": "Nome elemento multimediale",
+      "type": "Tipo di elemento multimediale",
+      "submit": "Crea",
+      "typePlaceholder": "Seleziona il tipo di elemento multimediale"
+    },
+    "categories": {
+      "media": "Media",
+      "home": "Home",
+      "settings": "Impostazioni",
+      "documents": "Documenti",
+      "streams": "Stream",
+      "voiceChannels": "Canali vocali",
+      "document": "Documento",
+      "stream": "Stream",
+      "voiceChannel": "Canale vocale"
+    },
+    "messageBox": {
+      "errorTitle": "Errore",
+      "successTitle": "Successo",
+      "inviteSuccess": {
+        "Part1": "Invitati",
+        "Part2": "utenti nella stanza."
+      },
+      "removedSuccess": {
+        "Part1": "Rimossi",
+        "Part2": "utenti dalla stanza."
+      },
+      "inviteRemoveError": {
+        "Part1": "Impossibile",
+        "Part2": "utenti:",
+        "invite": "invitare",
+        "remove": "rimuovere"
+      },
+      "userFetchError1": "Qualcosa è andato storto con il server e non siamo riusciti a recuperare i dati del nome utente.",
+      "userFetchError2": "Qualcosa è andato storto con il server e non siamo riusciti a recuperare i dati dei membri della stanza.",
+      "roomDeleteError": "Qualcosa è andato storto con il server e non siamo riusciti a eliminare la stanza.",
+      "roomLeaveError": "Qualcosa è andato storto con il server e non siamo riusciti a rimuoverti dalla stanza.",
+      "roomUpdateError": "Qualcosa è andato storto con il server e non siamo riusciti ad aggiornare la stanza."
+    },
+    "roomSettings": {
+      "updateRoom": {
+        "title": "Aggiorna stanza",
+        "newName": "Nuovo nome della stanza",
+        "newOwner": "Nuovo proprietario della stanza",
+        "submit": "Invia"
+      },
+      "userManagment": {
+        "title": "Gestione utenti",
+        "invite": "Invita utenti",
+        "remove": "Rimuovi utenti",
+        "searchUsersPlaceholder": "Cerca utenti per nome utente...",
+        "searchMembersPlaceholder": "Cerca membri della stanza...",
+        "inviteSelected": "Invita selezionati",
+        "removeSelected": "Rimuovi selezionati"
+      },
+      "leave": "Lascia stanza",
+      "leaveCheck": {
+        "Part1": "Sei sicuro di voler lasciare ",
+        "Part2": "? Dovrai essere invitato di nuovo per unirti."
+      },
+      "delete": "Elimina stanza",
+      "deleteCheck": {
+        "Part1": "Sei sicuro di voler eliminare ",
+        "Part2": " e tutti i dati associati? Puoi trasferire la proprietà della stanza e quindi uscire per mantenere la stanza."
+      },
+      "audioInputLong": "Dispositivo di input audio",
+      "audioInputShort": "Input audio"
+    }
+  }
+}

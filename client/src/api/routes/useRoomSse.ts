@@ -36,19 +36,18 @@ export function useRoomSSE(
             if (!Validation.isRoomBroadcastUpdate(data)) {
               throw new Error('Invalid media update data');
             }
-            console.log('Got SSE');
             switch (data.endpoint) {
               case 'media':
-                onMediaUpdate(data.type, data.data);
+                onMediaUpdate(data.type, data.data as Types.MediaData);
                 break;
               case 'room':
-                onRoomUpdate(data.type, data.data);
+                onRoomUpdate(data.type, data.data as Types.RoomUpdateData);
                 break;
               case 'user':
-                onUserUpdate(data.type, data.data);
+                onUserUpdate(data.type, data.data as Types.RoomUserUpdateData);
                 break;
               case 'presence':
-                onPresenceUpdate(data.type, data.data);
+                onPresenceUpdate(data.type, data.data as Types.PresenceData);
                 break;
               default:
                 console.warn(`Unknown endpoint: ${data.endpoint}`);

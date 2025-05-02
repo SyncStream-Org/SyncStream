@@ -86,9 +86,8 @@ export default class RoomSettings extends React.Component<Props, State> {
         async (res) => {
           if (res !== api.SuccessState.SUCCESS) {
             window.electron.ipcRenderer.invokeFunction('show-message-box', {
-              title: 'Error',
-              message:
-                'Something went wrong with the server and we could not update the room.',
+              title: localize.roomPage.messageBox.errorTitle,
+              message: localize.roomPage.messageBox.roomUpdateError,
             });
           }
         },
@@ -128,18 +127,18 @@ export default class RoomSettings extends React.Component<Props, State> {
         {isRoomOwner && (
           <>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
-              Update Room
+              {localize.roomPage.roomSettings.updateRoom.title}
             </h2>
             <form onSubmit={updateRoom}>
               <PrimaryInput
                 labelClassName="mt-1"
-                label="New Room Name"
+                label={localize.roomPage.roomSettings.updateRoom.newName}
                 id="roomName"
                 type="text"
               />
               <PrimaryInput
                 labelClassName="mt-1"
-                label="New Room Owner"
+                label={localize.roomPage.roomSettings.updateRoom.newOwner}
                 id="newOwner"
                 type="text"
               />
@@ -151,13 +150,13 @@ export default class RoomSettings extends React.Component<Props, State> {
               room={this.props.room}
             />
             <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
-              Delete Room
+              {localize.roomPage.roomSettings.delete}
             </h2>
             <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
               <DialogTrigger asChild>
                 <PrimaryButton
                   className="mt-3"
-                  text="Delete Room"
+                  text={localize.roomPage.roomSettings.delete}
                   type="button"
                 />
               </DialogTrigger>
@@ -167,14 +166,14 @@ export default class RoomSettings extends React.Component<Props, State> {
         )}
         {!isRoomOwner && (
           <>
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
-              Leave Room
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+              {localize.roomPage.roomSettings.leave}
             </h2>
             <Dialog open={this.state.openDelete} onOpenChange={setOpenDelete}>
               <DialogTrigger asChild>
                 <PrimaryButton
                   className="mt-3"
-                  text="Leave Room"
+                  text={localize.roomPage.roomSettings.leave}
                   type="button"
                 />
               </DialogTrigger>
@@ -183,14 +182,14 @@ export default class RoomSettings extends React.Component<Props, State> {
           </>
         )}
         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mt-6">
-          Audio Input Device
+          {localize.roomPage.roomSettings.audioInputLong}
         </h2>
         <Select onValueChange={handleAudioInputSelect}>
           <SelectTrigger className="w-[180px]">
             <SelectValue
               placeholder={
                 this.state.currentAudioInput === undefined
-                  ? 'Audio Input'
+                  ? localize.roomPage.roomSettings.audioInputShort
                   : this.state.currentAudioInput
               }
             />

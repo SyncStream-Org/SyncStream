@@ -6,9 +6,9 @@ import { ErrorCatcher } from "../middleware/errorCatcher";
 
 import rateLimit from "express-rate-limit";
 
-// rate limit to 1000 rq per 15min
+// rate limit to 1000 rq per second
 const limiter = rateLimit({
-    windowMs: 15*60*1000,
+    windowMs: 1000,
     max: 1000
 }); 
 
@@ -31,5 +31,6 @@ router.put("/rooms/:roomID/invitation", ErrorCatcher(controller.acceptRoomInvite
 router.delete("/rooms/:roomID/invitation", ErrorCatcher(controller.declineRoomInvite));
 router.get("/rooms/:roomID/broadcast", ErrorCatcher(controller.enterRoomBroadcast));
 router.get("/broadcast", ErrorCatcher(controller.enterUserBroadcast));
+router.get("/presence", ErrorCatcher(controller.getRoomPresence));
 
 export default router;
