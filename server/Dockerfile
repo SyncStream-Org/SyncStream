@@ -15,10 +15,10 @@ WORKDIR /app
 COPY ./server ./server
 COPY ./sharedLib ./sharedLib
 
-WORKDIR /app/server
+WORKDIR /app/sharedLib
 RUN npm run build
 
-WORKDIR /app/sharedLib
+WORKDIR /app/server
 RUN npm run build
 
 FROM node:22.7.0
