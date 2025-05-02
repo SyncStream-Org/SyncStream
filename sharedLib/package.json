@@ -1,6 +1,6 @@
 {
   "name": "syncstream-sharedlib",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Shared library for common code between client and server.",
   "main": "dist/index.js",
   "scripts": {
