@@ -1,6 +1,6 @@
 # SyncStream
 
-**SyncStream** is a self-hosted, all-in-one collaboration platform. Host private rooms for your clients supporing audio chat, synchronized media viewing, collaborative document editing, and file sharing — all while maintaining full control over your organization's data. 
+**SyncStream** is a self-hosted, all-in-one collaboration platform. Host private rooms for your clients supporting audio chat, synchronized media viewing, collaborative document editing, and file sharing — all while maintaining full control over your organization's data. 
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/4fbf9027d58743f1ab354d2fa686371e)](https://app.codacy.com/gh/SyncStream-Org/SyncStream/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
